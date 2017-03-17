@@ -26,8 +26,8 @@ composer require spatie/laravel-db-loader
 ## Usage
 
 ``` php
-$db-loader = new Spatie\DbLoader();
-echo $db-loader->echoPhrase('Hello, Spatie!');
+$db->loader = new Spatie\DbLoader();
+echo $db->loader->echoPhrase('Hello, Spatie!');
 ```
 
 ## Changelog
