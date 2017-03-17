@@ -1,11 +1,11 @@
 <?php
 
-namespace Spatie\Skeleton;
+namespace Spatie\DbLoader;
 
-class SkeletonClass
+class DbLoaderClass
 {
     /**
-     * Create a new Skeleton Instance.
+     * Create a new DbLoader Instance.
      */
     public function __construct()
     {
