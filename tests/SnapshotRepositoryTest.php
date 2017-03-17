@@ -2,6 +2,7 @@
 
 namespace Spatie\DbSnapshots\Test;
 
+use Spatie\DbSnapshots\Snapshot;
 use Spatie\DbSnapshots\SnapshotRepository;
 
 class SnapshotRepositoryTest extends TestCase
@@ -11,6 +12,8 @@ class SnapshotRepositoryTest extends TestCase
     {
         $snapshots = app(SnapshotRepository::class)->getAll();
 
-        dd($snapshots);
+        $this->assertCount(3, $snapshots);
+
+        $this->assertInstanceOf(Snapshot::class, $snapshots->first());
     }
 }
