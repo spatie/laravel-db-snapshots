@@ -1,11 +1,11 @@
 {
-    "name": "spatie/laravel-db-loader",
+    "name": "spatie/laravel-db-snapshots",
     "description": "An artisan command to dump and load databases",
     "keywords": [
         "spatie",
-        "laravel-db-loader"
+        "laravel-db-snapshots"
     ],
-    "homepage": "https://github.com/spatie/laravel-db-loader",
+    "homepage": "https://github.com/spatie/laravel-db-snapshots",
     "license": "MIT",
     "authors": [
         {
@@ -27,12 +27,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Spatie\\Skeleton\\": "src"
+            "Spatie\\DbSnapshots\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Spatie\\Skeleton\\Test\\": "tests"
+            "Spatie\\DbSnapshots\\Test\\": "tests"
         }
     },
     "scripts": {
