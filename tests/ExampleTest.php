@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\Skeleton\Test;
+namespace Spatie\DbLoader\Test;
 
 use PHPUnit\Framework\TestCase;
 

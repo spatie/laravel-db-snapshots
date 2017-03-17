@@ -16,7 +16,11 @@
         }
     ],
     "require": {
-        "php": "^7.1"
+        "php": "^7.1",
+        "illuminate/support": "^5.4",
+        "orchestra/testbench": "^3.4",
+        "spatie/db-dumper": "^2.4",
+        "spatie/laravel-migrate-fresh": "^1.4"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.0"
