@@ -15,7 +15,7 @@ class DbDumperFactory
      *
      * @return \Spatie\DbDumper\DbDumper
      */
-    public static function createFromConnection(string $dbConnectionName): DbDumper
+    public static function createForConnection(string $dbConnectionName): DbDumper
     {
         $dbConfig = config("database.connections.{$dbConnectionName}");
 

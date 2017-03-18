@@ -30,7 +30,9 @@ class DbSnapshotsServiceProvider extends ServiceProvider
         $this->app
             ->when(DbDumperFactory::class)
             ->needs(DbDumper::class)
-            ->give(function() {})
+            ->give(function() {
+                return new DbDumperFactory();
+            });
     }
 
     /**
