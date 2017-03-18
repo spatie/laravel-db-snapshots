@@ -27,12 +27,11 @@ class DbSnapshotsServiceProvider extends ServiceProvider
             return new SnapshotRepository($disk);
         });
 
-        $this->app
-            ->when(DbDumperFactory::class)
-            ->needs(DbDumper::class)
-            ->give(function() {
-                return new DbDumperFactory();
-            });
+        $this->app->bind(DbDumperFactory::class, function() {
+            $connectionName = 'mysql';
+
+            return new DbDumperFactory($connectionName);
+        });
     }
 
     /**

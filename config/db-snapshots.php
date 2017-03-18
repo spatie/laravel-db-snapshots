@@ -10,5 +10,5 @@ return [
     /*
      * The directory where temporary files will be stored
      */
-    'temporary_directory' => storage_path('app/laravel-db-snapshots/temp');
+    'temporary_directory_path' => storage_path('app/laravel-db-snapshots/temp'),
 ];

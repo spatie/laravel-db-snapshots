@@ -12,11 +12,6 @@ class Snapshot
     /** @var string */
     protected $fileName;
 
-    public static function fromDb()
-    {
-
-    }
-
     public function __construct(Disk $disk, string $fileName)
     {
         $this->disk = $disk;
