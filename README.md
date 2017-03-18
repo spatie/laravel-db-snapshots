@@ -1,5 +1,6 @@
-# An artisan command to dump, load and swap databases
+**WORK IN PROGRESS, DO NOT USE**
 
+# An artisan command to dump, load and swap databases
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-db-snapshots.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-db-snapshots)
 [![Build Status](https://img.shields.io/travis/spatie/laravel-db-snapshots/master.svg?style=flat-square)](https://travis-ci.org/spatie/laravel-db-snapshots)
 [![Quality Score](https://img.shields.io/scrutinizer/g/spatie/laravel-db-snapshots.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/laravel-db-snapshots)
