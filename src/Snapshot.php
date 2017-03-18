@@ -24,7 +24,6 @@ class Snapshot
         $this->fileName = $fileName;
     }
 
-
     public function load()
     {
 

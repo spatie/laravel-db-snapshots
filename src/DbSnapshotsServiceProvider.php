@@ -4,6 +4,7 @@ namespace Spatie\DbSnapshots;
 
 use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Support\ServiceProvider;
+use Spatie\DbDumper\DbDumper;
 
 class DbSnapshotsServiceProvider extends ServiceProvider
 {
@@ -25,6 +26,11 @@ class DbSnapshotsServiceProvider extends ServiceProvider
 
             return new SnapshotRepository($disk);
         });
+
+        $this->app
+            ->when(DbDumperFactory::class)
+            ->needs(DbDumper::class)
+            ->give(function() {})
     }
 
     /**
