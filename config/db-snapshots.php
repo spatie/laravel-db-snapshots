@@ -7,6 +7,12 @@ return [
      */
     'disk' => 'snapshots',
 
+    /**
+     * The connection to be used to create snapshots. Set this to null
+     * to use the default configured in `config/databases.php`
+     */
+    'default_connection' => null,
+
     /*
      * The directory where temporary files will be stored
      */

@@ -28,4 +28,9 @@ class Snapshot
     {
 
     }
+
+    public function size(): int
+    {
+
+    }
 }

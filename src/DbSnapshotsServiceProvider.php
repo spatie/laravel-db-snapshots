@@ -4,7 +4,10 @@ namespace Spatie\DbSnapshots;
 
 use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Support\ServiceProvider;
-use Spatie\DbDumper\DbDumper;
+use Spatie\DbSnapshots\Commands\Create;
+use Spatie\DbSnapshots\Commands\Delete;
+use Spatie\DbSnapshots\Commands\ListSnapshots;
+use Spatie\DbSnapshots\Commands\Load;
 
 class DbSnapshotsServiceProvider extends ServiceProvider
 {
@@ -15,11 +18,11 @@ class DbSnapshotsServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../config/db-snapshots.php' => config_path('db-snapshots.php'),
+                __DIR__ . '/../config/db-snapshots.php' => config_path('db-snapshots.php'),
             ], 'config');
         }
 
-        $this->app->bind(SnapshotRepository::class, function() {
+        $this->app->bind(SnapshotRepository::class, function () {
             $diskName = config('db-snapshots.disk');
 
             $disk = app(Factory::class)->disk($diskName);
@@ -27,11 +30,17 @@ class DbSnapshotsServiceProvider extends ServiceProvider
             return new SnapshotRepository($disk);
         });
 
-        $this->app->bind(DbDumperFactory::class, function() {
-            $connectionName = 'mysql';
+        $this->app->bind('command.snapshots:create', Create::class);
+        $this->app->bind('command.snapshots:load', Load::class);
+        $this->app->bind('command.snapshots:delete', Delete::class);
+        $this->app->bind('command.snapshots:list', ListSnapshots::class);
 
-            return new DbDumperFactory($connectionName);
-        });
+        $this->commands([
+            'command.snapshots:create',
+            'command.snapshots:load',
+            'command.snapshots:delete',
+            'command.snapshots:list',
+        ]);
     }
 
     /**
@@ -39,6 +48,6 @@ class DbSnapshotsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/db-snapshots.php', 'db-snapshots');
+        $this->mergeConfigFrom(__DIR__ . '/../config/db-snapshots.php', 'db-snapshots');
     }
 }

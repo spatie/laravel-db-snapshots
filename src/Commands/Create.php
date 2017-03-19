@@ -5,38 +5,35 @@ namespace Spatie\DbSnapshots\Commands;
 use DB;
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
-use Spatie\MigrateFresh\Events\DroppedTables;
-use Spatie\MigrateFresh\Events\DroppingTables;
-use Spatie\MigrateFresh\TableDroppers\TableDropper;
-use Spatie\MigrateFresh\Exceptions\CannotDropTables;
+use Spatie\DbSnapshots\SnapshotFactory;
 
 class Create extends Command
 {
-    /**
-     * The console command name.
-     *
-     * @var string
-     */
-    protected $signature = 'db-snapshots:create {name?}';
+    use ConfirmableTrait;
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
+    protected $signature = 'db-snapshots:create --name --disk --connection';
+
     protected $description = 'Create a new snapshot.';
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
     public function handle()
     {
+        if (! $this->confirm()) {
+            return;
+        }
+
         $this->info('Creating new snapshot...');
 
-        app(\Spatie\DbSnapshots\SnapshotFactory)
+        $diskName = $this->option('disk') ?? config('db-snapshots.disk');
 
+        $connectionName = $this->option('connection')
+            ?? config('db-snapshots.default_connection')
+            ?? config('databases.default');
+
+        $snapshotName = $this->option('name');
+
+        $snapshot = SnapshotFactory::createForConnectionOnDisk($diskName, $connectionName, $snapshotName);
+
+        $this->info("Snapshot created on disk {$diskName} (size: {$snapshot->size}");
 
         $this->comment('All done!');
     }

@@ -5,11 +5,11 @@ namespace Spatie\DbSnapshots\Commands;
 use DB;
 use Illuminate\Console\Command;
 
-class Delete extends Command
+class ListSnapshots extends Command
 {
     protected $signature = 'db-snapshots:delete --disk';
 
-    protected $description = 'Delete a snapshot.';
+    protected $description = 'List all the snapshots.';
 
     public function handle()
     {
