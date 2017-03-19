@@ -6,18 +6,17 @@ use Spatie\DbDumper\DbDumper;
 use Spatie\DbDumper\Databases\MySql;
 use Spatie\DbDumper\Databases\Sqlite;
 use Spatie\DbDumper\Databases\PostgreSql;
-use Spatie\Backup\Exceptions\CannotCreateDbDumper;
+use Spatie\DbSnapshots\Exceptions\CannotCreateDbDumper;
 
 class DbDumperFactory
 {
-    /**
-     * @param string $dbConnectionName
-     *
-     * @return \Spatie\DbDumper\DbDumper
-     */
-    public static function createForConnection(string $dbConnectionName): DbDumper
+    public static function createForConnection(string $connectionName): DbDumper
     {
-        $dbConfig = config("database.connections.{$dbConnectionName}");
+        $dbConfig = config("database.connections.{$connectionName}");
+
+        if (is_null($dbConfig)) {
+            throw CannotCreateDbDumper::connectionDoesNotExist($connectionName);
+        }
 
         $dbHost = array_get($dbConfig, 'read.host', array_get($dbConfig, 'host'));
 

@@ -2,6 +2,7 @@
 
 namespace Spatie\DbSnapshots\Test;
 
+use Carbon\Carbon;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Spatie\DbSnapshots\DbSnapshotsServiceProvider;
 use Illuminate\Contracts\Filesystem\Factory;
@@ -19,6 +20,8 @@ abstract class TestCase extends Orchestra
         $this->disk = app(Factory::class)->disk('snapshots');
 
         $this->clearDisk();
+
+        Carbon::setTestNow(Carbon::create('2017', '1', '1', '0', '0', '0'));
     }
 
     /**
@@ -56,5 +59,12 @@ abstract class TestCase extends Orchestra
         $this->disk->delete($this->disk->allFiles());
     }
 
+    protected function assertFileOnDiskContains($fileName, $needle)
+    {
+        $this->disk->assertExists($fileName);
 
+        $contents = $this->disk->get($fileName);
+
+        $this->assertContains($needle, $contents);
+    }
 }

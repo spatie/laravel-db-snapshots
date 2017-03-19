@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 
 class ListSnapshots extends Command
 {
-    protected $signature = 'db-snapshots:delete --disk';
+    protected $signature = 'snapshots:delete --disk';
 
     protected $description = 'List all the snapshots.';
 

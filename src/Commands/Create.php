@@ -11,13 +11,13 @@ class Create extends Command
 {
     use ConfirmableTrait;
 
-    protected $signature = 'db-snapshots:create --name --disk --connection';
+    protected $signature = 'snapshots:create {--name} {--disk} {--connection}';
 
     protected $description = 'Create a new snapshot.';
 
     public function handle()
     {
-        if (! $this->confirm()) {
+        if (! $this->confirmToProceed()) {
             return;
         }
 
@@ -31,7 +31,7 @@ class Create extends Command
 
         $snapshotName = $this->option('name');
 
-        $snapshot = SnapshotFactory::createForConnectionOnDisk($diskName, $connectionName, $snapshotName);
+        $snapshot = app(SnapshotFactory::class)->create($diskName, $connectionName, $snapshotName);
 
         $this->info("Snapshot created on disk {$diskName} (size: {$snapshot->size}");
 

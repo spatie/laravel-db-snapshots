@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 
 class Delete extends Command
 {
-    protected $signature = 'db-snapshots:delete --disk';
+    protected $signature = 'snapshots:delete --disk';
 
     protected $description = 'Delete a snapshot.';
 
