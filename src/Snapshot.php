@@ -31,6 +31,6 @@ class Snapshot
 
     public function size(): int
     {
-
+        return 1000;
     }
 }

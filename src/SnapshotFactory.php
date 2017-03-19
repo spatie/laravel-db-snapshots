@@ -24,15 +24,16 @@ class SnapshotFactory
         $this->filesystemFactory = $filesystemFactory;
     }
 
-    public function create(string $diskName, string $connectionName, string $snapshotName): Snapshot
+    public function create(string $diskName, string $connectionName, string $snapshotName = null): Snapshot
     {
-        $directory = new TemporaryDirectory(config('db-snapshots.temporary_directory_path'));
+        $directory = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))->create();
 
-        $fileName = $snapshotName ?? Carbon::createFromFormat('Y-m-d H:i:s') . '.sql';
+        $fileName = empty($snapshotName) ? Carbon::createFromFormat('Y-m-d H:i:s', Carbon::now()) . '.sql': $snapshotName . '.sql';
 
         $dumpPath = $directory->path($fileName);
 
         $this->getDbDumper($connectionName)->dumpToFile($dumpPath);
+
 
         $disk = $this->getDisk($diskName);
         //TO DO: avoid opening file, might be problem for big dumps

@@ -18,6 +18,8 @@ class DbDumperFactory
             throw CannotCreateDbDumper::connectionDoesNotExist($connectionName);
         }
 
+
+
         $dbHost = array_get($dbConfig, 'read.host', array_get($dbConfig, 'host'));
 
         $dbDumper = static::forDriver($dbConfig['driver'])

@@ -26,14 +26,14 @@ class Create extends Command
         $diskName = $this->option('disk') ?? config('db-snapshots.disk');
 
         $connectionName = $this->option('connection')
-            ?? config('db-snapshots.default_connection')
-            ?? config('databases.default');
+            ?: config('db-snapshots.default_connection')
+            ?? config('database.default');
 
         $snapshotName = $this->option('name');
 
         $snapshot = app(SnapshotFactory::class)->create($diskName, $connectionName, $snapshotName);
 
-        $this->info("Snapshot created on disk {$diskName} (size: {$snapshot->size}");
+        $this->info("Snapshot created on disk {$diskName} (size: {$snapshot->size()}");
 
         $this->comment('All done!');
     }
