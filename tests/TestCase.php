@@ -2,11 +2,25 @@
 
 namespace Spatie\DbSnapshots\Test;
 
+use Illuminate\Filesystem\FilesystemAdapter;
 use Spatie\DbSnapshots\DbSnapshotsServiceProvider;
+use Illuminate\Contracts\Filesystem\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
 {
+    /** @var FilesystemAdapter */
+    protected $disk;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->disk = app(Factory::class)->disk('snapshots');
+
+        $this->clearDisk();
+    }
+
     /**
      * @param \Illuminate\Foundation\Application $app
      *
@@ -33,12 +47,14 @@ abstract class TestCase extends Orchestra
 
         $app['config']->set('filesystems.disks.snapshots', [
             'driver' => 'local',
-            'root' => $this->getSnapshotsDirectory(),
+            'root' => __DIR__ . '/snapshotsDisk',
         ]);
     }
 
-    protected function getSnapshotsDirectory(): string
+    protected function clearDisk()
     {
-        return __DIR__ .'/fixtures';
+        $this->disk->delete($this->disk->allFiles());
     }
+
+
 }
