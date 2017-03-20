@@ -5,11 +5,12 @@ namespace Spatie\DbSnapshots\Commands;
 use DB;
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
-use Spatie\DbSnapshots\Snapshot;
+use Spatie\DbSnapshots\Commands\Concerns\AsksForSnapshotName;
 use Spatie\DbSnapshots\SnapshotRepository;
 
 class Load extends Command
 {
+    use AsksForSnapshotName;
     use ConfirmableTrait;
 
     protected $signature = 'snapshots:load {name?} --disk';
@@ -26,28 +27,14 @@ class Load extends Command
             return;
         }
 
-        if (! $this->confirmToProceed()) {
+        if (!$this->confirmToProceed()) {
             return;
         }
 
-        $name = $this->argument('name') ?: $this->askForSnapshotName($snapShots);
+        $name = $this->argument('name') ?: $this->askForSnapshotName();
 
         app(SnapshotRepository::class)->getByName($name)->load();
 
-        $this->comment("Snapshot {$name} loaded");
-    }
-
-    /**
-     * @param $snapShots
-     * @return string
-     */
-    protected function askForSnapshotName($snapShots): string
-    {
-        $names = $snapShots->map(function (Snapshot $snapshot) {
-            return $snapshot->name;
-        })->toArray();
-
-        $chosenName = $this->choice('Which snapshot?', $names, 0);
-        return $chosenName;
+        $this->info("Snapshot `{$name}` loaded!");
     }
 }
