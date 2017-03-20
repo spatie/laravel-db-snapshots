@@ -1,11 +1,11 @@
 <?php
 
-namespace Spatie\DbSnapshots\Test;
+namespace Spatie\DbSnapshots\Test\Helpers;
 
-
+use PHPUnit\Framework\TestCase;
 use Spatie\DbSnapshots\Helpers\Format;
 
-class FormatTest extends \PHPUnit_Framework_TestCase
+class FormatTest extends TestCase
 {
     /** @test */
     public function it_can_determine_a_human_readable_filesize()

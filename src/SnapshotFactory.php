@@ -28,7 +28,7 @@ class SnapshotFactory
     {
         $directory = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))->create();
 
-        $fileName = $snapshotName . '.sql';
+        $fileName = $snapshotName;
 
         $dumpPath = $directory->path($fileName);
 
