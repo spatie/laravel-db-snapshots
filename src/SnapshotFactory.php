@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Spatie\DbDumper\DbDumper;
-use \Illuminate\Filesystem\FilesystemAdapter as Disk;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 class SnapshotFactory
@@ -34,7 +33,6 @@ class SnapshotFactory
 
         $this->getDbDumper($connectionName)->dumpToFile($dumpPath);
 
-
         $disk = $this->getDisk($diskName);
         //TO DO: avoid opening file, might be problem for big dumps
         $disk->put($fileName, file_get_contents($dumpPath));
@@ -46,6 +44,7 @@ class SnapshotFactory
 
     protected function getDisk(string $diskName): FilesystemAdapter
     {
+
         return $this->filesystemFactory->disk($diskName);
     }
 

@@ -3,6 +3,7 @@
 namespace Spatie\DbSnapshots\Test;
 
 use Carbon\Carbon;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Spatie\DbSnapshots\DbSnapshotsServiceProvider;
 use Illuminate\Contracts\Filesystem\Factory;
@@ -17,9 +18,9 @@ abstract class TestCase extends Orchestra
     {
         parent::setUp();
 
-        $this->disk = app(Factory::class)->disk('snapshots');
+        $this->setUpDisk();
 
-        $this->clearDisk();
+        $this->setupDatabase();
 
         Carbon::setTestNow(Carbon::create('2017', '1', '1', '0', '0', '0'));
     }
@@ -44,13 +45,13 @@ abstract class TestCase extends Orchestra
         $app['config']->set('database.default', 'sqlite');
         $app['config']->set('database.connections.sqlite', [
             'driver' => 'sqlite',
-            'database' => ':memory:',
+            'database' => __DIR__ . '/fixtures/database.sqlite',
             'prefix' => '',
         ]);
 
         $app['config']->set('filesystems.disks.snapshots', [
             'driver' => 'local',
-            'root' => __DIR__ . '/snapshotsDisk',
+            'root' => __DIR__ . '/temp/snapshotsDisk',
         ]);
     }
 
@@ -66,5 +67,30 @@ abstract class TestCase extends Orchestra
         $contents = $this->disk->get($fileName);
 
         $this->assertContains($needle, $contents);
+    }
+
+    protected function setupDatabase()
+    {
+        $databasePath = __DIR__ . '/fixtures/database.sqlite';
+
+        if (file_exists($databasePath)) {
+            unlink($databasePath);
+        }
+
+        if (! file_exists($databasePath)) {
+            file_put_contents($databasePath, '');
+        }
+
+        $this->app['db']->connection()->getSchemaBuilder()->create('models', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+        });
+    }
+
+    protected function setUpDisk()
+    {
+        $this->disk = app(Factory::class)->disk('snapshots');
+
+        $this->clearDisk();
     }
 }

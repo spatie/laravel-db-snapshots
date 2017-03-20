@@ -15,6 +15,6 @@ class CreateTest extends TestCase
 
         $fileName = Carbon::now()->format('Y-m-d H:i:s') . '.sql';
 
-        $this->assertFileOnDiskContains($fileName, '');
+        $this->assertFileOnDiskContains($fileName, 'CREATE TABLE "models"');
     }
 }

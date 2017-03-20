@@ -23,7 +23,7 @@ class Create extends Command
 
         $this->info('Creating new snapshot...');
 
-        $diskName = $this->option('disk') ?? config('db-snapshots.disk');
+        $diskName = $this->option('disk') ?: config('db-snapshots.disk');
 
         $connectionName = $this->option('connection')
             ?: config('db-snapshots.default_connection')
