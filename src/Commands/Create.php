@@ -2,6 +2,7 @@
 
 namespace Spatie\DbSnapshots\Commands;
 
+use Carbon\Carbon;
 use DB;
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
@@ -28,7 +29,7 @@ class Create extends Command
             ?: config('db-snapshots.default_connection')
             ?? config('database.default');
 
-        $snapshotName = $this->argument('name');
+        $snapshotName = $this->argument('name') ?: Carbon::now()->format('Y-m-d H:i:s') . '.sql';
 
         $snapshot = app(SnapshotFactory::class)->create(
             config('db-snapshots.disk'),
@@ -38,7 +39,5 @@ class Create extends Command
         $size = Format::humanReadableSize($snapshot->size());
 
         $this->info("Snapshot `{$snapshotName}` created (size: {$size})");
-
-        $this->comment('All done!');
     }
 }

@@ -24,7 +24,7 @@ class Snapshot
 
         $this->fileName = $fileName;
 
-        $this->name = $fileName;
+        $this->name = pathinfo($fileName, PATHINFO_FILENAME);
     }
 
     public function load()

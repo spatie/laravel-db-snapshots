@@ -2,6 +2,9 @@
 
 namespace Spatie\DbSnapshots\Commands\Concerns;
 
+use Spatie\DbSnapshots\Snapshot;
+use Spatie\DbSnapshots\SnapshotRepository;
+
 trait AsksForSnapshotName
 {
     protected function askForSnapshotName(): string
@@ -10,7 +13,7 @@ trait AsksForSnapshotName
 
         $names = $snapShots->map(function (Snapshot $snapshot) {
             return $snapshot->name;
-        })->toArray();
+        })->values()->toArray();
 
         return $this->choice('Which snapshot?', $names, 0);
     }

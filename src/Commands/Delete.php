@@ -23,6 +23,6 @@ class Delete extends Command
 
         $snapshot->delete();
 
-        $this->comment("Snapshot `{$snapshot->name}` deleted!");
+        $this->info("Snapshot `{$snapshot->name}` deleted!");
     }
 }

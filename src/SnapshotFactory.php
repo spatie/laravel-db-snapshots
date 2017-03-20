@@ -24,11 +24,11 @@ class SnapshotFactory
         $this->filesystemFactory = $filesystemFactory;
     }
 
-    public function create(string $diskName, string $connectionName, string $snapshotName = null): Snapshot
+    public function create(string $diskName, string $connectionName, string $snapshotName): Snapshot
     {
         $directory = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))->create();
 
-        $fileName = empty($snapshotName) ? Carbon::createFromFormat('Y-m-d H:i:s', Carbon::now()) . '.sql': $snapshotName . '.sql';
+        $fileName = $snapshotName . '.sql';
 
         $dumpPath = $directory->path($fileName);
 
