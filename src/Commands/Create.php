@@ -29,12 +29,12 @@ class Create extends Command
             ?: config('db-snapshots.default_connection')
             ?? config('database.default');
 
-        $snapshotName = $this->argument('name') ?: Carbon::now()->format('Y-m-d H:i:s') . '.sql';
+        $snapshotName = $this->argument('name') ?: Carbon::now()->format('Y-m-d H:i:s');
 
         $snapshot = app(SnapshotFactory::class)->create(
             config('db-snapshots.disk'),
             $connectionName,
-            $snapshotName);
+            $snapshotName . '.sql');
 
         $size = Format::humanReadableSize($snapshot->size());
 

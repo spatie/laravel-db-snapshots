@@ -17,4 +17,12 @@ class CreateTest extends TestCase
 
         $this->assertFileOnDiskContains($fileName, 'CREATE TABLE "models"');
     }
+
+    /** @test */
+    public function it_can_create_a_snapshot_with_specific_name()
+    {
+        Artisan::call('snapshots:create', ['name' => 'test']);
+
+        $this->assertFileOnDiskContains('test.sql', 'CREATE TABLE "models"');
+    }
 }
