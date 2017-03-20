@@ -32,9 +32,10 @@ class Create extends Command
         $snapshotName = $this->argument('name') ?: Carbon::now()->format('Y-m-d H:i:s');
 
         $snapshot = app(SnapshotFactory::class)->create(
+            $snapshotName . '.sql',
             config('db-snapshots.disk'),
-            $connectionName,
-            $snapshotName . '.sql');
+            $connectionName
+        );
 
         $size = Format::humanReadableSize($snapshot->size());
 

@@ -4,7 +4,7 @@ namespace Spatie\DbSnapshots\Events;
 
 use Spatie\DbSnapshots\Snapshot;
 
-class CreatedSnapshot
+class LoadingSnapshot
 {
     /** @var \Spatie\DbSnapshots\Snapshot */
     public $snapshot;

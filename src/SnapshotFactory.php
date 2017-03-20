@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Spatie\DbDumper\DbDumper;
+use Spatie\DbSnapshots\Events\CreatingSnapshot;
 use Spatie\DbSnapshots\Exceptions\CannotCreateDisk;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 
@@ -24,8 +25,16 @@ class SnapshotFactory
         $this->filesystemFactory = $filesystemFactory;
     }
 
-    public function create(string $diskName, string $connectionName, string $snapshotName): Snapshot
+    public function create(string $snapshotName, string $diskName, string $connectionName): Snapshot
     {
+        $disk = $this->getDisk($diskName);
+
+        event(new CreatingSnapshot(
+            $snapshotName,
+            $disk,
+            $connectionName
+        ));
+
         $directory = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))->create();
 
         $fileName = $snapshotName;
@@ -33,8 +42,6 @@ class SnapshotFactory
         $dumpPath = $directory->path($fileName);
 
         $this->getDbDumper($connectionName)->dumpToFile($dumpPath);
-
-        $disk = $this->getDisk($diskName);
 
         $file = fopen($dumpPath, 'r');
 

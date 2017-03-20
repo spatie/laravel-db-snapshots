@@ -5,15 +5,19 @@ namespace Spatie\DbSnapshots;
 use Carbon\Carbon;
 use \Illuminate\Filesystem\FilesystemAdapter as Disk;
 use Illuminate\Support\Facades\DB;
+use Spatie\DbSnapshots\Events\DeletedSnapshot;
+use Spatie\DbSnapshots\Events\DeletingSnapshot;
+use Spatie\DbSnapshots\Events\LoadedSnapshot;
+use Spatie\DbSnapshots\Events\LoadingSnapshot;
 use Spatie\MigrateFresh\TableDroppers\TableDropper;
 
 class Snapshot
 {
     /** @var \Illuminate\Filesystem\FilesystemAdapter */
-    protected $disk;
+    public $disk;
 
     /** @var string */
-    protected $fileName;
+    public $fileName;
 
     /** @var string */
     public $name;
@@ -29,6 +33,8 @@ class Snapshot
 
     public function load()
     {
+        event(new LoadingSnapshot($this));
+
         $tableDropper = $this->getTableDropper();
 
         $tableDropper->dropAllTables();
@@ -36,11 +42,27 @@ class Snapshot
         $dbDumpContents = $this->disk->get($this->fileName);
 
         DB::statement($dbDumpContents);
+
+        event(new LoadedSnapshot($this));
     }
 
     public function delete()
     {
+        event(new DeletingSnapshot($this));
+
         $this->disk->delete($this->fileName);
+
+        even(new DeletedSnapshot($this->name, $this->disk));
+    }
+
+    public function size(): int
+    {
+        return $this->disk->size($this->fileName);
+    }
+
+    public function createdAt(): Carbon
+    {
+        return Carbon::createFromTimestamp($this->disk->lastModified($this->fileName));
     }
 
     /**
@@ -59,15 +81,5 @@ class Snapshot
         }
 
         return new $dropperClass;
-    }
-
-    public function size(): int
-    {
-        return $this->disk->size($this->fileName);
-    }
-
-    public function createdAt(): Carbon
-    {
-        return Carbon::createFromTimestamp($this->disk->lastModified($this->fileName));
     }
 }
