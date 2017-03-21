@@ -3,6 +3,7 @@
 namespace Spatie\DbSnapshots;
 
 use Carbon\Carbon;
+use Illuminate\Database\Schema\Blueprint;
 use \Illuminate\Filesystem\FilesystemAdapter as Disk;
 use Illuminate\Support\Facades\DB;
 use Spatie\DbSnapshots\Events\DeletedSnapshot;
@@ -33,16 +34,18 @@ class Snapshot
 
     public function load()
     {
-
         event(new LoadingSnapshot($this));
 
         $tableDropper = $this->getTableDropper();
-
         $tableDropper->dropAllTables();
 
+        DB::reconnect();
+
         $dbDumpContents = $this->disk->get($this->fileName);
-dd('here');
-        DB::statement($dbDumpContents);
+
+        foreach (explode(PHP_EOL, $dbDumpContents) as $statement) {
+            DB::statement($statement);
+        }
 
         event(new LoadedSnapshot($this));
     }

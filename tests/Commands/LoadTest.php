@@ -70,11 +70,9 @@ class LoadTest extends TestCase
 
     protected function getNameOfLoadedSnapshot(): string
     {
-        //DB::statement('INSERT INTO models (`name`) VALUES ("mysnap")');
-
         $result = DB::select('select `name` from models;');
 
-        return count($result) ? $result[0]['name'] : '';
+        return count($result) ? $result[0]->name : '';
     }
 
 }
