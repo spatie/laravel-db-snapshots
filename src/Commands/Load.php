@@ -33,7 +33,7 @@ class Load extends Command
 
         $name = $this->argument('name') ?: $this->askForSnapshotName();
 
-        $snapshot = app(SnapshotRepository::class)->getByName($name);
+        $snapshot = app(SnapshotRepository::class)->findByName($name);
 
         if (! $snapshot) {
             $this->warn("Snapshot `{$name}` does not exist!");

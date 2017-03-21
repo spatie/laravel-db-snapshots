@@ -19,7 +19,7 @@ class Delete extends Command
     {
         $name = $this->argument('name') ?: $this->askForSnapshotName();
 
-        $snapshot = app(SnapshotRepository::class)->getByName($name);
+        $snapshot = app(SnapshotRepository::class)->findByName($name);
 
         $snapshot->delete();
 

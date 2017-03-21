@@ -52,7 +52,7 @@ class Snapshot
 
         $this->disk->delete($this->fileName);
 
-        even(new DeletedSnapshot($this->name, $this->disk));
+        event(new DeletedSnapshot($this->name, $this->disk));
     }
 
     public function size(): int

@@ -26,7 +26,7 @@ class SnapshotRepository
             });
     }
 
-    public function getByName(string $name)
+    public function findByName(string $name)
     {
         return $this->getAll()->first(function (Snapshot $snapshot) use ($name) {
              return $snapshot->name === $name;
