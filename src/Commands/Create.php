@@ -13,7 +13,7 @@ class Create extends Command
 {
     use ConfirmableTrait;
 
-    protected $signature = 'snapshots:create {name?} {--connection}';
+    protected $signature = 'snapshot:create {name?} {--connection}';
 
     protected $description = 'Create a new snapshot.';
 

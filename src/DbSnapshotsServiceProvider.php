@@ -30,16 +30,16 @@ class DbSnapshotsServiceProvider extends ServiceProvider
             return new SnapshotRepository($disk);
         });
 
-        $this->app->bind('command.snapshots:create', Create::class);
-        $this->app->bind('command.snapshots:load', Load::class);
-        $this->app->bind('command.snapshots:delete', Delete::class);
-        $this->app->bind('command.snapshots:list', ListSnapshots::class);
+        $this->app->bind('command.snapshot:create', Create::class);
+        $this->app->bind('command.snapshot:load', Load::class);
+        $this->app->bind('command.snapshot:delete', Delete::class);
+        $this->app->bind('command.snapshot:list', ListSnapshots::class);
 
         $this->commands([
-            'command.snapshots:create',
-            'command.snapshots:load',
-            'command.snapshots:delete',
-            'command.snapshots:list',
+            'command.snapshot:create',
+            'command.snapshot:load',
+            'command.snapshot:delete',
+            'command.snapshot:list',
         ]);
     }
 

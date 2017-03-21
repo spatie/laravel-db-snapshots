@@ -14,7 +14,7 @@ class CreatingSnapshotTest extends TestCase
     {
         Event::fake();
 
-        Artisan::call('snapshots:create', ['name' => 'my-snapshot']);
+        Artisan::call('snapshot:create', ['name' => 'my-snapshot']);
 
         Event::assertDispatched(CreatingSnapshot::class, function(CreatingSnapshot $event) {
             return $event->fileName === 'my-snapshot.sql';

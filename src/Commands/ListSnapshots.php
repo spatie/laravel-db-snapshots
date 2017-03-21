@@ -10,7 +10,7 @@ use Spatie\DbSnapshots\SnapshotRepository;
 
 class ListSnapshots extends Command
 {
-    protected $signature = 'snapshots:list';
+    protected $signature = 'snapshot:list';
 
     protected $description = 'List all the snapshots.';
 

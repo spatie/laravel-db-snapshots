@@ -3,7 +3,7 @@
 return [
 
     /*
-     * The disk on which the snapshots are stored
+     * The name of the disk on which the snapshots are stored.
      */
     'disk' => 'snapshots',
 
@@ -14,7 +14,7 @@ return [
     'default_connection' => null,
 
     /*
-     * The directory where temporary files will be stored
+     * The directory where temporary files will be stored.
      */
     'temporary_directory_path' => storage_path('app/laravel-db-snapshots/temp'),
 ];

@@ -18,7 +18,7 @@ class LoadTest extends TestCase
 
         $this->command = m::mock('Spatie\DbSnapshots\Commands\Load[choice]');
 
-        $this->app->bind('command.snapshots:load', function () {
+        $this->app->bind('command.snapshot:load', function () {
             return $this->command;
         });
     }
@@ -33,7 +33,7 @@ class LoadTest extends TestCase
             ->once()
             ->andReturn('snapshot2');
 
-        Artisan::call('snapshots:load');
+        Artisan::call('snapshot:load');
 
         $this->assertSnapshotLoaded('snapshot2');
     }
@@ -43,7 +43,7 @@ class LoadTest extends TestCase
     {
         $this->assertSnapshotNotLoaded('snapshot2');
 
-        Artisan::call('snapshots:load', ['name' => 'snapshot2']);
+        Artisan::call('snapshot:load', ['name' => 'snapshot2']);
 
         $this->assertSnapshotLoaded('snapshot2');
     }

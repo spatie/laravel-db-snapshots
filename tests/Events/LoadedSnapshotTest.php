@@ -14,7 +14,7 @@ class LoadedSnapshotTest extends TestCase
     {
         Event::fake();
 
-        Artisan::call('snapshots:load', ['name' => 'snapshot2']);
+        Artisan::call('snapshot:load', ['name' => 'snapshot2']);
 
         Event::assertDispatched(LoadedSnapshot::class, function(LoadedSnapshot $event) {
             return $event->snapshot->fileName === 'snapshot2.sql';

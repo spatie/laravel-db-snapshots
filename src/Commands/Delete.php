@@ -11,7 +11,7 @@ class Delete extends Command
 {
     use AsksForSnapshotName;
 
-    protected $signature = 'snapshots:delete {name?}';
+    protected $signature = 'snapshot:delete {name?}';
 
     protected $description = 'Delete a snapshot.';
 

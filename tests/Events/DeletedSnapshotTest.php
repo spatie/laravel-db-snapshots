@@ -14,7 +14,7 @@ class DeletedSnapshotTest extends TestCase
     {
         Event::fake();
 
-        Artisan::call('snapshots:delete', ['name' => 'snapshot2']);
+        Artisan::call('snapshot:delete', ['name' => 'snapshot2']);
 
         Event::assertDispatched(DeletedSnapshot::class, function(DeletedSnapshot $event) {
             return $event->fileName === 'snapshot2.sql';

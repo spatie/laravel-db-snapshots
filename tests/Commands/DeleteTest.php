@@ -17,7 +17,7 @@ class DeleteTest extends TestCase
 
         $this->command = m::mock('Spatie\DbSnapshots\Commands\Delete[choice]');
 
-        $this->app->bind('command.snapshots:delete', function () {
+        $this->app->bind('command.snapshot:delete', function () {
             return $this->command;
         });
     }
@@ -32,7 +32,7 @@ class DeleteTest extends TestCase
             ->once()
             ->andReturn('snapshot2');
 
-        Artisan::call('snapshots:delete');
+        Artisan::call('snapshot:delete');
 
         $this->disk->assertMissing('snapshot2.sql');
     }
@@ -42,7 +42,7 @@ class DeleteTest extends TestCase
     {
         $this->disk->assertExists('snapshot2.sql');
 
-        Artisan::call('snapshots:delete', ['name' => 'snapshot2']);
+        Artisan::call('snapshot:delete', ['name' => 'snapshot2']);
 
         $this->disk->assertMissing('snapshot2.sql');
     }

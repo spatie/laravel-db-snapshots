@@ -11,7 +11,7 @@ class ListSnapshotsTest extends TestCase
     /** @test */
     public function it_can_list_all_snapshots()
     {
-        Artisan::call('snapshots:list');
+        Artisan::call('snapshot:list');
 
         $this->seeInConsoleOutput(['snapshot1', 'snapshot2', 'snapshot3']);
     }
