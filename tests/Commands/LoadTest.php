@@ -6,10 +6,10 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Artisan;
 use Spatie\DbSnapshots\Test\TestCase;
 
-class CreateTest extends TestCase
+class LoadTest extends TestCase
 {
     /** @test */
-    public function it_can_create_a_snapshot_without_a_specific_name()
+    public function it_can_create_a_snapshot()
     {
         Artisan::call('snapshots:create');
 

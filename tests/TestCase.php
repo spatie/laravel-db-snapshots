@@ -46,7 +46,7 @@ abstract class TestCase extends Orchestra
         $app['config']->set('database.default', 'sqlite');
         $app['config']->set('database.connections.sqlite', [
             'driver' => 'sqlite',
-            'database' => __DIR__ . '/fixtures/database.sqlite',
+            'database' => __DIR__ . '/temp/database.sqlite',
             'prefix' => '',
         ]);
 
@@ -67,7 +67,7 @@ abstract class TestCase extends Orchestra
 
     protected function setupDatabase()
     {
-        $databasePath = __DIR__ . '/fixtures/database.sqlite';
+        $databasePath = __DIR__ . '/temp/database.sqlite';
 
         if (file_exists($databasePath)) {
             unlink($databasePath);
@@ -81,6 +81,8 @@ abstract class TestCase extends Orchestra
             $table->increments('id');
             $table->string('name');
         });
+
+        \DB::statement("INSERT INTO models ('id', 'name') VALUES (1, 'dump1');");
     }
 
     protected function setUpDisk()
