@@ -7,7 +7,7 @@ use Spatie\DbSnapshots\SnapshotRepository;
 
 trait AsksForSnapshotName
 {
-    protected function askForSnapshotName(): string
+    public function askForSnapshotName(): string
     {
         $snapShots = app(SnapshotRepository::class)->getAll();
 

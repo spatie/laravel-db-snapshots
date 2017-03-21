@@ -2,11 +2,10 @@
 
 namespace Spatie\DbSnapshots\Commands\Test;
 
-use Carbon\Carbon;
 use DB;
 use Illuminate\Support\Facades\Artisan;
 use Spatie\DbSnapshots\Test\TestCase;
-//use Mockery as m;
+use Mockery as m;
 
 class LoadTest extends TestCase
 {
@@ -17,9 +16,9 @@ class LoadTest extends TestCase
     {
         parent::setUp();
 
-        //$this->command = m::mock('Spatie\DbSnapshots\Commands\Load[choice]');
+        $this->command = m::mock('Spatie\DbSnapshots\Commands\Load[choice]');
 
-        $this->app->bind('command.monitor:load', function () {
+        $this->app->bind('command.snapshots:load', function () {
             return $this->command;
         });
     }
@@ -30,9 +29,8 @@ class LoadTest extends TestCase
         $this->assertSnapshotNotLoaded('snapshot2');
 
         $this->command
-            ->shouldReceive('confirm')
+            ->shouldReceive('choice')
             ->once()
-            ->with('/Which snapshot/')
             ->andReturn('snapshot2');
 
         Artisan::call('snapshots:load');

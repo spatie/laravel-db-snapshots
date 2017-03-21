@@ -15,9 +15,9 @@ class DeleteTest extends TestCase
     {
         parent::setUp();
 
-        $this->command = m::mock('Spatie\DbSnapshots\Commands\Create[choice]');
+        $this->command = m::mock('Spatie\DbSnapshots\Commands\Delete[choice]');
 
-        $this->app->bind('command.monitor:create', function () {
+        $this->app->bind('command.snapshots:delete', function () {
             return $this->command;
         });
     }
@@ -28,9 +28,8 @@ class DeleteTest extends TestCase
         $this->disk->assertExists('snapshot2.sql');
 
         $this->command
-            ->shouldReceive('confirm')
+            ->shouldReceive('choice')
             ->once()
-            ->with('/Which snapshot/')
             ->andReturn('snapshot2');
 
         Artisan::call('snapshots:delete');

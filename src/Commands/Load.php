@@ -26,10 +26,11 @@ class Load extends Command
 
             return;
         }
-
-        if (!$this->confirmToProceed()) {
+/*
+        if (!$ this->confirmToProceed()) {
             return;
         }
+*/
 
         $name = $this->argument('name') ?: $this->askForSnapshotName();
 
