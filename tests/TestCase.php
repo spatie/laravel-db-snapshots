@@ -73,7 +73,7 @@ abstract class TestCase extends Orchestra
             unlink($databasePath);
         }
 
-        if (! file_exists($databasePath)) {
+        if (!file_exists($databasePath)) {
             file_put_contents($databasePath, '');
         }
 
@@ -81,8 +81,6 @@ abstract class TestCase extends Orchestra
             $table->increments('id');
             $table->string('name');
         });
-
-        \DB::statement("INSERT INTO models ('id', 'name') VALUES (1, 'dump1');");
     }
 
     protected function setUpDisk()
@@ -100,9 +98,16 @@ abstract class TestCase extends Orchestra
 
     protected function createDummySnapshots()
     {
-        $this->disk->put('snapshot1.sql', '');
-        $this->disk->put('snapshot2.sql', '');
-        $this->disk->put('snapshot3.sql', '');
+        foreach (range(1, 3) as $i) {
+            $this->disk->put("snapshot{$i}.sql", $this->getSnapshotContent("snapshot{$i}"));
+        }
+    }
+
+    protected function getSnapshotContent($modelName): string
+    {
+        $snapshotContent = file_get_contents(__DIR__ . '/fixtures/snapshotContent.sql');
+
+        return str_replace('%%modelName%%', $modelName, $snapshotContent);
     }
 
     /**
@@ -110,14 +115,14 @@ abstract class TestCase extends Orchestra
      */
     protected function seeInConsoleOutput($searchStrings)
     {
-        if (! is_array($searchStrings)) {
+        if (!is_array($searchStrings)) {
             $searchStrings = [$searchStrings];
         }
 
         $output = Artisan::output();
 
         foreach ($searchStrings as $searchString) {
-            $this->assertContains((string) $searchString, $output);
+            $this->assertContains((string)$searchString, $output);
         }
     }
 }

@@ -33,6 +33,7 @@ class Snapshot
 
     public function load()
     {
+
         event(new LoadingSnapshot($this));
 
         $tableDropper = $this->getTableDropper();
@@ -40,7 +41,7 @@ class Snapshot
         $tableDropper->dropAllTables();
 
         $dbDumpContents = $this->disk->get($this->fileName);
-
+dd('here');
         DB::statement($dbDumpContents);
 
         event(new LoadedSnapshot($this));

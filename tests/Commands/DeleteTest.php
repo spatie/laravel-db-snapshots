@@ -15,7 +15,7 @@ class DeleteTest extends TestCase
     {
         parent::setUp();
 
-        $this->command = m::mock('Spatie\UptimeMonitor\Commands\CreateMonitor[choice]');
+        $this->command = m::mock('Spatie\DbSnapshots\Commands\Create[choice]');
 
         $this->app->bind('command.monitor:create', function () {
             return $this->command;
