@@ -2,10 +2,10 @@
 
 namespace Spatie\DbSnapshots;
 
-use Carbon\Carbon;
 use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Spatie\DbDumper\DbDumper;
+use Spatie\DbSnapshots\Events\CreatedSnapshot;
 use Spatie\DbSnapshots\Events\CreatingSnapshot;
 use Spatie\DbSnapshots\Exceptions\CannotCreateDisk;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
@@ -29,15 +29,15 @@ class SnapshotFactory
     {
         $disk = $this->getDisk($diskName);
 
+        $fileName = $snapshotName . '.sql';
+
         event(new CreatingSnapshot(
-            $snapshotName,
+            $fileName,
             $disk,
             $connectionName
         ));
 
         $directory = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))->create();
-
-        $fileName = $snapshotName;
 
         $dumpPath = $directory->path($fileName);
 
@@ -51,7 +51,11 @@ class SnapshotFactory
 
         $directory->delete();
 
-        return new Snapshot($disk, $fileName);
+        $snapshot = new Snapshot($disk, $fileName);
+
+        event(new CreatedSnapshot($snapshot));
+
+        return $snapshot;
     }
 
     protected function getDisk(string $diskName): FilesystemAdapter

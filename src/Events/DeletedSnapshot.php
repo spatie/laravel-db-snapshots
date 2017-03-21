@@ -7,14 +7,14 @@ use Illuminate\Filesystem\FilesystemAdapter;
 class DeletedSnapshot
 {
     /** @var string */
-    public $snapshotName;
+    public $fileName;
 
     /** @var \Illuminate\Filesystem\FilesystemAdapter */
     public $disk;
 
-    public function __construct(string $snapshotName, FilesystemAdapter $disk)
+    public function __construct(string $fileName, FilesystemAdapter $disk)
     {
-        $this->snapshotName = $snapshotName;
+        $this->fileName = $fileName;
 
         $this->disk = $disk;
     }

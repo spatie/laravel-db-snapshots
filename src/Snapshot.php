@@ -3,8 +3,7 @@
 namespace Spatie\DbSnapshots;
 
 use Carbon\Carbon;
-use Illuminate\Database\Schema\Blueprint;
-use \Illuminate\Filesystem\FilesystemAdapter as Disk;
+use Illuminate\Filesystem\FilesystemAdapter as Disk;
 use Illuminate\Support\Facades\DB;
 use Spatie\DbSnapshots\Events\DeletedSnapshot;
 use Spatie\DbSnapshots\Events\DeletingSnapshot;
@@ -36,10 +35,7 @@ class Snapshot
     {
         event(new LoadingSnapshot($this));
 
-        $tableDropper = $this->getTableDropper();
-        $tableDropper->dropAllTables();
-
-        DB::reconnect();
+        $this->dropAllCurrentTables();
 
         $dbDumpContents = $this->disk->get($this->fileName);
 
@@ -56,7 +52,7 @@ class Snapshot
 
         $this->disk->delete($this->fileName);
 
-        event(new DeletedSnapshot($this->name, $this->disk));
+        event(new DeletedSnapshot($this->fileName, $this->disk));
     }
 
     public function size(): int
@@ -85,5 +81,13 @@ class Snapshot
         }
 
         return new $dropperClass;
+    }
+
+    protected function dropAllCurrentTables()
+    {
+        $tableDropper = $this->getTableDropper();
+        $tableDropper->dropAllTables();
+
+        DB::reconnect();
     }
 }

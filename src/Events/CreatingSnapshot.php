@@ -7,7 +7,7 @@ use Illuminate\Filesystem\FilesystemAdapter;
 class CreatingSnapshot
 {
     /** @var string */
-    public $snapshotName;
+    public $fileName;
 
     /** @var \Illuminate\Filesystem\FilesystemAdapter */
     public $disk;
@@ -15,9 +15,9 @@ class CreatingSnapshot
     /** @var string  */
     public $connectionName;
 
-    public function __construct(string $snapshotName, FilesystemAdapter $disk, string $connectionName)
+    public function __construct(string $fileName, FilesystemAdapter $disk, string $connectionName)
     {
-        $this->snapshotName = $snapshotName;
+        $this->fileName = $fileName;
 
         $this->disk = $disk;
 
