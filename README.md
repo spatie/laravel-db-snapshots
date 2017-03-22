@@ -5,6 +5,7 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-db-snapshots.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-db-snapshots)
 [![Build Status](https://img.shields.io/travis/spatie/laravel-db-snapshots/master.svg?style=flat-square)](https://travis-ci.org/spatie/laravel-db-snapshots)
 [![Quality Score](https://img.shields.io/scrutinizer/g/spatie/laravel-db-snapshots.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/laravel-db-snapshots)
+[![StyleCI](https://styleci.io/repos/85295298/shield?branch=master)](https://styleci.io/repos/85295298)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-db-snapshots.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-db-snapshots)
 
 This package provides artisan commands to quickly dump the database and load up a previously created dump.
