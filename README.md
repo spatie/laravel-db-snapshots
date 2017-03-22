@@ -1,5 +1,3 @@
-
-
 # An artisan command to create and load snapshots of your database
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-db-snapshots.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-db-snapshots)
