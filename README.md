@@ -12,7 +12,7 @@ This package provides artisan commands to quickly dump the database and load up 
 # create a dump
 php artisan snapshot:create my-first-dump
 
-# make some changes to you db
+# make some changes to your db
 # ...
 
 # create another dump
