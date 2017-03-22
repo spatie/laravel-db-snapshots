@@ -11,18 +11,12 @@ use Illuminate\Console\ConfirmableTrait;
 
 class Create extends Command
 {
-    use ConfirmableTrait;
-
     protected $signature = 'snapshot:create {name?} {--connection}';
 
     protected $description = 'Create a new snapshot.';
 
     public function handle()
     {
-        if (! $this->confirmToProceed()) {
-            return;
-        }
-
         $this->info('Creating new snapshot...');
 
         $connectionName = $this->option('connection')

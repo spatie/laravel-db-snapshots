@@ -8,6 +8,7 @@ use Spatie\DbSnapshots\Events\LoadedSnapshot;
 use Spatie\DbSnapshots\Events\DeletedSnapshot;
 use Spatie\DbSnapshots\Events\LoadingSnapshot;
 use Spatie\DbSnapshots\Events\DeletingSnapshot;
+use Spatie\MigrateFresh\TableDropperFactory;
 use Spatie\MigrateFresh\TableDroppers\TableDropper;
 use Illuminate\Filesystem\FilesystemAdapter as Disk;
 
@@ -65,27 +66,10 @@ class Snapshot
         return Carbon::createFromTimestamp($this->disk->lastModified($this->fileName));
     }
 
-    /**
-     * TO DO: create factory in table-dropper package.
-     *
-     * @return mixed
-     */
-    protected function getTableDropper(): TableDropper
-    {
-        $driverName = DB::getDriverName();
-
-        $dropperClass = '\\Spatie\\MigrateFresh\\TableDroppers\\'.ucfirst($driverName);
-
-        if (! class_exists($dropperClass)) {
-            throw CannotDropTables::unsupportedDbDriver($driverName);
-        }
-
-        return new $dropperClass;
-    }
-
     protected function dropAllCurrentTables()
     {
-        $tableDropper = $this->getTableDropper();
+        $tableDropper = TableDropperFactory::create(DB::getDriverName());
+
         $tableDropper->dropAllTables();
 
         DB::reconnect();

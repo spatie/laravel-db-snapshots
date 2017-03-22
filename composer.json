@@ -20,7 +20,7 @@
         "illuminate/support": "^5.4",
         "orchestra/testbench": "^3.4",
         "spatie/db-dumper": "^2.4",
-        "spatie/laravel-migrate-fresh": "^1.4",
+        "spatie/laravel-migrate-fresh": "^1.4.1",
         "spatie/temporary-directory": "^1.0"
     },
     "require-dev": {
