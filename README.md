@@ -139,31 +139,14 @@ php artisan snapshot:delete my-first-dump
 
 ## Events
 
-There are several events fired which can be used to perform some logic of your own
+There are several events fired which can be used to perform some logic of your own.
 
-### `Spatie\DbSnapshots\Events\CreatingSnapshot`
-
-Will be fired before a snapshot is created
-
-### `Spatie\DbSnapshots\Events\CreatedSnapshot`
-
-Will be fired after a snapshot has been created
-
-### `Spatie\DbSnapshots\Events\LoadingSnapshot`
-
-Will be fired before a snapshot is loaded
-
-### `Spatie\DbSnapshots\Events\LoadedSnapshot`
-
-Will be fired after a snapshot has been loaded
-
-### `Spatie\DbSnapshots\Events\DeletingSnapshot`
-
-Will be fired before a snapshot is deleted
-
-### `Spatie\DbSnapshots\Events\DeletedSnapshot`
-
-Will be fired after a snapshot has been deleted
+- `Spatie\DbSnapshots\Events\CreatingSnapshot`: will be fired before a snapshot is created
+- `Spatie\DbSnapshots\Events\CreatedSnapshot`: will be fired after a snapshot has been created
+- `Spatie\DbSnapshots\Events\LoadingSnapshot`: will be fired before a snapshot is loaded
+- `Spatie\DbSnapshots\Events\LoadedSnapshot`: will be fired after a snapshot has been loaded
+- `Spatie\DbSnapshots\Events\DeletingSnapshot`: will be fired before a snapshot is deleted
+- `Spatie\DbSnapshots\Events\DeletedSnapshot`: will be fired after a snapshot has been deleted
 
 ## Changelog
 
