@@ -2,8 +2,8 @@
 
 namespace Spatie\DbSnapshots;
 
-use Illuminate\Contracts\Filesystem\Filesystem as Disk;
 use Illuminate\Support\Collection;
+use Illuminate\Contracts\Filesystem\Filesystem as Disk;
 
 class SnapshotRepository
 {
@@ -21,7 +21,7 @@ class SnapshotRepository
             ->map(function (string $fileName) {
                 return new Snapshot($this->disk, $fileName);
             })
-            ->sortByDesc(function(Snapshot $snapshot) {
+            ->sortByDesc(function (Snapshot $snapshot) {
                 return $snapshot->createdAt()->toDateTimeString();
             });
     }
@@ -29,7 +29,7 @@ class SnapshotRepository
     public function findByName(string $name)
     {
         return $this->getAll()->first(function (Snapshot $snapshot) use ($name) {
-             return $snapshot->name === $name;
+            return $snapshot->name === $name;
         });
     }
 }

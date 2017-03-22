@@ -2,9 +2,9 @@
 
 namespace Spatie\DbSnapshots\Commands\Test;
 
-use Spatie\DbSnapshots\Test\TestCase;
 use Event;
 use Artisan;
+use Spatie\DbSnapshots\Test\TestCase;
 use Spatie\DbSnapshots\Events\LoadedSnapshot;
 
 class LoadedSnapshotTest extends TestCase
@@ -16,7 +16,7 @@ class LoadedSnapshotTest extends TestCase
 
         Artisan::call('snapshot:load', ['name' => 'snapshot2']);
 
-        Event::assertDispatched(LoadedSnapshot::class, function(LoadedSnapshot $event) {
+        Event::assertDispatched(LoadedSnapshot::class, function (LoadedSnapshot $event) {
             return $event->snapshot->fileName === 'snapshot2.sql';
         });
     }

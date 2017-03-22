@@ -2,9 +2,9 @@
 
 namespace Spatie\DbSnapshots\Commands\Test;
 
-use Spatie\DbSnapshots\Test\TestCase;
 use Event;
 use Artisan;
+use Spatie\DbSnapshots\Test\TestCase;
 use Spatie\DbSnapshots\Events\CreatingSnapshot;
 
 class CreatingSnapshotTest extends TestCase
@@ -16,7 +16,7 @@ class CreatingSnapshotTest extends TestCase
 
         Artisan::call('snapshot:create', ['name' => 'my-snapshot']);
 
-        Event::assertDispatched(CreatingSnapshot::class, function(CreatingSnapshot $event) {
+        Event::assertDispatched(CreatingSnapshot::class, function (CreatingSnapshot $event) {
             return $event->fileName === 'my-snapshot.sql';
         });
     }

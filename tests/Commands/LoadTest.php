@@ -3,9 +3,9 @@
 namespace Spatie\DbSnapshots\Commands\Test;
 
 use DB;
-use Illuminate\Support\Facades\Artisan;
-use Spatie\DbSnapshots\Test\TestCase;
 use Mockery as m;
+use Spatie\DbSnapshots\Test\TestCase;
+use Illuminate\Support\Facades\Artisan;
 
 class LoadTest extends TestCase
 {
@@ -72,5 +72,4 @@ class LoadTest extends TestCase
 
         return count($result) ? $result[0]->name : '';
     }
-
 }

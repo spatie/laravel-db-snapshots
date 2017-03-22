@@ -2,9 +2,9 @@
 
 namespace Spatie\DbSnapshots\Commands\Test;
 
-use Spatie\DbSnapshots\Test\TestCase;
 use Event;
 use Artisan;
+use Spatie\DbSnapshots\Test\TestCase;
 use Spatie\DbSnapshots\Events\DeletingSnapshot;
 
 class DeletingSnapshotTest extends TestCase
@@ -16,7 +16,7 @@ class DeletingSnapshotTest extends TestCase
 
         Artisan::call('snapshot:delete', ['name' => 'snapshot2']);
 
-        Event::assertDispatched(DeletingSnapshot::class, function(DeletingSnapshot $event) {
+        Event::assertDispatched(DeletingSnapshot::class, function (DeletingSnapshot $event) {
             return $event->snapshot->fileName === 'snapshot2.sql';
         });
     }

@@ -3,13 +3,13 @@
 namespace Spatie\DbSnapshots;
 
 use Carbon\Carbon;
-use Illuminate\Filesystem\FilesystemAdapter as Disk;
 use Illuminate\Support\Facades\DB;
-use Spatie\DbSnapshots\Events\DeletedSnapshot;
-use Spatie\DbSnapshots\Events\DeletingSnapshot;
 use Spatie\DbSnapshots\Events\LoadedSnapshot;
+use Spatie\DbSnapshots\Events\DeletedSnapshot;
 use Spatie\DbSnapshots\Events\LoadingSnapshot;
+use Spatie\DbSnapshots\Events\DeletingSnapshot;
 use Spatie\MigrateFresh\TableDroppers\TableDropper;
+use Illuminate\Filesystem\FilesystemAdapter as Disk;
 
 class Snapshot
 {
@@ -66,7 +66,7 @@ class Snapshot
     }
 
     /**
-     * TO DO: create factory in table-dropper package
+     * TO DO: create factory in table-dropper package.
      *
      * @return mixed
      */
@@ -74,9 +74,9 @@ class Snapshot
     {
         $driverName = DB::getDriverName();
 
-        $dropperClass = '\\Spatie\\MigrateFresh\\TableDroppers\\' . ucfirst($driverName);
+        $dropperClass = '\\Spatie\\MigrateFresh\\TableDroppers\\'.ucfirst($driverName);
 
-        if (!class_exists($dropperClass)) {
+        if (! class_exists($dropperClass)) {
             throw CannotDropTables::unsupportedDbDriver($driverName);
         }
 

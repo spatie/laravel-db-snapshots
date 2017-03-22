@@ -2,9 +2,9 @@
 
 namespace Spatie\DbSnapshots\Commands\Test;
 
-use Illuminate\Support\Facades\Artisan;
-use Spatie\DbSnapshots\Test\TestCase;
 use Mockery as m;
+use Spatie\DbSnapshots\Test\TestCase;
+use Illuminate\Support\Facades\Artisan;
 
 class DeleteTest extends TestCase
 {
