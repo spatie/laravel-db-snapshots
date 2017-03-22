@@ -37,19 +37,7 @@ class SnapshotFactory
             $connectionName
         ));
 
-        $directory = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))->create();
-
-        $dumpPath = $directory->path($fileName);
-
-        $this->getDbDumper($connectionName)->dumpToFile($dumpPath);
-
-        $file = fopen($dumpPath, 'r');
-
-        $disk->put($fileName, $file);
-
-        fclose($file);
-
-        $directory->delete();
+        $this->createDump($connectionName, $fileName, $disk);
 
         $snapshot = new Snapshot($disk, $fileName);
 
@@ -72,5 +60,22 @@ class SnapshotFactory
         $factory = $this->dumperFactory;
 
         return $factory::createForConnection($connectionName);
+    }
+
+    protected function createDump(string $connectionName, string $fileName, FilesystemAdapter $disk)
+    {
+        $directory = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))->create();
+
+        $dumpPath = $directory->path($fileName);
+
+        $this->getDbDumper($connectionName)->dumpToFile($dumpPath);
+
+        $file = fopen($dumpPath, 'r');
+
+        $disk->put($fileName, $file);
+
+        fclose($file);
+
+        $directory->delete();
     }
 }

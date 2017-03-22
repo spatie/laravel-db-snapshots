@@ -1,4 +1,4 @@
-**WORK IN PROGRESS, DO NOT USE**
+
 
 # An artisan command to create and load snapshots of your database
 
