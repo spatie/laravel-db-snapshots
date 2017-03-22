@@ -2,12 +2,12 @@
 
 namespace Spatie\DbSnapshots;
 
-use Illuminate\Contracts\Filesystem\Factory;
+use Spatie\DbSnapshots\Commands\Load;
 use Illuminate\Support\ServiceProvider;
 use Spatie\DbSnapshots\Commands\Create;
 use Spatie\DbSnapshots\Commands\Delete;
+use Illuminate\Contracts\Filesystem\Factory;
 use Spatie\DbSnapshots\Commands\ListSnapshots;
-use Spatie\DbSnapshots\Commands\Load;
 
 class DbSnapshotsServiceProvider extends ServiceProvider
 {
@@ -18,7 +18,7 @@ class DbSnapshotsServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/../config/db-snapshots.php' => config_path('db-snapshots.php'),
+                __DIR__.'/../config/db-snapshots.php' => config_path('db-snapshots.php'),
             ], 'config');
         }
 
@@ -48,6 +48,6 @@ class DbSnapshotsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/db-snapshots.php', 'db-snapshots');
+        $this->mergeConfigFrom(__DIR__.'/../config/db-snapshots.php', 'db-snapshots');
     }
 }

@@ -12,7 +12,7 @@ class CreatingSnapshot
     /** @var \Illuminate\Filesystem\FilesystemAdapter */
     public $disk;
 
-    /** @var string  */
+    /** @var string */
     public $connectionName;
 
     public function __construct(string $fileName, FilesystemAdapter $disk, string $connectionName)

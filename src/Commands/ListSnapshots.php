@@ -2,10 +2,9 @@
 
 namespace Spatie\DbSnapshots\Commands;
 
-use DB;
 use Illuminate\Console\Command;
-use Spatie\DbSnapshots\Helpers\Format;
 use Spatie\DbSnapshots\Snapshot;
+use Spatie\DbSnapshots\Helpers\Format;
 use Spatie\DbSnapshots\SnapshotRepository;
 
 class ListSnapshots extends Command
@@ -18,7 +17,7 @@ class ListSnapshots extends Command
     {
         $snapshots = app(SnapshotRepository::class)->getAll();
 
-        $rows = $snapshots->map(function(Snapshot $snapshot) {
+        $rows = $snapshots->map(function (Snapshot $snapshot) {
             return [
                 $snapshot->name,
                 $snapshot->createdAt()->format('Y-m-d H:i:s'),

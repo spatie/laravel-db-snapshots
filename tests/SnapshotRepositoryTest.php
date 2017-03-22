@@ -34,6 +34,4 @@ class SnapshotRepositoryTest extends TestCase
 
         $this->assertNull($this->repository->findByName('snapshot4'));
     }
-
-
 }

@@ -2,11 +2,10 @@
 
 namespace Spatie\DbSnapshots\Commands;
 
-use DB;
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
-use Spatie\DbSnapshots\Commands\Concerns\AsksForSnapshotName;
 use Spatie\DbSnapshots\SnapshotRepository;
+use Spatie\DbSnapshots\Commands\Concerns\AsksForSnapshotName;
 
 class Load extends Command
 {
@@ -22,7 +21,7 @@ class Load extends Command
         $snapShots = app(SnapshotRepository::class)->getAll();
 
         if ($snapShots->isEmpty()) {
-            $this->warn("No snapshots found. Run `snapshot:create` first to create snapshots.");
+            $this->warn('No snapshots found. Run `snapshot:create` first to create snapshots.');
 
             return;
         }

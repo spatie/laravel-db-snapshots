@@ -2,10 +2,9 @@
 
 namespace Spatie\DbSnapshots\Commands;
 
-use DB;
 use Illuminate\Console\Command;
-use Spatie\DbSnapshots\Commands\Concerns\AsksForSnapshotName;
 use Spatie\DbSnapshots\SnapshotRepository;
+use Spatie\DbSnapshots\Commands\Concerns\AsksForSnapshotName;
 
 class Delete extends Command
 {

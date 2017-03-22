@@ -2,12 +2,12 @@
 
 namespace Spatie\DbSnapshots\Commands;
 
-use Carbon\Carbon;
 use DB;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Console\ConfirmableTrait;
 use Spatie\DbSnapshots\Helpers\Format;
 use Spatie\DbSnapshots\SnapshotFactory;
+use Illuminate\Console\ConfirmableTrait;
 
 class Create extends Command
 {
