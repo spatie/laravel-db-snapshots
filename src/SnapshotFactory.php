@@ -30,6 +30,7 @@ class SnapshotFactory
         $disk = $this->getDisk($diskName);
 
         $fileName = $snapshotName.'.sql';
+        $fileName = pathinfo($fileName, PATHINFO_BASENAME);
 
         event(new CreatingSnapshot(
             $fileName,
