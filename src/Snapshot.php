@@ -39,9 +39,7 @@ class Snapshot
 
         $dbDumpContents = $this->disk->get($this->fileName);
 
-        foreach (explode(PHP_EOL, $dbDumpContents) as $statement) {
-            DB::statement($statement);
-        }
+        DB::unprepared($dbDumpContents);
 
         event(new LoadedSnapshot($this));
     }
