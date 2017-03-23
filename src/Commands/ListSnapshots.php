@@ -19,6 +19,8 @@ class ListSnapshots extends Command
 
         if ($snapshots->isEmpty()) {
             $this->warn('No snapshots found. Run `snapshot:create` to create one.');
+
+            return;
         }
 
         $rows = $snapshots->map(function (Snapshot $snapshot) {
