@@ -18,6 +18,9 @@ class SnapshotRepository
     public function getAll(): Collection
     {
         return collect($this->disk->allFiles())
+            ->filter(function(string $fileName) {
+                return pathinfo($fileName, PATHINFO_EXTENSION) === 'sql';
+            })
             ->map(function (string $fileName) {
                 return new Snapshot($this->disk, $fileName);
             })
