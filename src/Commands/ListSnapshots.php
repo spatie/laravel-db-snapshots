@@ -17,6 +17,10 @@ class ListSnapshots extends Command
     {
         $snapshots = app(SnapshotRepository::class)->getAll();
 
+        if ($snapshots->isEmpty()) {
+            $this->warn('No snapshots found. Run `snapshot:create` to create one.');
+        }
+
         $rows = $snapshots->map(function (Snapshot $snapshot) {
             return [
                 $snapshot->name,
