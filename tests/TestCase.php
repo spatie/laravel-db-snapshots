@@ -101,6 +101,8 @@ abstract class TestCase extends Orchestra
         foreach (range(1, 3) as $i) {
             $this->disk->put("snapshot{$i}.sql", $this->getSnapshotContent("snapshot{$i}"));
         }
+
+        $this->disk->put('otherfile.txt', "not a snapshot");
     }
 
     protected function getSnapshotContent($modelName): string
