@@ -49,7 +49,7 @@ Next, you must install the service provider:
 // config/app.php
 'providers' => [
     ...
-    Spatie\MediaLibrary\DbSnapshotsServiceProvider::class,
+    Spatie\DbSnapshots\DbSnapshotsServiceProvider::class,
 ];
 ```
 
