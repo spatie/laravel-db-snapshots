@@ -102,7 +102,7 @@ abstract class TestCase extends Orchestra
             $this->disk->put("snapshot{$i}.sql", $this->getSnapshotContent("snapshot{$i}"));
         }
 
-        $this->disk->put('otherfile.txt', "not a snapshot");
+        $this->disk->put('otherfile.txt', 'not a snapshot');
     }
 
     protected function getSnapshotContent($modelName): string
