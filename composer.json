@@ -1,6 +1,6 @@
 {
     "name": "spatie/laravel-db-snapshots",
-    "description": "An artisan command to dump and load databases",
+    "description": "Quickly dump and load databases",
     "keywords": [
         "spatie",
         "laravel-db-snapshots"
