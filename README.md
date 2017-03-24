@@ -18,7 +18,7 @@ php artisan snapshot:create my-first-dump
 php artisan snapshot:create my-second-dump
 
 # load up the first dump
-php artisan snapshot:load my-second-dump
+php artisan snapshot:load my-first-dump
 
 # list all snapshots
 php artisan snapshot:list
