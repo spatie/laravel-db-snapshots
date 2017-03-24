@@ -5,7 +5,7 @@
 [![StyleCI](https://styleci.io/repos/85295298/shield?branch=master)](https://styleci.io/repos/85295298)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-db-snapshots.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-db-snapshots)
 
-This package provides artisan commands to quickly dump the database and load up a previously created dump.
+This package provides Artisan commands to quickly dump and load databases in a Laravel application.
 
 ```bash
 # create a dump
