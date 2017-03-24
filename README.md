@@ -1,4 +1,4 @@
-# Quickly dump load snapshots of your database
+# Quickly dump and load databases
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-db-snapshots.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-db-snapshots)
 [![Build Status](https://img.shields.io/travis/spatie/laravel-db-snapshots/master.svg?style=flat-square)](https://travis-ci.org/spatie/laravel-db-snapshots)
