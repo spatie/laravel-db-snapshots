@@ -8,19 +8,19 @@
 This package provides Artisan commands to quickly dump and load databases in a Laravel application.
 
 ```bash
-# create a dump
+# Create a dump
 php artisan snapshot:create my-first-dump
 
-# make some changes to your db
+# Make some changes to your db
 # ...
 
-# create another dump
+# Create another dump
 php artisan snapshot:create my-second-dump
 
-# load up the first dump
+# Load up the first dump
 php artisan snapshot:load my-first-dump
 
-# list all snapshots
+# List all snapshots
 php artisan snapshot:list
 ```
 
@@ -36,18 +36,17 @@ We publish all received postcards [on our company website](https://spatie.be/en/
 
 ## Installation
 
-You can install the package via composer:
+You can install the package via Composer:
 
 ``` bash
 composer require spatie/laravel-db-snapshots
 ```
 
-Next, you must install the service provider:
+Next, you must install the service provider to `config/app.php`:
 
 ```php
-// config/app.php
 'providers' => [
-    ...
+    // ...
     Spatie\DbSnapshots\DbSnapshotsServiceProvider::class,
 ];
 ```
@@ -55,18 +54,17 @@ Next, you must install the service provider:
 And finally you should add a disk named `snapshots` to `app/config/filesystems.php` on which the snapshots will be saved. This would be a typical configuration:
 
 ```php
-    ...
-	'disks' => [
-	    ...
-	    
-        'snapshots' => [
-            'driver' => 'local',
-            'root' => database_path('snapshots'),
-        ],
-    ...    
+// ...
+'disks' => [
+    // ...
+    'snapshots' => [
+        'driver' => 'local',
+        'root' => database_path('snapshots'),
+    ],
+// ...    
 ```
 
-Optionally you may publish the configuration file with:
+Optionally, you may publish the configuration file with:
 
 ```bash
 php artisan vendor:publish --provider="Spatie\DbSnapshots\DbSnapshotsServiceProvider" --tag="config"
@@ -77,7 +75,7 @@ This is the content of the published file:
 ```php
 return [
 
-    /*
+    /**
      * The name of the disk on which the snapshots are stored.
      */
     'disk' => 'snapshots',
@@ -88,7 +86,7 @@ return [
      */
     'default_connection' => null,
 
-    /*
+    /**
      * The directory where temporary files will be stored.
      */
     'temporary_directory_path' => storage_path('app/laravel-db-snapshots/temp'),
@@ -103,10 +101,10 @@ To create a snapshot (which is just a dump from the database) run:
 php artisan snapshot:create my-first-dump
 ```
 
-Giving your snapshot a name is optional. If you don't pas a name the current date time will be used
+Giving your snapshot a name is optional. If you don't pass a name the current date time will be used:
 
 ```bash
-# creates a snapshot named something like `2017-03-17 14:31`
+# Creates a snapshot named something like `2017-03-17 14:31`
 php artisan snapshot:create
 ```
 
@@ -134,11 +132,9 @@ A dump can be deleted with:
 php artisan snapshot:delete my-first-dump
 ```
 
-
-
 ## Events
 
-There are several events fired which can be used to perform some logic of your own.
+There are several events fired which can be used to perform some logic of your own:
 
 - `Spatie\DbSnapshots\Events\CreatingSnapshot`: will be fired before a snapshot is created
 - `Spatie\DbSnapshots\Events\CreatedSnapshot`: will be fired after a snapshot has been created
