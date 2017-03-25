@@ -9,19 +9,19 @@ This package provides Artisan commands to quickly dump and load databases in a L
 
 ```bash
 # Create a dump
-$ php artisan snapshot:create my-first-dump
+php artisan snapshot:create my-first-dump
 
 # Make some changes to your db
 # ...
 
 # Create another dump
-$ php artisan snapshot:create my-second-dump
+php artisan snapshot:create my-second-dump
 
 # Load up the first dump
-$ php artisan snapshot:load my-first-dump
+php artisan snapshot:load my-first-dump
 
 # List all snapshots
-$ php artisan snapshot:list
+php artisan snapshot:list
 ```
 
 This package supports MySQL, PostgreSQL and SQLite.
@@ -39,7 +39,7 @@ We publish all received postcards [on our company website](https://spatie.be/en/
 You can install the package via Composer:
 
 ``` bash
-$ composer require spatie/laravel-db-snapshots
+composer require spatie/laravel-db-snapshots
 ```
 
 Next, you must install the service provider to `config/app.php`:
@@ -67,7 +67,7 @@ And finally you should add a disk named `snapshots` to `app/config/filesystems.p
 Optionally, you may publish the configuration file with:
 
 ```bash
-$ php artisan vendor:publish --provider="Spatie\DbSnapshots\DbSnapshotsServiceProvider" --tag="config"
+php artisan vendor:publish --provider="Spatie\DbSnapshots\DbSnapshotsServiceProvider" --tag="config"
 ```
 
 This is the content of the published file:
@@ -98,38 +98,38 @@ return [
 To create a snapshot (which is just a dump from the database) run:
 
 ```bash
-$ php artisan snapshot:create my-first-dump
+php artisan snapshot:create my-first-dump
 ```
 
 Giving your snapshot a name is optional. If you don't pass a name the current date time will be used:
 
 ```bash
 # Creates a snapshot named something like `2017-03-17 14:31`
-$ php artisan snapshot:create
+php artisan snapshot:create
 ```
 
 After you've made some changes to the database you can create another snapshot:
 
 ```bash
-$ php artisan snapshot:create my-second-dump
+php artisan snapshot:create my-second-dump
 ```
 
 To load a previous dump issue this command:
 
 ```bash
-$ php artisan snapshot:load my-first-dump
+php artisan snapshot:load my-first-dump
 ```
 
 To list all the dumps run:
 
 ```bash
-$ php artisan snapshot:list
+php artisan snapshot:list
 ```
 
 A dump can be deleted with:
 
 ```bash
-$ php artisan snapshot:delete my-first-dump
+php artisan snapshot:delete my-first-dump
 ```
 
 ## Events
@@ -150,7 +150,7 @@ Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recen
 ## Testing
 
 ``` bash
-$ composer test
+composer test
 ```
 
 ## Contributing
