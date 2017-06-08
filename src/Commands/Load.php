@@ -14,7 +14,7 @@ class Load extends Command
 
     protected $signature = 'snapshot:load {name?} --disk';
 
-    protected $description = 'Load up a snapshots.';
+    protected $description = 'Load up a snapshot.';
 
     public function handle()
     {
