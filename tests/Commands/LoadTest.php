@@ -3,6 +3,7 @@
 namespace Spatie\DbSnapshots\Commands\Test;
 
 use DB;
+use Illuminate\Support\Facades\Config;
 use Mockery as m;
 use Spatie\DbSnapshots\Test\TestCase;
 use Illuminate\Support\Facades\Artisan;
@@ -48,6 +49,16 @@ class LoadTest extends TestCase
         $this->assertSnapshotLoaded('snapshot2');
     }
 
+    /** @test */
+    public function it_can_load_a_snapshot_with_connection_option()
+    {
+        $this->assertSnapshotNotLoaded('snapshot2');
+
+        Artisan::call('snapshot:load', ['name' => 'snapshot2' , '--connection' => 'testing']);
+
+        $this->assertSnapshotLoaded('snapshot2');
+    }
+    
     protected function assertSnapshotLoaded($snapshotName)
     {
         $this->assertEquals(

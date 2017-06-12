@@ -120,6 +120,12 @@ To load a previous dump issue this command:
 php artisan snapshot:load my-first-dump
 ```
 
+To load a previous dump to another DB connection:
+
+```bash
+php artisan snapshot:load my-first-dump --connection=connectionName
+```
+
 To list all the dumps run:
 
 ```bash
