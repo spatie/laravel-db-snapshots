@@ -31,7 +31,7 @@ class Snapshot
         $this->name = pathinfo($fileName, PATHINFO_FILENAME);
     }
 
-    public function load($connection = null)
+    public function load(string $connectionName = null)
     {
         event(new LoadingSnapshot($this));
 
@@ -39,7 +39,7 @@ class Snapshot
 
         $dbDumpContents = $this->disk->get($this->fileName);
 
-        DB::connection($connection)->unprepared($dbDumpContents);
+        DB::connection($connectionName)->unprepared($dbDumpContents);
 
         event(new LoadedSnapshot($this));
     }
