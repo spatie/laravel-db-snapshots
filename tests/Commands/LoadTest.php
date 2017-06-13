@@ -57,7 +57,7 @@ class LoadTest extends TestCase
 
         $this->assertSnapshotLoaded('snapshot2');
     }
-    
+
     protected function assertSnapshotLoaded($snapshotName)
     {
         $this->assertEquals(
