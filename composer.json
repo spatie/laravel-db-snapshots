@@ -17,7 +17,7 @@
     ],
     "require": {
         "php": "^7.0",
-        "illuminate/support": "^5.4.16|~5.5.x-dev",
+        "illuminate/support": "^5.4.16|~5.5.x-dev|~5.5.x-dev",
         "league/flysystem": "^1.0.27",
         "spatie/db-dumper": "^2.7",
         "spatie/laravel-migrate-fresh": "^1.4.1",
@@ -25,7 +25,7 @@
     },
     "require-dev": {
         "mockery/mockery": "^0.9.8",
-        "orchestra/testbench": "^3.4.5|~3.5.x-dev",
+        "orchestra/testbench": "^3.4.5|~3.5.x-dev|~3.5.x-dev",
         "phpunit/phpunit": "^6.2"
     },
     "autoload": {
@@ -52,3 +52,4 @@
         }
     }
 }
+
