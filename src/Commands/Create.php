@@ -10,7 +10,7 @@ use Spatie\DbSnapshots\SnapshotFactory;
 
 class Create extends Command
 {
-    protected $signature = 'snapshot:create {name?} {--connection}';
+    protected $signature = 'snapshot:create {name?} {--connection=}';
 
     protected $description = 'Create a new snapshot.';
 
