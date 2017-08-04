@@ -17,8 +17,8 @@
     ],
     "require": {
         "php": "^7.0",
-        "illuminate/support": "^5.4.16",
-        "league/flysystem": "^1.0.27",
+        "illuminate/support": "^5.4.30",
+        "league/flysystem": "^1.0.40",
         "spatie/db-dumper": "^2.7",
         "spatie/laravel-migrate-fresh": "^1.4.1",
         "spatie/temporary-directory": "^1.1"
