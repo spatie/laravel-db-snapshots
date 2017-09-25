@@ -13,7 +13,7 @@ class CreateTest extends TestCase
     {
         Artisan::call('snapshot:create');
 
-        $fileName = Carbon::now()->format('Y-m-d H:i:s').'.sql';
+        $fileName = Carbon::now()->format('Y-m-d_H-i-s').'.sql';
 
         $this->assertFileOnDiskContains($fileName, 'CREATE TABLE "models"');
     }
