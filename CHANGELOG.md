@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 1.1.2 - 2017-09-26
+
+- fix for windows users
+
 ## 1.1.1 - 2017-08-04
 
 - fix `connection` option to load snapshot command
