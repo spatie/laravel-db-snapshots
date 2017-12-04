@@ -35,6 +35,10 @@ class Snapshot
     {
         event(new LoadingSnapshot($this));
 
+        if ($connectionName !== null) {
+            DB::setDefaultConnection($connectionName);
+        }
+
         $this->dropAllCurrentTables();
 
         $dbDumpContents = $this->disk->get($this->fileName);
