@@ -18,14 +18,14 @@
     "require": {
         "php": "^7.0",
         "illuminate/support": "^5.4.30",
-        "league/flysystem": "^1.0.40",
+        "league/flysystem": "^1.0.41",
         "spatie/db-dumper": "^2.7",
         "spatie/laravel-migrate-fresh": "^1.4.1",
         "spatie/temporary-directory": "^1.1"
     },
     "require-dev": {
         "mockery/mockery": "^0.9.8",
-        "orchestra/testbench": "^3.4.5",
+        "orchestra/testbench": "^3.4.10",
         "phpunit/phpunit": "^5.7"
     },
     "autoload": {
