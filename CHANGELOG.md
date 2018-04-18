@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 1.1.4 - 2018-04-18
+
+- improve output of the delete command when there are no snapshots yet
+
 ## 1.1.3 - 2017-12-05
 
 - prevent tables being dropped on the non-default connection
