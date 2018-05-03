@@ -75,7 +75,9 @@ class SnapshotFactory
 
         $disk->put($fileName, $file);
 
-        fclose($file);
+        if (is_resource($file)) {
+            fclose($file);
+        }
 
         $directory->delete();
     }
