@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 1.1.5 - 2018-05-03
+
+- fix bug when trying to close a file that is already closed
+
 ## 1.1.4 - 2018-04-18
 
 - improve output of the delete command when there are no snapshots yet
