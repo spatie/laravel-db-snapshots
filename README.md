@@ -34,7 +34,7 @@ You can install the package via Composer:
 composer require spatie/laravel-db-snapshots
 ```
 
-Next, you must install the service provider to `config/app.php`:
+In Laravel 5.5 and above, the package will autoregister the service provider. For Laravel 5.4 or below you must install this service provider to `config/app.php`:
 
 ```php
 'providers' => [
