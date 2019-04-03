@@ -106,7 +106,7 @@ abstract class TestCase extends Orchestra
             $this->disk->put("snapshot{$i}.sql", $this->getSnapshotContent("snapshot{$i}"));
         }
 
-        $this->disk->put("snapshot4.sql.gz", gzencode($this->getSnapshotContent('snapshot4')));
+        $this->disk->put('snapshot4.sql.gz', gzencode($this->getSnapshotContent('snapshot4')));
 
         $this->disk->put('otherfile.txt', 'not a snapshot');
     }
