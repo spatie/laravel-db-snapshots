@@ -15,7 +15,7 @@ class CreateTest extends TestCase
 
         $fileName = Carbon::now()->format('Y-m-d_H-i-s').'.sql';
 
-        $this->assertFileOnDiskContains($fileName, 'CREATE TABLE IF NOT EXISTS "models"');
+        $this->assertFileOnDiskContains($fileName, 'CREATE TABLE "models"');
     }
 
     /** @test */
@@ -23,7 +23,7 @@ class CreateTest extends TestCase
     {
         Artisan::call('snapshot:create', ['name' => 'test']);
 
-        $this->assertFileOnDiskContains('test.sql', 'CREATE TABLE IF NOT EXISTS "models"');
+        $this->assertFileOnDiskContains('test.sql', 'CREATE TABLE "models"');
     }
 
     /** @test */
@@ -33,6 +33,6 @@ class CreateTest extends TestCase
 
         $fileName = Carbon::now()->format('Y-m-d_H-i-s').'.sql.gz';
 
-        $this->assertFileOnDiskContains($fileName, 'CREATE TABLE IF NOT EXISTS "models"', true);
+        $this->assertFileOnDiskContains($fileName, 'CREATE TABLE "models"', true);
     }
 }
