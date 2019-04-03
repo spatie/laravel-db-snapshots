@@ -19,6 +19,12 @@ class SnapshotRepository
     {
         return collect($this->disk->allFiles())
             ->filter(function (string $fileName) {
+                $pathinfo = pathinfo($fileName);
+
+                if ($pathinfo['extension'] === 'gz') {
+                    $fileName = $pathinfo['filename'];
+                }
+
                 return pathinfo($fileName, PATHINFO_EXTENSION) === 'sql';
             })
             ->map(function (string $fileName) {

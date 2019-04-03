@@ -2,6 +2,7 @@
 
 namespace Spatie\DbSnapshots;
 
+use Spatie\DbDumper\Compressors\GzipCompressor;
 use Spatie\DbDumper\DbDumper;
 use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Filesystem\FilesystemAdapter;
@@ -25,12 +26,18 @@ class SnapshotFactory
         $this->filesystemFactory = $filesystemFactory;
     }
 
-    public function create(string $snapshotName, string $diskName, string $connectionName): Snapshot
+    public function create(string $snapshotName, string $diskName, string $connectionName, bool $compress = null): Snapshot
     {
         $disk = $this->getDisk($diskName);
 
         $fileName = $snapshotName.'.sql';
         $fileName = pathinfo($fileName, PATHINFO_BASENAME);
+
+        $compress = ($compress === true) ?: (bool) config('db-snapshots.compress', false);
+
+        if ($compress) {
+            $fileName .= '.gz';
+        }
 
         event(new CreatingSnapshot(
             $fileName,
@@ -38,7 +45,7 @@ class SnapshotFactory
             $connectionName
         ));
 
-        $this->createDump($connectionName, $fileName, $disk);
+        $this->createDump($connectionName, $fileName, $disk, $compress);
 
         $snapshot = new Snapshot($disk, $fileName);
 
@@ -63,13 +70,19 @@ class SnapshotFactory
         return $factory::createForConnection($connectionName);
     }
 
-    protected function createDump(string $connectionName, string $fileName, FilesystemAdapter $disk)
+    protected function createDump(string $connectionName, string $fileName, FilesystemAdapter $disk, bool $compress)
     {
         $directory = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))->create();
 
         $dumpPath = $directory->path($fileName);
 
-        $this->getDbDumper($connectionName)->dumpToFile($dumpPath);
+        $dbDumper = $this->getDbDumper($connectionName);
+
+        if ($compress) {
+            $dbDumper->useCompressor(new GzipCompressor());
+        }
+
+        $dbDumper->dumpToFile($dumpPath);
 
         $file = fopen($dumpPath, 'r');
 

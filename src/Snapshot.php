@@ -22,11 +22,21 @@ class Snapshot
     /** @var string */
     public $name;
 
+    /** @var string */
+    public $compressionExt = null;
+
     public function __construct(Disk $disk, string $fileName)
     {
         $this->disk = $disk;
 
         $this->fileName = $fileName;
+
+        $pathinfo = pathinfo($fileName);
+
+        if ($pathinfo['extension'] === 'gz') {
+            $this->compressionExt = $pathinfo['extension'];
+            $fileName = $pathinfo['filename'];
+        }
 
         $this->name = pathinfo($fileName, PATHINFO_FILENAME);
     }
@@ -42,6 +52,10 @@ class Snapshot
         $this->dropAllCurrentTables();
 
         $dbDumpContents = $this->disk->get($this->fileName);
+
+        if ($this->compressionExt === 'gz') {
+            $dbDumpContents = gzdecode($dbDumpContents);
+        }
 
         DB::connection($connectionName)->unprepared($dbDumpContents);
 

@@ -58,6 +58,16 @@ class LoadTest extends TestCase
         $this->assertSnapshotLoaded('snapshot2');
     }
 
+    /** @test */
+    public function it_can_load_a_compressed_snapshot()
+    {
+        $this->assertSnapshotNotLoaded('snapshot4');
+
+        Artisan::call('snapshot:load', ['name' => 'snapshot4']);
+
+        $this->assertSnapshotLoaded('snapshot4');
+    }
+
     protected function assertSnapshotLoaded($snapshotName)
     {
         $this->assertEquals(

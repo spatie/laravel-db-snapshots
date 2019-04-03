@@ -10,7 +10,7 @@ use Spatie\DbSnapshots\SnapshotFactory;
 
 class Create extends Command
 {
-    protected $signature = 'snapshot:create {name?} {--connection=}';
+    protected $signature = 'snapshot:create {name?} {--connection=} {--compress}';
 
     protected $description = 'Create a new snapshot.';
 
@@ -24,10 +24,13 @@ class Create extends Command
 
         $snapshotName = $this->argument('name') ?: Carbon::now()->format('Y-m-d_H-i-s');
 
+        $compress = $this->option('compress');
+
         $snapshot = app(SnapshotFactory::class)->create(
             $snapshotName,
             config('db-snapshots.disk'),
-            $connectionName
+            $connectionName,
+            $compress ?: null
         );
 
         $size = Format::humanReadableSize($snapshot->size());
