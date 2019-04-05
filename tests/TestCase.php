@@ -56,13 +56,13 @@ abstract class TestCase extends Orchestra
         ]);
     }
 
-    protected function assertFileOnDiskContains($fileName, $needle, bool $isRegex = false)
+    protected function assertFileOnDiskPassesRegex($fileName, $needle)
     {
         $this->disk->assertExists($fileName);
 
         $contents = $this->disk->get($fileName);
 
-        ($isRegex) ? $this->assertRegExp($needle, $contents) : $this->assertContains($needle, $contents);
+        $this->assertRegExp($needle, $contents);
     }
 
     protected function setupDatabase()

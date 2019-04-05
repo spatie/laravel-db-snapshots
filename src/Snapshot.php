@@ -23,7 +23,7 @@ class Snapshot
     public $name;
 
     /** @var string */
-    public $compressionExt = null;
+    public $compressionExtension = null;
 
     public function __construct(Disk $disk, string $fileName)
     {
@@ -34,7 +34,7 @@ class Snapshot
         $pathinfo = pathinfo($fileName);
 
         if ($pathinfo['extension'] === 'gz') {
-            $this->compressionExt = $pathinfo['extension'];
+            $this->compressionExtension = $pathinfo['extension'];
             $fileName = $pathinfo['filename'];
         }
 
@@ -53,7 +53,7 @@ class Snapshot
 
         $dbDumpContents = $this->disk->get($this->fileName);
 
-        if ($this->compressionExt === 'gz') {
+        if ($this->compressionExtension === 'gz') {
             $dbDumpContents = gzdecode($dbDumpContents);
         }
 

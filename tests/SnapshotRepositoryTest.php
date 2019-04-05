@@ -42,7 +42,7 @@ class SnapshotRepositoryTest extends TestCase
 
         $this->assertInstanceOf(Snapshot::class, $snapshot);
 
-        $this->assertEquals('gz', $snapshot->compressionExt);
+        $this->assertEquals('gz', $snapshot->compressionExtension);
 
         $this->assertNull($this->repository->findByName('snapshot5'));
     }

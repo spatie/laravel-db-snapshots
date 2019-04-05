@@ -26,14 +26,12 @@ class SnapshotFactory
         $this->filesystemFactory = $filesystemFactory;
     }
 
-    public function create(string $snapshotName, string $diskName, string $connectionName, bool $compress = null): Snapshot
+    public function create(string $snapshotName, string $diskName, string $connectionName, bool $compress = false): Snapshot
     {
         $disk = $this->getDisk($diskName);
 
         $fileName = $snapshotName.'.sql';
         $fileName = pathinfo($fileName, PATHINFO_BASENAME);
-
-        $compress = ($compress === true) ?: (bool) config('db-snapshots.compress', false);
 
         if ($compress) {
             $fileName .= '.gz';
