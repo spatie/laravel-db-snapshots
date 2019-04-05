@@ -82,6 +82,11 @@ return [
      * The directory where temporary files will be stored.
      */
     'temporary_directory_path' => storage_path('app/laravel-db-snapshots/temp'),
+
+    /*
+     * Create dump files that are gzipped
+     */
+    'compress' => false,
 ];
 ```
 
@@ -98,6 +103,13 @@ Giving your snapshot a name is optional. If you don't pass a name the current da
 ```bash
 # Creates a snapshot named something like `2017-03-17 14:31`
 php artisan snapshot:create
+```
+
+When creating snapshots, you can optionally create compressed snapshots.  To do this either pass the `--compress` option on the command line, or set the `db-snapshots.compress` configuration option to `true`:
+
+```bash
+# Creates a snapshot named my-compressed-dump.sql.gz
+php artisan snapshot:create my-compressed-dump --compress
 ```
 
 After you've made some changes to the database you can create another snapshot:

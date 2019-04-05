@@ -22,7 +22,7 @@ class SnapshotRepositoryTest extends TestCase
     {
         $snapshots = $this->repository->getAll();
 
-        $this->assertCount(3, $snapshots);
+        $this->assertCount(4, $snapshots);
 
         $this->assertInstanceOf(Snapshot::class, $snapshots->first());
     }
@@ -32,6 +32,18 @@ class SnapshotRepositoryTest extends TestCase
     {
         $this->assertInstanceOf(Snapshot::class, $this->repository->findByName('snapshot2'));
 
-        $this->assertNull($this->repository->findByName('snapshot4'));
+        $this->assertNull($this->repository->findByName('snapshot5'));
+    }
+
+    /** @test */
+    public function it_can_find_gz_compressed_snapshots()
+    {
+        $snapshot = $this->repository->findByName('snapshot4');
+
+        $this->assertInstanceOf(Snapshot::class, $snapshot);
+
+        $this->assertEquals('gz', $snapshot->compressionExtension);
+
+        $this->assertNull($this->repository->findByName('snapshot5'));
     }
 }

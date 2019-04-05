@@ -56,13 +56,13 @@ abstract class TestCase extends Orchestra
         ]);
     }
 
-    protected function assertFileOnDiskContains($fileName, $needle)
+    protected function assertFileOnDiskPassesRegex($fileName, $needle)
     {
         $this->disk->assertExists($fileName);
 
         $contents = $this->disk->get($fileName);
 
-        $this->assertContains($needle, $contents);
+        $this->assertRegExp($needle, $contents);
     }
 
     protected function setupDatabase()
@@ -101,6 +101,8 @@ abstract class TestCase extends Orchestra
         foreach (range(1, 3) as $i) {
             $this->disk->put("snapshot{$i}.sql", $this->getSnapshotContent("snapshot{$i}"));
         }
+
+        $this->disk->put('snapshot4.sql.gz', gzencode($this->getSnapshotContent('snapshot4')));
 
         $this->disk->put('otherfile.txt', 'not a snapshot');
     }
