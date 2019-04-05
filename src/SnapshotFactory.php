@@ -68,7 +68,7 @@ class SnapshotFactory
         return $factory::createForConnection($connectionName);
     }
 
-    protected function createDump(string $connectionName, string $fileName, FilesystemAdapter $disk, bool $compress)
+    protected function createDump(string $connectionName, string $fileName, FilesystemAdapter $disk, bool $compress = false)
     {
         $directory = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))->create();
 
