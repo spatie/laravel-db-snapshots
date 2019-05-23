@@ -86,7 +86,7 @@ class DbDumperFactoryTest extends TestCase
 
         $this->app['config']->set('database.connections.mysql.dump', $dumpConfig);
 
-        $this->assertContains('--single-transaction', $this->getDumpCommand());
+        $this->assertContains('--single-transaction', $this->getDumpCommand('mysql'));
     }
 
     /** @test */
@@ -96,7 +96,7 @@ class DbDumperFactoryTest extends TestCase
 
         $this->app['config']->set('database.connections.mysql.dump', $dumpConfig);
 
-        $this->assertContains(implode(' ', $dumpConfig['include_tables']), $this->getDumpCommand());
+        $this->assertContains(implode(' ', $dumpConfig['include_tables']), $this->getDumpCommand('mysql'));
     }
 
     /** @test */
@@ -106,14 +106,20 @@ class DbDumperFactoryTest extends TestCase
 
         $this->app['config']->set('database.connections.mysql.dump', $dumpConfig);
 
-        $this->assertContains($dumpConfig['add_extra_option'], $this->getDumpCommand());
+        $this->assertContains($dumpConfig['add_extra_option'], $this->getDumpCommand('mysql'));
     }
 
-    protected function getDumpCommand(): string
+    /** @test */
+    public function it_adds_the_inserts_option_to_the_pgsql_dump_command()
+    {
+        $this->assertContains('--inserts', $this->getDumpCommand('pgsql'));
+    }
+
+    protected function getDumpCommand(string $connectionName): string
     {
         $dumpFile = '';
         $credentialsFile = '';
 
-        return DbDumperFactory::createForConnection('mysql')->getDumpCommand($dumpFile, $credentialsFile);
+        return DbDumperFactory::createForConnection($connectionName)->getDumpCommand($dumpFile, $credentialsFile);
     }
 }
