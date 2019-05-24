@@ -2,6 +2,11 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+
+## 1.2.1 - 2019-05-24
+
+- use `--inserts` option for pgsql connections by default
+
 ## 1.2.0 - 2019-04-06
 
 - support creating and loading gzip snapshots
