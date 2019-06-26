@@ -2,6 +2,9 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 1.2.2 - 2019-06-27
+
+- fix compression option from config not being respected
 
 ## 1.2.1 - 2019-05-24
 
