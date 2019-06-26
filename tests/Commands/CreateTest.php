@@ -27,9 +27,23 @@ class CreateTest extends TestCase
     }
 
     /** @test */
-    public function it_can_create_a_compressed_snapshot()
+    public function it_can_create_a_compressed_snapshot_from_cli_param()
     {
         Artisan::call('snapshot:create', ['--compress' => true]);
+
+        $fileName = Carbon::now()->format('Y-m-d_H-i-s').'.sql.gz';
+
+        $this->disk->assertExists($fileName);
+
+        $this->assertNotEmpty(gzdecode($this->disk->get($fileName)));
+    }
+
+    /** @test */
+    public function it_can_create_a_compressed_snapshot_from_config()
+    {
+        $this->app['config']->set('db-snapshots.compress', true);
+
+        Artisan::call('snapshot:create');
 
         $fileName = Carbon::now()->format('Y-m-d_H-i-s').'.sql.gz';
 

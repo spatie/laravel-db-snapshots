@@ -23,13 +23,13 @@ class Create extends Command
 
         $snapshotName = $this->argument('name') ?: Carbon::now()->format('Y-m-d_H-i-s');
 
-        $compress = $this->option('compress', null);
+        $compress = $this->option('compress') || config('db-snapshots.compress', false);
 
         $snapshot = app(SnapshotFactory::class)->create(
             $snapshotName,
             config('db-snapshots.disk'),
             $connectionName,
-            ($compress !== null) ? $compress : (bool) config('db-snapshots.compress', false)
+            $compress
         );
 
         $size = Format::humanReadableSize($snapshot->size());
