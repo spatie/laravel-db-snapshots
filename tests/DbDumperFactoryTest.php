@@ -80,6 +80,16 @@ class DbDumperFactoryTest extends TestCase
     }
 
     /** @test */
+    public function it_will_throw_an_exception_when_no_disks_are_set_up()
+    {
+        config()->set('filesystem.disks', null);
+
+        $this->expectException(CannotCreateDbDumper::class);
+
+        DbDumperFactory::createForConnection('unknown type');
+    }
+
+    /** @test */
     public function it_can_add_named_options_to_the_dump_command()
     {
         $dumpConfig = ['use_single_transaction'];
