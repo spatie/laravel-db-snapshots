@@ -12,7 +12,7 @@ class Load extends Command
     use AsksForSnapshotName;
     use ConfirmableTrait;
 
-    protected $signature = 'snapshot:load {name?} {--connection=} --disk';
+    protected $signature = 'snapshot:load {name?} {--connection=} {--force} --disk';
 
     protected $description = 'Load up a snapshot.';
 
