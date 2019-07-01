@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 1.2.4 - 2019-07-01
+
+- fix for load command in production
+
 ## 1.2.3 - 2019-06-28
 
 - fix CannotCreateDisk exception when no disks are set up.
