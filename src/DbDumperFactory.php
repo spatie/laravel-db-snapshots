@@ -2,6 +2,8 @@
 
 namespace Spatie\DbSnapshots;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Spatie\DbDumper\DbDumper;
 use Spatie\DbDumper\Databases\MySql;
 use Spatie\DbDumper\Databases\Sqlite;
@@ -18,7 +20,7 @@ class DbDumperFactory
             throw CannotCreateDbDumper::connectionDoesNotExist($connectionName);
         }
 
-        $dbHost = array_get($dbConfig, 'read.host', array_get($dbConfig, 'host'));
+        $dbHost = Arr::get($dbConfig, 'read.host', Arr::get($dbConfig, 'host'));
 
         $dbDumper = static::forDriver($dbConfig['driver'])
             ->setHost($dbHost ?? '')
@@ -66,7 +68,7 @@ class DbDumperFactory
     protected static function processExtraDumpParameters(array $dumpConfiguration, $dbDumper): DbDumper
     {
         collect($dumpConfiguration)->each(function ($configValue, $configName) use ($dbDumper) {
-            $methodName = lcfirst(studly_case(is_numeric($configName) ? $configValue : $configName));
+            $methodName = lcfirst(Str::studly(is_numeric($configName) ? $configValue : $configName));
             $methodValue = is_numeric($configName) ? null : $configValue;
 
             $methodName = static::determineValidMethodName($dbDumper, $methodName);
