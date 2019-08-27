@@ -15,7 +15,7 @@ abstract class TestCase extends Orchestra
     /** @var FilesystemAdapter */
     protected $disk;
 
-    public function setUp()
+    public function setUp():void
     {
         parent::setUp();
 
@@ -126,7 +126,7 @@ abstract class TestCase extends Orchestra
         $output = Artisan::output();
 
         foreach ($searchStrings as $searchString) {
-            $this->assertContains((string) $searchString, $output);
+            $this->assertStringContainsString((string) $searchString, $output);
         }
     }
 }

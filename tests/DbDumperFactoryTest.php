@@ -10,7 +10,7 @@ use Spatie\DbSnapshots\Exceptions\CannotCreateDbDumper;
 
 class DbDumperFactoryTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -96,7 +96,7 @@ class DbDumperFactoryTest extends TestCase
 
         $this->app['config']->set('database.connections.mysql.dump', $dumpConfig);
 
-        $this->assertContains('--single-transaction', $this->getDumpCommand('mysql'));
+        $this->assertStringContainsString('--single-transaction', $this->getDumpCommand('mysql'));
     }
 
     /** @test */
@@ -106,7 +106,7 @@ class DbDumperFactoryTest extends TestCase
 
         $this->app['config']->set('database.connections.mysql.dump', $dumpConfig);
 
-        $this->assertContains(implode(' ', $dumpConfig['include_tables']), $this->getDumpCommand('mysql'));
+        $this->assertStringContainsString(implode(' ', $dumpConfig['include_tables']), $this->getDumpCommand('mysql'));
     }
 
     /** @test */
@@ -116,13 +116,13 @@ class DbDumperFactoryTest extends TestCase
 
         $this->app['config']->set('database.connections.mysql.dump', $dumpConfig);
 
-        $this->assertContains($dumpConfig['add_extra_option'], $this->getDumpCommand('mysql'));
+        $this->assertStringContainsString($dumpConfig['add_extra_option'], $this->getDumpCommand('mysql'));
     }
 
     /** @test */
     public function it_adds_the_inserts_option_to_the_pgsql_dump_command()
     {
-        $this->assertContains('--inserts', $this->getDumpCommand('pgsql'));
+        $this->assertStringContainsString('--inserts', $this->getDumpCommand('pgsql'));
     }
 
     protected function getDumpCommand(string $connectionName): string
