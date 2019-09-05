@@ -4,7 +4,6 @@ namespace Spatie\DbSnapshots;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Spatie\MigrateFresh\TableDropperFactory;
 use Spatie\DbSnapshots\Events\LoadedSnapshot;
 use Spatie\DbSnapshots\Events\DeletedSnapshot;
 use Spatie\DbSnapshots\Events\LoadingSnapshot;
