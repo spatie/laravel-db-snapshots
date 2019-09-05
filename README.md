@@ -36,16 +36,7 @@ You can install the package via Composer:
 composer require spatie/laravel-db-snapshots
 ```
 
-In Laravel 5.5 and above, the package will autoregister the service provider. For Laravel 5.4 or below you must install this service provider to `config/app.php`:
-
-```php
-'providers' => [
-    // ...
-    Spatie\DbSnapshots\DbSnapshotsServiceProvider::class,
-];
-```
-
-And finally you should add a disk named `snapshots` to `app/config/filesystems.php` on which the snapshots will be saved. This would be a typical configuration:
+You should add a disk named `snapshots` to `app/config/filesystems.php` on which the snapshots will be saved. This would be a typical configuration:
 
 ```php
 // ...
