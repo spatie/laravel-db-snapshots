@@ -10,7 +10,7 @@ class SnapshotRepositoryTest extends TestCase
     /** @var \Spatie\DbSnapshots\SnapshotRepository */
     protected $repository;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

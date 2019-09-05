@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 1.3.0 - 2019-09-04
+
+- add support for Laravel 6
+- drop anything below Laravel 5.8
+- drop anything below PHP 7.2
+
 ## 1.2.4 - 2019-07-01
 
 - fix for load command in production

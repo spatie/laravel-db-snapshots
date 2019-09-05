@@ -11,7 +11,7 @@ class DeleteTest extends TestCase
     /** @var \Spatie\DbSnapshots\Commands\Delete|m\Mock */
     protected $command;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

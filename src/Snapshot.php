@@ -83,9 +83,9 @@ class Snapshot
 
     protected function dropAllCurrentTables()
     {
-        $tableDropper = TableDropperFactory::create(DB::getDriverName());
-
-        $tableDropper->dropAllTables();
+        DB::connection(DB::getDefaultConnection())
+            ->getSchemaBuilder()
+            ->dropAllTables();
 
         DB::reconnect();
     }
