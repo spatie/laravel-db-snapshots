@@ -50,14 +50,23 @@ class Snapshot
 
         $this->dropAllCurrentTables();
 
-        $dbDumpContents = $this->disk->get($this->fileName);
+        $compressed =  ($this->compressionExtension === 'gz');
 
-        if ($this->compressionExtension === 'gz') {
-            // test
-            $dbDumpContents = gzdecode($dbDumpContents);
+        $largefile = new BigFile($this->disk->path($this->fileName),"r",$compressed);
+
+        $iterator = $largefile->iterateText(); // Text or Binary based on your file type
+        $i=0;
+        $sqlLine="";
+        foreach ($iterator as $line)
+        {
+            $trimmed=trim($line);
+            $sqlLine.=$trimmed;
+            if (substr($trimmed,-1)==";")
+            {
+                DB::connection($connectionName)->unprepared($sqlLine);
+                $sqlLine="";
+            }
         }
-
-        DB::connection($connectionName)->unprepared($dbDumpContents);
 
         event(new LoadedSnapshot($this));
     }
