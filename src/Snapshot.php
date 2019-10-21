@@ -53,6 +53,7 @@ class Snapshot
         $dbDumpContents = $this->disk->get($this->fileName);
 
         if ($this->compressionExtension === 'gz') {
+            // test
             $dbDumpContents = gzdecode($dbDumpContents);
         }
 
