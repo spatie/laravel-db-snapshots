@@ -54,7 +54,7 @@ class Snapshot
 
         $largefile = new BigFile($this->disk->path($this->fileName),"r",$compressed);
 
-        $iterator = $largefile->iterateText(); // Text or Binary based on your file type
+        $iterator = $largefile->iterateText();
         $i=0;
         $sqlLine="";
         foreach ($iterator as $line)
