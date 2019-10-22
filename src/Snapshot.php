@@ -50,21 +50,19 @@ class Snapshot
 
         $this->dropAllCurrentTables();
 
-        $compressed =  ($this->compressionExtension === 'gz');
+        $compressed = ($this->compressionExtension === 'gz');
 
-        $largefile = new Bigfile($this->disk->path($this->fileName),"r",$compressed);
+        $largefile = new Bigfile($this->disk->path($this->fileName),'r', $compressed);
 
         $iterator = $largefile->iterateText();
-  
-        $sqlLine="";
-        foreach ($iterator as $line)
-        {
-            $trimmed=trim($line);
-            $sqlLine.=$trimmed;
-            if (substr($trimmed,-1)==";")
-            {
+
+        $sqlLine = "";
+        foreach ($iterator as $line) {
+            $trimmed = trim($line);
+            $sqlLine .= $trimmed;
+            if (substr($trimmed,-1) == ';') {
                 DB::connection($connectionName)->unprepared($sqlLine);
-                $sqlLine="";
+                $sqlLine = '';
             }
         }
 
