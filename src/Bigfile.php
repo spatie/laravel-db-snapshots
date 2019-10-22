@@ -11,7 +11,6 @@ class Bigfile
     public function __construct($filename, $mode = 'r', $compressed = false)
     {
         if (! file_exists($filename)) {
-
             throw new \Exception('File not found');
         }
         if ($compressed) {
@@ -32,5 +31,4 @@ class Bigfile
 
         return $count;
     }
-
 }
