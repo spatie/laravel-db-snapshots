@@ -8,7 +8,7 @@ class Bigfile
 {
     protected $file;
 
-    public function __construct($filename, $mode = 'r' ,$compressed = false)
+    public function __construct($filename, $mode = 'r', $compressed = false)
     {
         if (! file_exists($filename)) {
 
@@ -16,7 +16,7 @@ class Bigfile
         }
         if ($compressed) {
             $this->file = new \SplFileObject('compress.zlib://'.$filename, $mode);
-        }else{
+        } else {
             $this->file = new \SplFileObject($filename, $mode);
         }
     }
