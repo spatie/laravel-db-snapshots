@@ -52,10 +52,10 @@ class Snapshot
 
         $compressed =  ($this->compressionExtension === 'gz');
 
-        $largefile = new BigFile($this->disk->path($this->fileName),"r",$compressed);
+        $largefile = new Bigfile($this->disk->path($this->fileName),"r",$compressed);
 
         $iterator = $largefile->iterateText();
-        $i=0;
+  
         $sqlLine="";
         foreach ($iterator as $line)
         {
