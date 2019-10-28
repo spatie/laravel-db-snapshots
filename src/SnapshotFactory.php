@@ -90,6 +90,8 @@ class SnapshotFactory
             fclose($file);
         }
 
+        gc_collect_cycles();
+
         $directory->delete();
     }
 }
