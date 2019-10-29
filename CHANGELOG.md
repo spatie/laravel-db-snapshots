@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 1.3.1 - 2019-10-29
+
+- fix for obscure but repeatable issue relating to rmdir failing (#78)
+
 ## 1.3.0 - 2019-09-04
 
 - add support for Laravel 6
