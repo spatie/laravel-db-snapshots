@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Spatie\DbSnapshots\Commands\Create;
 use Spatie\DbSnapshots\Commands\Delete;
 use Illuminate\Contracts\Filesystem\Factory;
+use Spatie\DbSnapshots\Commands\Cleanup;
 use Spatie\DbSnapshots\Commands\ListSnapshots;
 
 class DbSnapshotsServiceProvider extends ServiceProvider
@@ -34,12 +35,14 @@ class DbSnapshotsServiceProvider extends ServiceProvider
         $this->app->bind('command.snapshot:load', Load::class);
         $this->app->bind('command.snapshot:delete', Delete::class);
         $this->app->bind('command.snapshot:list', ListSnapshots::class);
+        $this->app->bind('command.snapshot:cleanup', Cleanup::class);
 
         $this->commands([
             'command.snapshot:create',
             'command.snapshot:load',
             'command.snapshot:delete',
             'command.snapshot:list',
+            'command.snapshot:cleanup',
         ]);
     }
 

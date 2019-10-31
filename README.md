@@ -24,6 +24,9 @@ php artisan snapshot:load my-first-dump
 
 # List all snapshots
 php artisan snapshot:list
+
+# Remove old snapshots. Keeping only the most recent
+php artisan snapshot:cleanup --keep=2
 ```
 
 This package supports MySQL, PostgreSQL and SQLite.
@@ -133,6 +136,12 @@ A dump can be deleted with:
 
 ```bash
 php artisan snapshot:delete my-first-dump
+```
+
+To remove all backups except the most recent 2
+
+```bash
+php artisan snapshot:cleanup --keep=2
 ```
 
 ## Events
