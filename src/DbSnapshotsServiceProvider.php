@@ -6,8 +6,8 @@ use Spatie\DbSnapshots\Commands\Load;
 use Illuminate\Support\ServiceProvider;
 use Spatie\DbSnapshots\Commands\Create;
 use Spatie\DbSnapshots\Commands\Delete;
-use Illuminate\Contracts\Filesystem\Factory;
 use Spatie\DbSnapshots\Commands\Cleanup;
+use Illuminate\Contracts\Filesystem\Factory;
 use Spatie\DbSnapshots\Commands\ListSnapshots;
 
 class DbSnapshotsServiceProvider extends ServiceProvider

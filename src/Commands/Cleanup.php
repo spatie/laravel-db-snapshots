@@ -17,7 +17,7 @@ class Cleanup extends Command
 
         $keep = $this->option('keep');
 
-        if (!$this->option('keep')) {
+        if (! $this->option('keep')) {
             $this->warn('No value for option --keep.');
 
             return;
