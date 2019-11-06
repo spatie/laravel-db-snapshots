@@ -4,6 +4,9 @@
 
 namespace Spatie\DbSnapshots;
 
+use \Exception;
+use \SplFileObject;
+
 class Bigfile
 {
     protected $file;
@@ -11,13 +14,9 @@ class Bigfile
     public function __construct($filename, $mode = 'r', $compressed = false)
     {
         if (! file_exists($filename)) {
-            throw new \Exception('File not found');
+            throw new Exception('File not found');
         }
-        if ($compressed) {
-            $this->file = new \SplFileObject('compress.zlib://'.$filename, $mode);
-        } else {
-            $this->file = new \SplFileObject($filename, $mode);
-        }
+        $this->file = new SplFileObject(($compressed ? 'compress.zlib://'.$filename : $filename), $mode);
     }
 
     public function iterateText()
