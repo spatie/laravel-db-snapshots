@@ -4,8 +4,8 @@
 
 namespace Spatie\DbSnapshots;
 
-use \Exception;
-use \SplFileObject;
+use Exception;
+use SplFileObject;
 
 class Bigfile
 {
