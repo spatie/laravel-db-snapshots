@@ -3,12 +3,12 @@
 namespace Spatie\DbSnapshots;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
-use Spatie\DbSnapshots\Events\LoadedSnapshot;
-use Spatie\DbSnapshots\Events\DeletedSnapshot;
-use Spatie\DbSnapshots\Events\LoadingSnapshot;
-use Spatie\DbSnapshots\Events\DeletingSnapshot;
 use Illuminate\Filesystem\FilesystemAdapter as Disk;
+use Illuminate\Support\Facades\DB;
+use Spatie\DbSnapshots\Events\DeletedSnapshot;
+use Spatie\DbSnapshots\Events\DeletingSnapshot;
+use Spatie\DbSnapshots\Events\LoadedSnapshot;
+use Spatie\DbSnapshots\Events\LoadingSnapshot;
 
 class Snapshot
 {
