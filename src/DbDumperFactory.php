@@ -4,10 +4,10 @@ namespace Spatie\DbSnapshots;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Spatie\DbDumper\DbDumper;
 use Spatie\DbDumper\Databases\MySql;
-use Spatie\DbDumper\Databases\Sqlite;
 use Spatie\DbDumper\Databases\PostgreSql;
+use Spatie\DbDumper\Databases\Sqlite;
+use Spatie\DbDumper\DbDumper;
 use Spatie\DbSnapshots\Exceptions\CannotCreateDbDumper;
 
 class DbDumperFactory
@@ -20,7 +20,17 @@ class DbDumperFactory
             throw CannotCreateDbDumper::connectionDoesNotExist($connectionName);
         }
 
-        $dbHost = Arr::get($dbConfig, 'read.host', Arr::get($dbConfig, 'host'));
+        $fallback = Arr::get(
+            $dbConfig,
+            'read.host',
+            Arr::get($dbConfig, 'host')
+        );
+
+        $dbHost = Arr::get(
+            $dbConfig,
+            'read.host.0',
+            $fallback,
+        );
 
         $dbDumper = static::forDriver($dbConfig['driver'])
             ->setHost($dbHost ?? '')
