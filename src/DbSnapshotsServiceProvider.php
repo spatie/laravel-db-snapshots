@@ -2,13 +2,13 @@
 
 namespace Spatie\DbSnapshots;
 
-use Spatie\DbSnapshots\Commands\Load;
+use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Support\ServiceProvider;
+use Spatie\DbSnapshots\Commands\Cleanup;
 use Spatie\DbSnapshots\Commands\Create;
 use Spatie\DbSnapshots\Commands\Delete;
-use Spatie\DbSnapshots\Commands\Cleanup;
-use Illuminate\Contracts\Filesystem\Factory;
 use Spatie\DbSnapshots\Commands\ListSnapshots;
+use Spatie\DbSnapshots\Commands\Load;
 
 class DbSnapshotsServiceProvider extends ServiceProvider
 {

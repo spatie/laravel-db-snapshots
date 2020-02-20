@@ -4,8 +4,8 @@ namespace Spatie\DbSnapshots\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
-use Spatie\DbSnapshots\SnapshotRepository;
 use Spatie\DbSnapshots\Commands\Concerns\AsksForSnapshotName;
+use Spatie\DbSnapshots\SnapshotRepository;
 
 class Load extends Command
 {

@@ -2,10 +2,10 @@
 
 namespace Spatie\DbSnapshots\Commands\Test;
 
-use Event;
 use Artisan;
-use Spatie\DbSnapshots\Test\TestCase;
+use Event;
 use Spatie\DbSnapshots\Events\CreatedSnapshot;
+use Spatie\DbSnapshots\Test\TestCase;
 
 class CreatedSnapshotTest extends TestCase
 {

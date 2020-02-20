@@ -3,9 +3,9 @@
 namespace Spatie\DbSnapshots\Commands\Test;
 
 use DB;
+use Illuminate\Support\Facades\Artisan;
 use Mockery as m;
 use Spatie\DbSnapshots\Test\TestCase;
-use Illuminate\Support\Facades\Artisan;
 
 class LoadTest extends TestCase
 {

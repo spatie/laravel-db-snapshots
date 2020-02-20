@@ -4,10 +4,10 @@ namespace Spatie\DbSnapshots;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Spatie\DbDumper\DbDumper;
 use Spatie\DbDumper\Databases\MySql;
-use Spatie\DbDumper\Databases\Sqlite;
 use Spatie\DbDumper\Databases\PostgreSql;
+use Spatie\DbDumper\Databases\Sqlite;
+use Spatie\DbDumper\DbDumper;
 use Spatie\DbSnapshots\Exceptions\CannotCreateDbDumper;
 
 class DbDumperFactory

@@ -3,8 +3,8 @@
 namespace Spatie\DbSnapshots\Commands\Test;
 
 use Carbon\Carbon;
-use Spatie\DbSnapshots\Test\TestCase;
 use Illuminate\Support\Facades\Artisan;
+use Spatie\DbSnapshots\Test\TestCase;
 
 class CreateTest extends TestCase
 {
