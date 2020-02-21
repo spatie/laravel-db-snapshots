@@ -3,9 +3,9 @@
 namespace Spatie\DbSnapshots\Test;
 
 use Spatie\DbDumper\Databases\MySql;
+use Spatie\DbDumper\Databases\PostgreSql;
 use Spatie\DbDumper\Databases\Sqlite;
 use Spatie\DbSnapshots\DbDumperFactory;
-use Spatie\DbDumper\Databases\PostgreSql;
 use Spatie\DbSnapshots\Exceptions\CannotCreateDbDumper;
 
 class DbDumperFactoryTest extends TestCase

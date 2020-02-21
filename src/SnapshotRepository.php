@@ -2,8 +2,8 @@
 
 namespace Spatie\DbSnapshots;
 
-use Illuminate\Support\Collection;
 use Illuminate\Contracts\Filesystem\Filesystem as Disk;
+use Illuminate\Support\Collection;
 
 class SnapshotRepository
 {
