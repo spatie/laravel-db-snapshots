@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 1.4.1 - 2020-02-20
+
+- allow read connections (#81)
+
 ## 1.4.0 - 2019-11-01
 
 - add command to cleanup old snapshots (#79)
