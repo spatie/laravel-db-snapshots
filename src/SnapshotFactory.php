@@ -2,14 +2,14 @@
 
 namespace Spatie\DbSnapshots;
 
-use Spatie\DbDumper\DbDumper;
 use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Filesystem\FilesystemAdapter;
-use Spatie\DbSnapshots\Events\CreatedSnapshot;
 use Spatie\DbDumper\Compressors\GzipCompressor;
+use Spatie\DbDumper\DbDumper;
+use Spatie\DbSnapshots\Events\CreatedSnapshot;
 use Spatie\DbSnapshots\Events\CreatingSnapshot;
-use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Spatie\DbSnapshots\Exceptions\CannotCreateDisk;
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 class SnapshotFactory
 {

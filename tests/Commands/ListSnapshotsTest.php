@@ -2,8 +2,8 @@
 
 namespace Spatie\DbSnapshots\Commands\Test;
 
-use Spatie\DbSnapshots\Test\TestCase;
 use Illuminate\Support\Facades\Artisan;
+use Spatie\DbSnapshots\Test\TestCase;
 
 class ListSnapshotsTest extends TestCase
 {

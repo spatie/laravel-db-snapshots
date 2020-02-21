@@ -3,9 +3,9 @@
 namespace Spatie\DbSnapshots\Test;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Contracts\Filesystem\Factory;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Artisan;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Spatie\DbSnapshots\DbSnapshotsServiceProvider;
 

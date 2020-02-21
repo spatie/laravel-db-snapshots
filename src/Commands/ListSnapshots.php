@@ -3,8 +3,8 @@
 namespace Spatie\DbSnapshots\Commands;
 
 use Illuminate\Console\Command;
-use Spatie\DbSnapshots\Snapshot;
 use Spatie\DbSnapshots\Helpers\Format;
+use Spatie\DbSnapshots\Snapshot;
 use Spatie\DbSnapshots\SnapshotRepository;
 
 class ListSnapshots extends Command
