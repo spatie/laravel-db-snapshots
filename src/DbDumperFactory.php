@@ -29,7 +29,7 @@ class DbDumperFactory
         $dbHost = Arr::get(
             $dbConfig,
             'read.host.0',
-            $fallback,
+            $fallback
         );
 
         $dbDumper = static::forDriver($dbConfig['driver'])
