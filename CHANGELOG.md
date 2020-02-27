@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 1.4.2 - 2020-02-27
+
+- PHP7.2 syntax fix (#87)
+
 ## 1.4.1 - 2020-02-20
 
 - allow read connections (#81)
