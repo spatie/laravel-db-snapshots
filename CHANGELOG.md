@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 1.5.0 - 2020-03-03
+
+- add support for Laravel 7
+
 ## 1.4.2 - 2020-02-27
 
 - PHP7.2 syntax fix (#87)
