@@ -30,9 +30,9 @@ class Load extends Command
             return;
         }
 
-        $use_latest_snapshot = $this->option('latest') ?: false;
+        $useLatestSnapshot = $this->option('latest') ?: false;
 
-        if ($use_latest_snapshot) {
+        if ($useLatestSnapshot) {
             $name = $snapShots->last()->name;
         } else {
             $name = $this->argument('name') ?: $this->askForSnapshotName();
