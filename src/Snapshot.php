@@ -5,10 +5,14 @@ namespace Spatie\DbSnapshots;
 use Carbon\Carbon;
 use Illuminate\Filesystem\FilesystemAdapter as Disk;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Spatie\DbSnapshots\Events\DeletedSnapshot;
 use Spatie\DbSnapshots\Events\DeletingSnapshot;
 use Spatie\DbSnapshots\Events\LoadedSnapshot;
 use Spatie\DbSnapshots\Events\LoadingSnapshot;
+use \Exception;
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 class Snapshot
 {
@@ -23,6 +27,9 @@ class Snapshot
 
     /** @var string */
     public $compressionExtension = null;
+
+    /** @var bool */
+    private $useStream = false;
 
     public function __construct(Disk $disk, string $fileName)
     {
@@ -40,6 +47,12 @@ class Snapshot
         $this->name = pathinfo($fileName, PATHINFO_FILENAME);
     }
 
+    public function useStream()
+    {
+        $this->useStream = true;
+        return $this;
+    }
+
     public function load(string $connectionName = null)
     {
         event(new LoadingSnapshot($this));
@@ -50,6 +63,13 @@ class Snapshot
 
         $this->dropAllCurrentTables();
 
+        $this->useStream ? $this->loadStream($connectionName) : $this->loadAsync($connectionName);
+
+        event(new LoadedSnapshot($this));
+    }
+
+    public function loadAsync(string $connectionName = null)
+    {
         $dbDumpContents = $this->disk->get($this->fileName);
 
         if ($this->compressionExtension === 'gz') {
@@ -57,29 +77,12 @@ class Snapshot
         }
 
         DB::connection($connectionName)->unprepared($dbDumpContents);
-
-        event(new LoadedSnapshot($this));
     }
 
     public function loadStream(string $connectionName = null)
     {
-        event(new LoadingSnapshot($this));
-
-        if ($connectionName !== null) {
-            DB::setDefaultConnection($connectionName);
-        }
-
-        $this->dropAllCurrentTables();
-
-        if ($this->compressionExtension === 'gz') {
-            $dumpFilePath = $this->decompress();
-        } else {
-            $dumpFilePath = $this->disk->path($this->fileName);
-        }
-
+        $dumpFilePath = $this->compressionExtension === 'gz' ? $this->streamDecompress() : $this->disk->path($this->fileName);
         $this->streamFileIntoDB($dumpFilePath, $connectionName);
-
-        event(new LoadedSnapshot($this));
     }
 
     public function streamFileIntoDB($path, string $connectionName = null)
@@ -89,13 +92,14 @@ class Snapshot
         }
 
         $tmpLine = '';
+
         $lines = file($path);
         $errors = [];
 
         foreach ($lines as $line) {
 
             // Skip it if line is a comment
-            if (substr($line, 0, 2) == '--' || trim($line) == '') {
+            if (substr($line, 0, 2) === '--' || trim($line) == '') {
                 continue;
             }
 
@@ -103,10 +107,10 @@ class Snapshot
             $tmpLine .= $line;
 
             // If the line ends with a semicolon, it is the end of the query - run it
-            if (substr(trim($line), -1, 1) == ';') {
+            if (substr(trim($line), -1, 1) === ';') {
                 try {
                     DB::connection($connectionName)->unprepared($tmpLine);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $errors[] = [
                         'query'   => $tmpLine,
                         'message' => $e->getMessage(),
