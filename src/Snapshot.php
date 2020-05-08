@@ -74,7 +74,6 @@ class Snapshot
         if ($this->compressionExtension === 'gz') {
             $dumpFilePath = $this->decompress();
         } else {
-
             $dumpFilePath = $this->disk->path($this->fileName);
         }
 
@@ -90,8 +89,8 @@ class Snapshot
         }
 
         $tmpLine = '';
-        $lines   = file($path);
-        $errors  = [];
+        $lines = file($path);
+        $errors = [];
 
         foreach ($lines as $line) {
 
@@ -121,6 +120,7 @@ class Snapshot
         if (empty($errors)) {
             return true;
         }
+
         return $errors;
     }
 
@@ -139,14 +139,14 @@ class Snapshot
 
         $buffer_size = 4096; // read 4kb at a time
 
-        while(feof($stream)!==true) {
+        while (feof($stream) !== true) {
             fwrite($fileDest, fread($stream, $buffer_size));
         }
 
-        $fileSource = gzopen($gzPath, "rb");
+        $fileSource = gzopen($gzPath, 'rb');
         $fileDest = fopen($sqlPath, 'w');
 
-        while(feof($fileSource)!==true) {
+        while (feof($fileSource) !== true) {
             fwrite($fileDest, gzread($fileSource, $buffer_size));
         }
 
