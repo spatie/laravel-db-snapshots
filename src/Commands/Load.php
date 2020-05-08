@@ -12,7 +12,7 @@ class Load extends Command
     use AsksForSnapshotName;
     use ConfirmableTrait;
 
-    protected $signature = 'snapshot:load {name?} {--connection=} {--force} --disk';
+    protected $signature = 'snapshot:load {name?} {--connection=} {--force} {--stream} --disk';
 
     protected $description = 'Load up a snapshot.';
 
@@ -40,7 +40,11 @@ class Load extends Command
             return;
         }
 
-        $snapshot->loadStream($this->option('connection'));
+        if ($this->option('stream')) {
+            $snapshot->loadStream($this->option('connection'));
+        } else {
+            $snapshot->load($this->option('connection'));
+        }
 
         $this->info("Snapshot `{$name}` loaded!");
     }
