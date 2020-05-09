@@ -128,23 +128,20 @@ class Snapshot
         return $errors;
     }
 
-    public function decompress()
+    public function streamDecompress()
     {
-        $stream = $this->disk->readStream($this->fileName);
+        $stream      = $this->disk->readStream($this->fileName);
+        $directory   = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))->create();
+        $loadPath    = $directory->path('temp-load.tmp');
+        $gzPath      = $loadPath.'.gz';
+        $sqlPath     = $loadPath.'.sql';
+        $fileDest    = fopen($gzPath, 'w');
+        $buffer_size = 4096;
 
-        $directory = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))->create();
-
-        $loadPath = $directory->path('temp-load.tmp');
-
-        $gzPath = $loadPath.'.gz';
-        $sqlPath = $loadPath.'.sql';
-
-        $fileDest = fopen($gzPath, 'w');
-
-        $buffer_size = 4096; // read 4kb at a time
-
-        while (feof($stream) !== true) {
-            fwrite($fileDest, fread($stream, $buffer_size));
+        if (!file_exists($this->disk->path($this->fileName))) {
+            while (feof($stream) !== true) {
+                fwrite($fileDest, fread($stream, $buffer_size));
+            }
         }
 
         $fileSource = gzopen($gzPath, 'rb');
