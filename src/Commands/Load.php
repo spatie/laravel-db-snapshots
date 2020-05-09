@@ -40,10 +40,11 @@ class Load extends Command
             return;
         }
 
-        $this->option('stream') ?
-            $snapshot->loadStream($this->option('connection')) :
-            $snapshot->load($this->option('connection'));
+        if ($this->option('stream')) {
+            $snapshot->useStream();
+        }
 
+        $snapshot->load($this->option('connection'));
 
         $this->info("Snapshot `{$name}` loaded!");
     }

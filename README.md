@@ -126,6 +126,12 @@ To load a previous dump to another DB connection:
 php artisan snapshot:load my-first-dump --connection=connectionName
 ```
 
+To load a dump using streams (useful for large files where you might run out of memory):
+
+```bash
+php artisan snapshot:load my-first-dump --stream
+```
+
 To list all the dumps run:
 
 ```bash
@@ -143,6 +149,23 @@ To remove all backups except the most recent 2
 ```bash
 php artisan snapshot:cleanup --keep=2
 ```
+
+## Use programmatically
+
+Load the latest snapshot using streams
+```php
+use Illuminate\Support\Facades\Storage;
+use Spatie\DbSnapshots\Snapshot;
+
+$disk  = Storage::disk('snapshots_remote');
+$files = $disk->files();
+$snapshotName = end($files);
+
+$snapshot =  new Snapshot($disk, $snapshotName);
+
+$snapshot->useStream()->load();
+```
+
 
 ## Events
 
