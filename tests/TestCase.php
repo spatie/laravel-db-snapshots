@@ -61,7 +61,7 @@ abstract class TestCase extends Orchestra
 
         $contents = $this->disk->get($fileName);
 
-        $this->assertRegExp($needle, $contents);
+        $this->assertMatchesRegularExpression($needle, $contents);
     }
 
     protected function setupDatabase()
