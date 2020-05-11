@@ -32,12 +32,10 @@ class Load extends Command
 
         $useLatestSnapshot = $this->option('latest') ?: false;
 
-        if ($useLatestSnapshot) {
-            $name = $snapShots->last()->name;
-        } else {
-            $name = $this->argument('name') ?: $this->askForSnapshotName();
-        }
-
+        $name = $useLatestSnapshot
+            ? $snapShots->last()->name;
+            : $this->argument('name') ?: $this->askForSnapshotName();
+   
         $snapshot = app(SnapshotRepository::class)->findByName($name);
 
         if (! $snapshot) {
