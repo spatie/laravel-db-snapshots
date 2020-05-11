@@ -49,6 +49,16 @@ class LoadTest extends TestCase
     }
 
     /** @test */
+    public function it_can_load_the_latest_snapshot()
+    {
+        $this->assertSnapshotNotLoaded('snapshot4');
+
+        Artisan::call('snapshot:load', ['--latest' => true]);
+
+        $this->assertSnapshotLoaded('snapshot4');
+    }
+
+    /** @test */
     public function it_can_load_a_snapshot_with_connection_option()
     {
         $this->assertSnapshotNotLoaded('snapshot2');
