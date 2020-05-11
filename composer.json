@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": "^7.2",
+        "php": "^7.3",
         "illuminate/support": "^6.0|^7.0",
         "league/flysystem": "^1.0.41",
         "spatie/db-dumper": "^2.11",
