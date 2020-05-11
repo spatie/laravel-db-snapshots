@@ -35,7 +35,7 @@ class Load extends Command
         $name = $useLatestSnapshot
             ? $snapShots->last()->name
             : $this->argument('name') ?: $this->askForSnapshotName();
-   
+
         $snapshot = app(SnapshotRepository::class)->findByName($name);
 
         if (! $snapshot) {
