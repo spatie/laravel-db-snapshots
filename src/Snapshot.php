@@ -33,6 +33,9 @@ class Snapshot
     /** @var bool */
     private $useStream = false;
 
+    /** @var bool */
+    private $showProgress = false;
+
     /** @var array */
     private $errors = [];
 
@@ -61,6 +64,12 @@ class Snapshot
         return $this;
     }
 
+    public function showProgress()
+    {
+        $this->showProgress = true;
+        return $this;
+    }
+
     public function load(string $connectionName = null)
     {
         event(new LoadingSnapshot($this));
@@ -86,8 +95,11 @@ class Snapshot
         $dbDumpContents = $this->disk->get($this->fileName);
 
         if ($this->compressionExtension === 'gz') {
+            event(new SnapshotStatus($this, 'Decompressing snapshot...'));
             $dbDumpContents = gzdecode($dbDumpContents);
         }
+
+        event(new SnapshotStatus($this, 'Importing SQL...'));
 
         DB::connection($connectionName)->unprepared($dbDumpContents);
     }
@@ -125,8 +137,15 @@ class Snapshot
         }
 
         $tmpLine = '';
+        $counter = $this->showProgress ? 0 : false;
 
-        $file = $this->getFileHandler($path)->each(function ($line) use(&$tmpLine, $connectionName) {
+        event(new SnapshotStatus($this, 'Importing SQL...'));
+
+        $file = $this->getFileHandler($path)->each(function ($line) use(&$tmpLine, &$counter, $connectionName) {
+
+            if ($counter !== false && $counter % 500 === 0) {
+                echo '.';
+            }
 
             // Skip it if line is a comment
             if (substr($line, 0, 2) === '--' || trim($line) == '') {
@@ -140,6 +159,10 @@ class Snapshot
                 try {
                     DB::connection($connectionName)->unprepared($tmpLine);
                 } catch (Exception $e) {
+
+                    if ($counter !== false) {
+                        echo 'E';
+                    }
 
                     preg_match_all('/INSERT INTO `(.*)`/mU', $e->getMessage(), $matches);
 
@@ -159,6 +182,7 @@ class Snapshot
 
                 $tmpLine = '';
             }
+            $counter++;
         });
 
         if ($counter !== false) {
@@ -180,6 +204,8 @@ class Snapshot
                            ->path('temp-load.tmp').'.gz';
         $fileDest    = fopen($gzFilePath, 'w');
         $buffer_size = 16384;
+
+        event(new SnapshotStatus($this, 'Downloading snapshot...'));
 
         if (!file_exists($this->disk->path($this->fileName))) {
             while (feof($stream) !== true) {
@@ -213,6 +239,8 @@ class Snapshot
 
     protected function dropAllCurrentTables()
     {
+        event(new SnapshotStatus($this, 'Dropping all current database tables...'));
+
         DB::connection(DB::getDefaultConnection())
             ->getSchemaBuilder()
             ->dropAllTables();
