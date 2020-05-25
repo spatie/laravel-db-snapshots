@@ -81,7 +81,7 @@ class Snapshot
 
         $this->dropAllCurrentTables();
 
-        $status = $this->useStream ? $this->loadStream($connectionName) : $this->loadAsync($connectionName);
+        $this->useStream ? $this->loadStream($connectionName) : $this->loadAsync($connectionName);
 
         event(new LoadedSnapshot($this));
     }
@@ -142,7 +142,7 @@ class Snapshot
 
         event(new SnapshotStatus($this, 'Importing SQL...'));
 
-        $file = $this->getFileHandler($path)->each(function ($line) use (&$tmpLine, &$counter, $connectionName) {
+        $this->getFileHandler($path)->each(function ($line) use (&$tmpLine, &$counter, $connectionName) {
             if ($counter !== false && $counter % 500 === 0) {
                 echo '.';
             }
@@ -165,17 +165,19 @@ class Snapshot
 
                     preg_match_all('/INSERT INTO `(.*)`/mU', $e->getMessage(), $matches);
 
-                    unset($matches[0]);
+                    if (is_array($matches)) {
+                        unset($matches[0]);
 
-                    foreach ($matches as $match) {
-                        if (empty($match[0])) {
-                            continue;
+                        foreach ($matches as $match) {
+                            if (empty($match[0])) {
+                                continue;
+                            }
+                            $tableName = $match[0];
+                            if (! isset($this->errors[$tableName])) {
+                                $this->errors[$tableName] = 0;
+                            }
+                            $this->errors[$tableName]++;
                         }
-                        $tableName = $match[0];
-                        if (! isset($this->errors[$tableName])) {
-                            $this->errors[$tableName] = 0;
-                        }
-                        $this->errors[$tableName]++;
                     }
                 }
 
@@ -202,7 +204,6 @@ class Snapshot
                            ->create()
                            ->path('temp-load.tmp').'.gz';
         $fileDest = fopen($gzFilePath, 'w');
-        $buffer_size = 16384;
 
         event(new SnapshotStatus($this, 'Downloading snapshot...'));
 
