@@ -7,11 +7,13 @@ use Illuminate\Filesystem\FilesystemAdapter as Disk;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\LazyCollection;
 use Spatie\DbSnapshots\Events\DeletedSnapshot;
 use Spatie\DbSnapshots\Events\DeletingSnapshot;
 use Spatie\DbSnapshots\Events\LoadedSnapshot;
 use Spatie\DbSnapshots\Events\LoadingSnapshot;
 use \Exception;
+use Spatie\DbSnapshots\Events\SnapshotStatus;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 class Snapshot
@@ -30,6 +32,12 @@ class Snapshot
 
     /** @var bool */
     private $useStream = false;
+
+    /** @var array */
+    private $errors = [];
+
+    /** @var int */
+    CONST STREAM_BUFFER_SIZE = 16384;
 
     public function __construct(Disk $disk, string $fileName)
     {
@@ -63,12 +71,17 @@ class Snapshot
 
         $this->dropAllCurrentTables();
 
-        $this->useStream ? $this->loadStream($connectionName) : $this->loadAsync($connectionName);
+        $status = $this->useStream ? $this->loadStream($connectionName) : $this->loadAsync($connectionName);
 
         event(new LoadedSnapshot($this));
     }
 
-    public function loadAsync(string $connectionName = null)
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
+    protected function loadAsync(string $connectionName = null)
     {
         $dbDumpContents = $this->disk->get($this->fileName);
 
@@ -79,13 +92,33 @@ class Snapshot
         DB::connection($connectionName)->unprepared($dbDumpContents);
     }
 
-    public function loadStream(string $connectionName = null)
+    protected function loadStream(string $connectionName = null)
     {
-        $dumpFilePath = $this->compressionExtension === 'gz' ? $this->streamDecompress() : $this->disk->path($this->fileName);
-        $this->streamFileIntoDB($dumpFilePath, $connectionName);
+        $dumpFilePath = $this->compressionExtension === 'gz' ?
+            $this->downloadExternalSnapshort() :
+            $this->disk->path($this->fileName);
+
+        return $this->streamFileIntoDB($dumpFilePath, $connectionName);
     }
 
-    public function streamFileIntoDB($path, string $connectionName = null)
+    protected function getFileHandler($path) : LazyCollection
+    {
+        return LazyCollection::make(function () use($path) {
+            if ($this->compressionExtension === 'gz') {
+                $handle = gzopen($path, 'r');
+                while (!gzeof($handle)) {
+                    yield gzgets($handle, self::STREAM_BUFFER_SIZE);
+                }
+            } else {
+                $handle = $this->disk->readStream($path);
+                while (($line = fgets($handle)) !== false) {
+                    yield $line;
+                }
+            }
+        });
+    }
+
+    protected function streamFileIntoDB($path, string $connectionName = null)
     {
         if ($connectionName !== null) {
             DB::setDefaultConnection($connectionName);
@@ -93,17 +126,13 @@ class Snapshot
 
         $tmpLine = '';
 
-        $lines = file($path);
-        $errors = [];
-
-        foreach ($lines as $line) {
+        $file = $this->getFileHandler($path)->each(function ($line) use(&$tmpLine, $connectionName) {
 
             // Skip it if line is a comment
             if (substr($line, 0, 2) === '--' || trim($line) == '') {
-                continue;
+                return;
             }
 
-            // Add this line to the current segment
             $tmpLine .= $line;
 
             // If the line ends with a semicolon, it is the end of the query - run it
@@ -111,52 +140,56 @@ class Snapshot
                 try {
                     DB::connection($connectionName)->unprepared($tmpLine);
                 } catch (Exception $e) {
-                    $errors[] = [
-                        'query'   => $tmpLine,
-                        'message' => $e->getMessage(),
-                    ];
+
+                    preg_match_all('/INSERT INTO `(.*)`/mU', $e->getMessage(), $matches);
+
+                    unset($matches[0]);
+
+                    foreach($matches as $match) {
+                        if (empty($match[0])) {
+                            continue;
+                        }
+                        $tableName = $match[0];
+                        if (!isset($this->errors[$tableName])) {
+                            $this->errors[$tableName] = 0;
+                        }
+                        $this->errors[$tableName]++;
+                    }
                 }
 
                 $tmpLine = '';
             }
+        });
+
+        if ($counter !== false) {
+            echo PHP_EOL;
         }
 
-        if (empty($errors)) {
-            return true;
+        if (!empty($this->errors)) {
+            return $this->errors;
         }
 
-        return $errors;
+        return true;
     }
 
-    public function streamDecompress()
+    public function downloadExternalSnapshort()
     {
         $stream      = $this->disk->readStream($this->fileName);
-        $directory   = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))->create();
-        $loadPath    = $directory->path('temp-load.tmp');
-        $gzPath      = $loadPath.'.gz';
-        $sqlPath     = $loadPath.'.sql';
-        $fileDest    = fopen($gzPath, 'w');
-        $buffer_size = 4096;
+        $gzFilePath  = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))
+                           ->create()
+                           ->path('temp-load.tmp').'.gz';
+        $fileDest    = fopen($gzFilePath, 'w');
+        $buffer_size = 16384;
 
         if (!file_exists($this->disk->path($this->fileName))) {
             while (feof($stream) !== true) {
-                fwrite($fileDest, fread($stream, $buffer_size));
+                fwrite($fileDest, gzread($stream, self::STREAM_BUFFER_SIZE));
             }
         }
 
-        $fileSource = gzopen($gzPath, 'rb');
-        $fileDest = fopen($sqlPath, 'w');
-
-        while (feof($fileSource) !== true) {
-            fwrite($fileDest, gzread($fileSource, $buffer_size));
-        }
-
-        fclose($stream);
-        fclose($fileDest);
-
         $this->disk = Storage::disk('local');
 
-        return $sqlPath;
+        return $gzFilePath;
     }
 
     public function delete()
