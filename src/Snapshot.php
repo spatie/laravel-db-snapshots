@@ -3,16 +3,15 @@
 namespace Spatie\DbSnapshots;
 
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Filesystem\FilesystemAdapter as Disk;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\LazyCollection;
 use Spatie\DbSnapshots\Events\DeletedSnapshot;
 use Spatie\DbSnapshots\Events\DeletingSnapshot;
 use Spatie\DbSnapshots\Events\LoadedSnapshot;
 use Spatie\DbSnapshots\Events\LoadingSnapshot;
-use \Exception;
 use Spatie\DbSnapshots\Events\SnapshotStatus;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 
@@ -40,7 +39,7 @@ class Snapshot
     private $errors = [];
 
     /** @var int */
-    CONST STREAM_BUFFER_SIZE = 16384;
+    const STREAM_BUFFER_SIZE = 16384;
 
     public function __construct(Disk $disk, string $fileName)
     {
@@ -61,12 +60,14 @@ class Snapshot
     public function useStream()
     {
         $this->useStream = true;
+
         return $this;
     }
 
     public function showProgress()
     {
         $this->showProgress = true;
+
         return $this;
     }
 
@@ -113,12 +114,12 @@ class Snapshot
         return $this->streamFileIntoDB($dumpFilePath, $connectionName);
     }
 
-    protected function getFileHandler($path) : LazyCollection
+    protected function getFileHandler($path): LazyCollection
     {
-        return LazyCollection::make(function () use($path) {
+        return LazyCollection::make(function () use ($path) {
             if ($this->compressionExtension === 'gz') {
                 $handle = gzopen($path, 'r');
-                while (!gzeof($handle)) {
+                while (! gzeof($handle)) {
                     yield gzgets($handle, self::STREAM_BUFFER_SIZE);
                 }
             } else {
@@ -141,8 +142,7 @@ class Snapshot
 
         event(new SnapshotStatus($this, 'Importing SQL...'));
 
-        $file = $this->getFileHandler($path)->each(function ($line) use(&$tmpLine, &$counter, $connectionName) {
-
+        $file = $this->getFileHandler($path)->each(function ($line) use (&$tmpLine, &$counter, $connectionName) {
             if ($counter !== false && $counter % 500 === 0) {
                 echo '.';
             }
@@ -159,7 +159,6 @@ class Snapshot
                 try {
                     DB::connection($connectionName)->unprepared($tmpLine);
                 } catch (Exception $e) {
-
                     if ($counter !== false) {
                         echo 'E';
                     }
@@ -168,12 +167,12 @@ class Snapshot
 
                     unset($matches[0]);
 
-                    foreach($matches as $match) {
+                    foreach ($matches as $match) {
                         if (empty($match[0])) {
                             continue;
                         }
                         $tableName = $match[0];
-                        if (!isset($this->errors[$tableName])) {
+                        if (! isset($this->errors[$tableName])) {
                             $this->errors[$tableName] = 0;
                         }
                         $this->errors[$tableName]++;
@@ -189,7 +188,7 @@ class Snapshot
             echo PHP_EOL;
         }
 
-        if (!empty($this->errors)) {
+        if (! empty($this->errors)) {
             return $this->errors;
         }
 
@@ -198,16 +197,16 @@ class Snapshot
 
     public function downloadExternalSnapshort()
     {
-        $stream      = $this->disk->readStream($this->fileName);
-        $gzFilePath  = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))
+        $stream = $this->disk->readStream($this->fileName);
+        $gzFilePath = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))
                            ->create()
                            ->path('temp-load.tmp').'.gz';
-        $fileDest    = fopen($gzFilePath, 'w');
+        $fileDest = fopen($gzFilePath, 'w');
         $buffer_size = 16384;
 
         event(new SnapshotStatus($this, 'Downloading snapshot...'));
 
-        if (!file_exists($this->disk->path($this->fileName))) {
+        if (! file_exists($this->disk->path($this->fileName))) {
             while (feof($stream) !== true) {
                 fwrite($fileDest, gzread($stream, self::STREAM_BUFFER_SIZE));
             }
