@@ -12,7 +12,7 @@ class Load extends Command
     use AsksForSnapshotName;
     use ConfirmableTrait;
 
-    protected $signature = 'snapshot:load {name?} {--connection=} {--force} {--stream} --disk';
+    protected $signature = 'snapshot:load {name?} {--connection=} {--force} {--stream} --disk {--latest}';
 
     protected $description = 'Load up a snapshot.';
 
@@ -30,7 +30,11 @@ class Load extends Command
             return;
         }
 
-        $name = $this->argument('name') ?: $this->askForSnapshotName();
+        $useLatestSnapshot = $this->option('latest') ?: false;
+
+        $name = $useLatestSnapshot
+            ? $snapShots->last()->name
+            : ($this->argument('name') ?: $this->askForSnapshotName());
 
         $snapshot = app(SnapshotRepository::class)->findByName($name);
 
