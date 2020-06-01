@@ -14,7 +14,7 @@ class CannotCreateDisk extends Exception
             return new static("Cannot create a disk `{$diskName}`. There are no disks set up.");
         }
 
-        $existingDiskNames = implode(array_keys($disks), ', ');
+        $existingDiskNames = implode(', ', array_keys($disks));
 
         return new static("Cannot create a disk `{$diskName}`. Known disknames are {$existingDiskNames}.");
     }
