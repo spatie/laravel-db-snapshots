@@ -5,14 +5,14 @@ namespace Spatie\DbSnapshots\Test;
 use Carbon\Carbon;
 use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Artisan;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Spatie\DbSnapshots\DbSnapshotsServiceProvider;
 
 abstract class TestCase extends Orchestra
 {
-    /** @var \Illuminate\Filesystem\FilesystemAdapter */
-    protected $disk;
+    protected FilesystemAdapter $disk;
 
     public function setUp(): void
     {
@@ -30,7 +30,7 @@ abstract class TestCase extends Orchestra
      *
      * @return array
      */
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [
             DbSnapshotsServiceProvider::class,

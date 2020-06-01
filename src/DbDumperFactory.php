@@ -82,7 +82,7 @@ class DbDumperFactory
             $methodValue = is_numeric($configName) ? null : $configValue;
 
             $methodName = static::determineValidMethodName($dbDumper, $methodName);
-dump($methodValue);
+
             if (method_exists($dbDumper, $methodName)) {
                 static::callMethodOnDumper($dbDumper, $methodName, $methodValue);
             }
@@ -91,7 +91,14 @@ dump($methodValue);
         return $dbDumper;
     }
 
-    protected static function callMethodOnDumper(DbDumper $dbDumper, string $methodName, ?string $methodValue = null): DbDumper
+    /**
+     * @param \Spatie\DbDumper\DbDumper $dbDumper
+     * @param string $methodName
+     * @param string|array|null $methodValue
+     *
+     * @return \Spatie\DbDumper\DbDumper
+     */
+    protected static function callMethodOnDumper(DbDumper $dbDumper, string $methodName, $methodValue = null): DbDumper
     {
         if (! $methodValue) {
             $dbDumper->$methodName();
