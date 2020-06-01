@@ -6,8 +6,7 @@ use Spatie\DbSnapshots\Snapshot;
 
 class CreatedSnapshot
 {
-    /** @var \Spatie\DbSnapshots\Snapshot */
-    public $snapshot;
+    public Snapshot $snapshot;
 
     public function __construct(Snapshot $snapshot)
     {

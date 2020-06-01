@@ -91,14 +91,7 @@ class DbDumperFactory
         return $dbDumper;
     }
 
-    /**
-     * @param \Spatie\DbDumper\DbDumper $dbDumper
-     * @param string $methodName
-     * @param string|null $methodValue
-     *
-     * @return \Spatie\DbDumper\DbDumper
-     */
-    protected static function callMethodOnDumper(DbDumper $dbDumper, string $methodName, $methodValue): DbDumper
+    protected static function callMethodOnDumper(DbDumper $dbDumper, string $methodName, ?string $methodValue = null): DbDumper
     {
         if (! $methodValue) {
             $dbDumper->$methodName();

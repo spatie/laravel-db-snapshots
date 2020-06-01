@@ -13,11 +13,9 @@ use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 class SnapshotFactory
 {
-    /** @var \Spatie\DbSnapshots\DbDumperFactory */
-    protected $dumperFactory;
+    protected DbDumperFactory $dumperFactory;
 
-    /** @var \Illuminate\Contracts\Filesystem\Factory */
-    protected $filesystemFactory;
+    protected Factory $filesystemFactory;
 
     public function __construct(DbDumperFactory $dumperFactory, Factory $filesystemFactory)
     {

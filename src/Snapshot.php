@@ -12,17 +12,13 @@ use Spatie\DbSnapshots\Events\LoadingSnapshot;
 
 class Snapshot
 {
-    /** @var \Illuminate\Filesystem\FilesystemAdapter */
-    public $disk;
+    public Disk $disk;
 
-    /** @var string */
-    public $fileName;
+    public string $fileName;
 
-    /** @var string */
-    public $name;
+    public string $name;
 
-    /** @var string */
-    public $compressionExtension = null;
+    public ?string $compressionExtension = null;
 
     public function __construct(Disk $disk, string $fileName)
     {

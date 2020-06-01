@@ -12,9 +12,6 @@ use Spatie\DbSnapshots\Commands\Load;
 
 class DbSnapshotsServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap the application services.
-     */
     public function boot()
     {
         if ($this->app->runningInConsole()) {
@@ -46,9 +43,6 @@ class DbSnapshotsServiceProvider extends ServiceProvider
         ]);
     }
 
-    /**
-     * Register the application services.
-     */
     public function register()
     {
         $this->mergeConfigFrom(__DIR__.'/../config/db-snapshots.php', 'db-snapshots');

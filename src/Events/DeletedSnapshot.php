@@ -6,11 +6,9 @@ use Illuminate\Filesystem\FilesystemAdapter;
 
 class DeletedSnapshot
 {
-    /** @var string */
-    public $fileName;
+    public string $fileName;
 
-    /** @var \Illuminate\Filesystem\FilesystemAdapter */
-    public $disk;
+    public FilesystemAdapter $disk;
 
     public function __construct(string $fileName, FilesystemAdapter $disk)
     {
