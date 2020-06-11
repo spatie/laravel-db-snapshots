@@ -34,42 +34,6 @@ php artisan snapshot:cleanup --keep=2
 
 This package supports MySQL, PostgreSQL and SQLite.
 
-# Quickly dump and load databases
-
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-db-snapshots.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-db-snapshots)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/spatie/laravel-db-snapshots/run-tests?label=tests)
-[![Quality Score](https://img.shields.io/scrutinizer/g/spatie/laravel-db-snapshots.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/laravel-db-snapshots)
-[![StyleCI](https://styleci.io/repos/85295298/shield?branch=master)](https://styleci.io/repos/85295298)
-[![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-db-snapshots.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-db-snapshots)
-
-This package provides Artisan commands to quickly dump and load databases in a Laravel application.
-
-```bash
-# Create a dump
-php artisan snapshot:create my-first-dump
-
-# Make some changes to your db
-# ...
-
-# Create another dump
-php artisan snapshot:create my-second-dump
-
-# Load up the first dump
-php artisan snapshot:load my-first-dump
-
-# Load up the latest dump
-php artisan snapshot:load --latest
-
-# List all snapshots
-php artisan snapshot:list
-
-# Remove old snapshots. Keeping only the most recent
-php artisan snapshot:cleanup --keep=2
-```
-
-This package supports MySQL, PostgreSQL and SQLite.
-
 ## Support us
 
 Learn how to create a package like this one, by watching our premium video course:
