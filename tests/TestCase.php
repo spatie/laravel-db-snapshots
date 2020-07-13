@@ -101,6 +101,7 @@ abstract class TestCase extends Orchestra
             $this->disk->put("snapshot{$i}.sql", $this->getSnapshotContent("snapshot{$i}"));
         }
 
+        // Make sure the next snapshot is created at least 1 second after the ones that created earlier.
         sleep(1);
 
         $this->disk->put('snapshot4.sql.gz', gzencode($this->getSnapshotContent('snapshot4')));
