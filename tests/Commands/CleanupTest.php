@@ -25,4 +25,16 @@ class CleanupTest extends TestCase
         $this->disk->assertMissing('snapshot1.sql');
         $this->disk->assertExists('snapshot2.sql');
     }
+
+    /** @test */
+    public function it_can_delete_all_snapshots_if_keep_is_zero()
+    {
+        $this->clearDisk();
+
+        $this->disk->put('snapshot.sql', 'new content');
+
+        Artisan::call('snapshot:cleanup --keep=0');
+
+        $this->disk->assertMissing('snapshot.sql');
+    }
 }
