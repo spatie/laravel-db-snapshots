@@ -37,4 +37,17 @@ class CleanupTest extends TestCase
 
         $this->disk->assertMissing('snapshot.sql');
     }
+
+    /** @test */
+    public function it_warns_if_keep_is_not_specified()
+    {
+        $this->clearDisk();
+
+        $this->disk->put('snapshot.sql', 'new content');
+
+        Artisan::call('snapshot:cleanup');
+
+        $this->disk->assertExists('snapshot.sql');
+        $this->seeInConsoleOutput('No value for option --keep.');
+    }
 }
