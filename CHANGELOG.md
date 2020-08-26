@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 1.6.2 - 2020-08-25
+
+- fix cleaning up all snapshots (#102)
+
 ## 1.6.1 - 2020-06-01
 
 - fix implode() exeception on PHP 7.4 (#88)
