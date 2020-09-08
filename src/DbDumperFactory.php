@@ -70,7 +70,6 @@ class DbDumperFactory
 
     /**
      * @param array $dumpConfiguration
-     *
      * @param $dbDumper
      *
      * @return mixed
@@ -93,14 +92,14 @@ class DbDumperFactory
 
     /**
      * @param \Spatie\DbDumper\DbDumper $dbDumper
-     * @param string $methodName
-     * @param string|array|null $methodValue
+     * @param string                    $methodName
+     * @param string|array|null         $methodValue
      *
      * @return \Spatie\DbDumper\DbDumper
      */
     protected static function callMethodOnDumper(DbDumper $dbDumper, string $methodName, $methodValue = null): DbDumper
     {
-        if (! $methodValue) {
+        if (!$methodValue) {
             $dbDumper->$methodName();
 
             return $dbDumper;

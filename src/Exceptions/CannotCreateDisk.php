@@ -10,7 +10,7 @@ class CannotCreateDisk extends Exception
     {
         $disks = config('filesystems.disks', null);
 
-        if (! $disks) {
+        if (!$disks) {
             return new static("Cannot create a disk `{$diskName}`. There are no disks set up.");
         }
 

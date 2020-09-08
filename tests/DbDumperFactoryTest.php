@@ -17,12 +17,12 @@ class DbDumperFactoryTest extends TestCase
         $this->app['config']->set('database.default', 'mysql');
 
         $dbConfig = [
-            'driver' => 'mysql',
-            'host' => 'localhost',
+            'driver'   => 'mysql',
+            'host'     => 'localhost',
             'username' => 'root',
             'password' => 'myPassword',
             'database' => 'myDb',
-            'dump' => ['add_extra_option' => '--extra-option=value'],
+            'dump'     => ['add_extra_option' => '--extra-option=value'],
         ];
 
         $this->app['config']->set('database.connections.mysql', $dbConfig);
@@ -39,7 +39,7 @@ class DbDumperFactoryTest extends TestCase
     public function it_can_create_sqlite_instance()
     {
         $this->app['config']->set('database.connections.sqlite', [
-            'driver' => 'sqlite',
+            'driver'   => 'sqlite',
             'database' => 'database.sqlite',
             // host, username and password are not required for the sqlite driver
         ]);
@@ -52,7 +52,7 @@ class DbDumperFactoryTest extends TestCase
     {
         $dbConfig = [
             'driver' => 'mysql',
-            'read' => [
+            'read'   => [
                 'host' => 'localhost-read',
             ],
             'write' => [
@@ -61,7 +61,7 @@ class DbDumperFactoryTest extends TestCase
             'username' => 'root',
             'password' => 'myPassword',
             'database' => 'myDb',
-            'dump' => ['add_extra_option' => '--extra-option=value'],
+            'dump'     => ['add_extra_option' => '--extra-option=value'],
         ];
 
         $this->app['config']->set('database.connections.mysql', $dbConfig);

@@ -26,7 +26,7 @@ class Load extends Command
             return;
         }
 
-        if (! $this->confirmToProceed()) {
+        if (!$this->confirmToProceed()) {
             return;
         }
 
@@ -38,7 +38,7 @@ class Load extends Command
 
         $snapshot = app(SnapshotRepository::class)->findByName($name);
 
-        if (! $snapshot) {
+        if (!$snapshot) {
             $this->warn("Snapshot `{$name}` does not exist!");
 
             return;

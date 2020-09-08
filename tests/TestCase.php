@@ -44,14 +44,14 @@ abstract class TestCase extends Orchestra
     {
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
-            'driver' => 'sqlite',
+            'driver'   => 'sqlite',
             'database' => __DIR__.'/temp/database.sqlite',
-            'prefix' => '',
+            'prefix'   => '',
         ]);
 
         $app['config']->set('filesystems.disks.snapshots', [
             'driver' => 'local',
-            'root' => __DIR__.'/temp/snapshotsDisk',
+            'root'   => __DIR__.'/temp/snapshotsDisk',
         ]);
     }
 
@@ -72,7 +72,7 @@ abstract class TestCase extends Orchestra
             unlink($databasePath);
         }
 
-        if (! file_exists($databasePath)) {
+        if (!file_exists($databasePath)) {
             file_put_contents($databasePath, '');
         }
 
@@ -118,7 +118,7 @@ abstract class TestCase extends Orchestra
      */
     protected function seeInConsoleOutput($searchStrings)
     {
-        if (! is_array($searchStrings)) {
+        if (!is_array($searchStrings)) {
             $searchStrings = [$searchStrings];
         }
 

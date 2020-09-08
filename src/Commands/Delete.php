@@ -28,7 +28,7 @@ class Delete extends Command
 
         $snapshot = app(SnapshotRepository::class)->findByName($name);
 
-        if (! $snapshot) {
+        if (!$snapshot) {
             $this->warn("Snapshot `{$name}` does not exist!");
 
             return;
