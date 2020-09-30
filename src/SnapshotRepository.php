@@ -7,8 +7,7 @@ use Illuminate\Support\Collection;
 
 class SnapshotRepository
 {
-    /** @var \Illuminate\Filesystem\FilesystemAdapter */
-    protected $disk;
+    protected Disk $disk;
 
     public function __construct(Disk $disk)
     {

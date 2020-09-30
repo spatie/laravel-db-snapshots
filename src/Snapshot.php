@@ -17,17 +17,13 @@ use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 class Snapshot
 {
-    /** @var \Illuminate\Filesystem\FilesystemAdapter */
-    public $disk;
+    public Disk $disk;
 
-    /** @var string */
-    public $fileName;
+    public string $fileName;
 
-    /** @var string */
-    public $name;
+    public string $name;
 
-    /** @var string */
-    public $compressionExtension = null;
+    public ?string $compressionExtension = null;
 
     /** @var bool */
     private $useStream = false;

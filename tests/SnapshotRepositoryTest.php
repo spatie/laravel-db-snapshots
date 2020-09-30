@@ -7,8 +7,7 @@ use Spatie\DbSnapshots\SnapshotRepository;
 
 class SnapshotRepositoryTest extends TestCase
 {
-    /** @var \Spatie\DbSnapshots\SnapshotRepository */
-    protected $repository;
+    protected SnapshotRepository $repository;
 
     public function setUp(): void
     {

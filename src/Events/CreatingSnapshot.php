@@ -6,14 +6,11 @@ use Illuminate\Filesystem\FilesystemAdapter;
 
 class CreatingSnapshot
 {
-    /** @var string */
-    public $fileName;
+    public string $fileName;
 
-    /** @var \Illuminate\Filesystem\FilesystemAdapter */
-    public $disk;
+    public FilesystemAdapter $disk;
 
-    /** @var string */
-    public $connectionName;
+    public string $connectionName;
 
     public function __construct(string $fileName, FilesystemAdapter $disk, string $connectionName)
     {

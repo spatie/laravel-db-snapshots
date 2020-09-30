@@ -2,6 +2,19 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 1.7.0 - 2020-09-08
+
+- add support for Laravel 8
+
+## 1.6.2 - 2020-08-25
+
+- fix cleaning up all snapshots (#102)
+
+## 1.6.1 - 2020-06-01
+
+- fix implode() exeception on PHP 7.4 (#88)
+- drop support for anything below PHP 7.4
+
 ## 1.6.0 - 2020-05-11
 
 - drop support for Laravel 5 and PHP 7.3
