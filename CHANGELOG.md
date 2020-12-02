@@ -2,6 +2,11 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+
+## 1.7.1 - 2020-12-02
+
+- add support for PHP 8.0
+
 ## 1.7.0 - 2020-09-08
 
 - add support for Laravel 8
