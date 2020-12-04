@@ -86,7 +86,7 @@ return [
 
     /**
      * The connection to be used to create snapshots. Set this to null
-     * to use the default configured in `config/databases.php`
+     * to use the default configured in `config/database.php`
      */
     'default_connection' => null,
 
@@ -159,6 +159,14 @@ To remove all backups except the most recent 2
 ```bash
 php artisan snapshot:cleanup --keep=2
 ```
+
+If you need to pass extra options to the underlying db-dumper, add a `dump` key to the database **connection** with a key of `addExtraOptions` and a value of the option. For example, to prevent the Postgres db dumper from setting the owner, you'd add:
+```
+'dump' => [
+    'addExtraOption' => '--no-owner',
+],
+```
+To the `pgsql` connection in `database.php`
 
 ## Events
 
