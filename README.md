@@ -49,9 +49,11 @@ We highly appreciate you sending us a postcard from your hometown, mentioning wh
 
 ## Installation
 
+> For PHP 7.x and/or Laravel 6.x, use v1.x of this package.
+
 You can install the package via Composer:
 
-``` bash
+```bash
 composer require spatie/laravel-db-snapshots
 ```
 
@@ -179,23 +181,23 @@ There are several events fired which can be used to perform some logic of your o
 - `Spatie\DbSnapshots\Events\DeletingSnapshot`: will be fired before a snapshot is deleted
 - `Spatie\DbSnapshots\Events\DeletedSnapshot`: will be fired after a snapshot has been deleted
 
-## Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
-
 ## Testing
 
-``` bash
+```bash
 composer test
 ```
 
+## Changelog
+
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
-## Security
+## Security Vulnerabilities
 
-If you discover any security related issues, please email freek@spatie.be instead of using the issue tracker.
+Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
 
 ## Credits
 

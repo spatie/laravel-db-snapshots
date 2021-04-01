@@ -36,7 +36,7 @@ class Snapshot
         $this->name = pathinfo($fileName, PATHINFO_FILENAME);
     }
 
-    public function load(string $connectionName = null)
+    public function load(string $connectionName = null): void
     {
         event(new LoadingSnapshot($this));
 
@@ -57,7 +57,7 @@ class Snapshot
         event(new LoadedSnapshot($this));
     }
 
-    public function delete()
+    public function delete(): void
     {
         event(new DeletingSnapshot($this));
 
