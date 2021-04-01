@@ -11,7 +11,7 @@ trait AsksForSnapshotName
     {
         $snapShots = app(SnapshotRepository::class)->getAll();
 
-        $names = $snapShots->map(fn (Snapshot $snapshot) =>$snapshot->name)
+        $names = $snapShots->map(fn (Snapshot $snapshot) => $snapshot->name)
             ->values()->toArray();
 
         return $this->choice('Which snapshot?', $names, 0);

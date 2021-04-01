@@ -8,8 +8,8 @@ use Spatie\DbSnapshots\Commands\Create;
 use Spatie\DbSnapshots\Commands\Delete;
 use Spatie\DbSnapshots\Commands\ListSnapshots;
 use Spatie\DbSnapshots\Commands\Load;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class DbSnapshotsServiceProvider extends PackageServiceProvider
 {
