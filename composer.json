@@ -16,16 +16,16 @@
         }
     ],
     "require": {
-        "php": "^7.4|^8.0",
-        "illuminate/support": "^6.0|^7.0|^8.0",
+        "php": "^8.0",
+        "illuminate/support": "^7.0|^8.0",
         "league/flysystem": "^1.0.41",
-        "spatie/db-dumper": "^2.11",
-        "spatie/temporary-directory": "^1.1"
+        "spatie/db-dumper": "^3.0",
+        "spatie/temporary-directory": "^2.0"
     },
     "require-dev": {
         "mockery/mockery": "^1.4",
-        "orchestra/testbench": "^4.0|^5.0|^6.0",
-        "phpunit/phpunit": "^9.1|^9.3"
+        "orchestra/testbench": "^5.0|^6.0",
+        "phpunit/phpunit": "^9.5"
     },
     "autoload": {
         "psr-4": {
