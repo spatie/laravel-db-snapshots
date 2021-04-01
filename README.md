@@ -49,9 +49,11 @@ We highly appreciate you sending us a postcard from your hometown, mentioning wh
 
 ## Installation
 
+> For PHP 7.x and/or Laravel 6.x, use v1.x of this package.
+
 You can install the package via Composer:
 
-``` bash
+```bash
 composer require spatie/laravel-db-snapshots
 ```
 
