@@ -68,13 +68,6 @@ class DbDumperFactory
         throw CannotCreateDbDumper::unsupportedDriver($driver);
     }
 
-    /**
-     * @param array $dumpConfiguration
-     *
-     * @param $dbDumper
-     *
-     * @return mixed
-     */
     protected static function processExtraDumpParameters(array $dumpConfiguration, $dbDumper): DbDumper
     {
         collect($dumpConfiguration)->each(function ($configValue, $configName) use ($dbDumper) {
@@ -91,14 +84,7 @@ class DbDumperFactory
         return $dbDumper;
     }
 
-    /**
-     * @param \Spatie\DbDumper\DbDumper $dbDumper
-     * @param string $methodName
-     * @param string|array|null $methodValue
-     *
-     * @return \Spatie\DbDumper\DbDumper
-     */
-    protected static function callMethodOnDumper(DbDumper $dbDumper, string $methodName, $methodValue = null): DbDumper
+    protected static function callMethodOnDumper(DbDumper $dbDumper, string $methodName, string | array | null $methodValue = null): DbDumper
     {
         if (! $methodValue) {
             $dbDumper->$methodName();
@@ -114,8 +100,6 @@ class DbDumperFactory
     protected static function determineValidMethodName(DbDumper $dbDumper, string $methodName): string
     {
         return collect([$methodName, 'set'.ucfirst($methodName)])
-            ->first(function (string $methodName) use ($dbDumper) {
-                return method_exists($dbDumper, $methodName);
-            }, '');
+            ->first(fn (string $methodName) => method_exists($dbDumper, $methodName), '');
     }
 }

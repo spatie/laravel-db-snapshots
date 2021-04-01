@@ -23,8 +23,6 @@ class Cleanup extends Command
             return;
         }
 
-        $snapshots->splice($keep)->each(function ($snapshot) {
-            $snapshot->delete();
-        });
+        $snapshots->splice($keep)->each(fn ($snapshot) => $snapshot->delete());
     }
 }

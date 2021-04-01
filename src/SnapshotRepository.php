@@ -7,11 +7,10 @@ use Illuminate\Support\Collection;
 
 class SnapshotRepository
 {
-    protected Disk $disk;
-
-    public function __construct(Disk $disk)
-    {
-        $this->disk = $disk;
+    public function __construct(
+        protected Disk $disk,
+    ) {
+        //
     }
 
     public function getAll(): Collection
@@ -26,18 +25,12 @@ class SnapshotRepository
 
                 return pathinfo($fileName, PATHINFO_EXTENSION) === 'sql';
             })
-            ->map(function (string $fileName) {
-                return new Snapshot($this->disk, $fileName);
-            })
-            ->sortByDesc(function (Snapshot $snapshot) {
-                return $snapshot->createdAt()->toDateTimeString();
-            });
+            ->map(fn (string $fileName) => new Snapshot($this->disk, $fileName))
+            ->sortByDesc(fn (Snapshot $snapshot) => $snapshot->createdAt()->toDateTimeString());
     }
 
     public function findByName(string $name)
     {
-        return $this->getAll()->first(function (Snapshot $snapshot) use ($name) {
-            return $snapshot->name === $name;
-        });
+        return $this->getAll()->first(fn (Snapshot $snapshot) => $snapshot->name === $name);
     }
 }

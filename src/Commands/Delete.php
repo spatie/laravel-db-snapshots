@@ -16,8 +16,6 @@ class Delete extends Command
 
     public function handle()
     {
-        $snapShots = app(SnapshotRepository::class)->getAll();
-
         if (app(SnapshotRepository::class)->getAll()->isEmpty()) {
             $this->warn('No snapshots found. Run `snapshot:create` to create snapshots.');
 

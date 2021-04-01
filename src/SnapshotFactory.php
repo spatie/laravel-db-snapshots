@@ -13,15 +13,11 @@ use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 class SnapshotFactory
 {
-    protected DbDumperFactory $dumperFactory;
-
-    protected Factory $filesystemFactory;
-
-    public function __construct(DbDumperFactory $dumperFactory, Factory $filesystemFactory)
-    {
-        $this->dumperFactory = $dumperFactory;
-
-        $this->filesystemFactory = $filesystemFactory;
+    public function __construct(
+        protected DbDumperFactory $dumperFactory,
+        protected Factory $filesystemFactory,
+    ) {
+        //
     }
 
     public function create(string $snapshotName, string $diskName, string $connectionName, bool $compress = false): Snapshot
@@ -66,7 +62,7 @@ class SnapshotFactory
         return $factory::createForConnection($connectionName);
     }
 
-    protected function createDump(string $connectionName, string $fileName, FilesystemAdapter $disk, bool $compress = false)
+    protected function createDump(string $connectionName, string $fileName, FilesystemAdapter $disk, bool $compress = false): void
     {
         $directory = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))->create();
 
