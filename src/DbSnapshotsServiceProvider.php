@@ -3,23 +3,32 @@
 namespace Spatie\DbSnapshots;
 
 use Illuminate\Contracts\Filesystem\Factory;
-use Illuminate\Support\ServiceProvider;
 use Spatie\DbSnapshots\Commands\Cleanup;
 use Spatie\DbSnapshots\Commands\Create;
 use Spatie\DbSnapshots\Commands\Delete;
 use Spatie\DbSnapshots\Commands\ListSnapshots;
 use Spatie\DbSnapshots\Commands\Load;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Spatie\LaravelPackageTools\Package;
 
-class DbSnapshotsServiceProvider extends ServiceProvider
+class DbSnapshotsServiceProvider extends PackageServiceProvider
 {
-    public function boot()
+    public function configurePackage(Package $package): void
     {
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__.'/../config/db-snapshots.php' => config_path('db-snapshots.php'),
-            ], 'config');
-        }
+        $package
+            ->name('laravel-db-snapshots')
+            ->hasConfigFile()
+            ->hasCommands([
+                'command.snapshot:create',
+                'command.snapshot:load',
+                'command.snapshot:delete',
+                'command.snapshot:list',
+                'command.snapshot:cleanup',
+            ]);
+    }
 
+    public function bootingPackage()
+    {
         $this->app->bind(SnapshotRepository::class, function () {
             $diskName = config('db-snapshots.disk');
 
@@ -33,18 +42,5 @@ class DbSnapshotsServiceProvider extends ServiceProvider
         $this->app->bind('command.snapshot:delete', Delete::class);
         $this->app->bind('command.snapshot:list', ListSnapshots::class);
         $this->app->bind('command.snapshot:cleanup', Cleanup::class);
-
-        $this->commands([
-            'command.snapshot:create',
-            'command.snapshot:load',
-            'command.snapshot:delete',
-            'command.snapshot:list',
-            'command.snapshot:cleanup',
-        ]);
-    }
-
-    public function register()
-    {
-        $this->mergeConfigFrom(__DIR__.'/../config/db-snapshots.php', 'db-snapshots');
     }
 }

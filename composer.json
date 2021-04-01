@@ -20,6 +20,7 @@
         "illuminate/support": "^7.0|^8.0",
         "league/flysystem": "^1.0.41",
         "spatie/db-dumper": "^3.0",
+        "spatie/laravel-package-tools": "^1.6",
         "spatie/temporary-directory": "^2.0"
     },
     "require-dev": {
