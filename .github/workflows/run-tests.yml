@@ -1,44 +1,49 @@
 name: run-tests
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
-    test:
-        runs-on: ${{ matrix.os }}
-        strategy:
-            fail-fast: true
-            matrix:
-                os: [ubuntu-latest]
-                php: [8.0]
-                laravel: [8.*, 7.*]
-                dependency-version: [prefer-lowest, prefer-stable]
-                include:
-                    -   laravel: 8.*
-                        testbench: 6.*
-                    -   laravel: 7.*
-                        testbench: 5.*
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ ubuntu-latest ]
+        php: [ 8.0 ]
+        laravel: [ 8.*, 7.* ]
+        dependency-version: [ prefer-lowest, prefer-stable ]
+        include:
+          - laravel: 8.*
+            testbench: 6.*
+          - laravel: 7.*
+            testbench: 5.*
 
-        name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }} - ${{ matrix.os }}
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }} - ${{ matrix.os }}
 
-        steps:
-            -   name: Checkout code
-                uses: actions/checkout@v2
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-            -   name: Install SQLite 3
-                run: |
-                    sudo apt-get install sqlite3
+      - name: Install SQLite 3
+        run: |
+          sudo apt-get install sqlite3
 
-            -   name: Setup PHP
-                uses: shivammathur/setup-php@v2
-                with:
-                    php-version: ${{ matrix.php }}
-                    extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
-                    coverage: none
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
+          coverage: none
 
-            -   name: Install dependencies
-                run: |
-                    composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-                    composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
+      - name: Setup problem matchers
+        run: |
+          echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+          echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
-            -   name: Execute tests
-                run: vendor/bin/phpunit
+      - name: Install dependencies
+        run: |
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+
+      - name: Execute tests
+        run: vendor/bin/phpunit --no-coverage
