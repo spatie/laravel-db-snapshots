@@ -2,7 +2,7 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
-## 2.0.0 - unreleased
+## 2.0.0 - 2021-04-02
 
 - require PHP 8+
 - drop support for PHP 7
