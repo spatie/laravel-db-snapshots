@@ -2,6 +2,13 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.0.0 - unreleased
+
+- require PHP 8+
+- drop support for PHP 7
+- drop support for Laravel 6
+- use PHP 8 syntax
+- implement `spatie/laravel-package-tools`
 
 ## 1.7.1 - 2020-12-02
 
