@@ -30,6 +30,8 @@ jobs:
         run: |
           sudo apt-get install sqlite3
 
+      - run: sqlite3 -version
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
