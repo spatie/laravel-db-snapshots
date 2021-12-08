@@ -9,7 +9,7 @@ use Spatie\DbSnapshots\SnapshotFactory;
 
 class Create extends Command
 {
-    protected $signature = 'snapshot:create {name?} {--connection=} {--compress}';
+    protected $signature = 'snapshot:create {name?} {--connection=} {--compress} {--table=*}';
 
     protected $description = 'Create a new snapshot.';
 
@@ -25,11 +25,15 @@ class Create extends Command
 
         $compress = $this->option('compress') || config('db-snapshots.compress', false);
 
+        $tables = $this->option('table') ?: config('db-snapshots.tables', null);
+        $tables = is_string($tables) ? explode(',', $tables) : $tables;
+
         $snapshot = app(SnapshotFactory::class)->create(
             $snapshotName,
             config('db-snapshots.disk'),
             $connectionName,
-            $compress
+            $compress,
+            $tables
         );
 
         $size = Format::humanReadableSize($snapshot->size());

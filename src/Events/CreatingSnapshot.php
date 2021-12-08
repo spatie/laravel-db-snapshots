@@ -10,6 +10,7 @@ class CreatingSnapshot
         public string $fileName,
         public FilesystemAdapter $disk,
         public string $connectionName,
+        public ?array $tables = null
     ) {
         //
     }
