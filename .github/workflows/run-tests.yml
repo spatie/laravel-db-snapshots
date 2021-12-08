@@ -26,7 +26,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install SQLite 3
+      - name: Install SQLite 3 (3.32 is required and only included in Ubuntu 21.x)
         run: |
           sudo apt-get install build-essential tar wget
           wget https://www.sqlite.org/2021/sqlite-autoconf-3370000.tar.gz
