@@ -64,6 +64,15 @@ abstract class TestCase extends Orchestra
         $this->assertMatchesRegularExpression($needle, $contents);
     }
 
+    protected function assertFileOnDiskFailsRegex($fileName, $needle)
+    {
+        $this->disk->assertExists($fileName);
+
+        $contents = $this->disk->get($fileName);
+
+        $this->assertDoesNotMatchRegularExpression($needle, $contents);
+    }
+
     protected function setupDatabase()
     {
         $databasePath = __DIR__.'/temp/database.sqlite';
@@ -77,6 +86,16 @@ abstract class TestCase extends Orchestra
         }
 
         $this->app['db']->connection()->getSchemaBuilder()->create('models', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+        });
+
+        $this->app['db']->connection()->getSchemaBuilder()->create('users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+        });
+
+        $this->app['db']->connection()->getSchemaBuilder()->create('posts', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
         });
