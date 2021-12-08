@@ -28,9 +28,7 @@ jobs:
 
       - name: Install SQLite 3
         run: |
-          sudo apt-get install sqlite3
-
-      - run: sqlite3 -version
+          sudo apt-get upgrade sqlite3
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
