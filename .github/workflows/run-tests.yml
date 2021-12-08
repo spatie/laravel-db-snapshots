@@ -31,7 +31,7 @@ jobs:
           sudo apt-get install build-essential tar wget
           wget https://www.sqlite.org/2021/sqlite-autoconf-3370000.tar.gz
           tar xzf sqlite-autoconf-3370000.tar.gz
-          cd sqlite-autoconf-3220000
+          cd sqlite-autoconf-3370000
           ./configure
           make
           sudo make install
