@@ -28,8 +28,14 @@ jobs:
 
       - name: Install SQLite 3
         run: |
-          sudo apt-get update
-          sudo apt-get upgrade sqlite3
+          sudo apt-get install build-essential tar wget
+          wget https://www.sqlite.org/2021/sqlite-autoconf-3370000.tar.gz
+          tar xzf sqlite-autoconf-3370000.tar.gz
+          cd sqlite-autoconf-3220000
+          ./configure
+          make
+          sudo make install
+          sqlite3 --version
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
