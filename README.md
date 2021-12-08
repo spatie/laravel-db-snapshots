@@ -101,6 +101,13 @@ return [
      * Create dump files that are gzipped
      */
     'compress' => false,
+
+    /*
+     * Only these tables will be included in the snapshot. Set to `null` to include all tables.
+     *
+     * Default: `null`
+     */
+    'tables' => null,
 ];
 ```
 
@@ -117,6 +124,14 @@ Giving your snapshot a name is optional. If you don't pass a name the current da
 ```bash
 # Creates a snapshot named something like `2017-03-17 14:31`
 php artisan snapshot:create
+```
+
+Maybe you only want to snapshot a couple of tables. You can do this by passing the `--table` multiple times or as a comma separated list:
+
+```bash
+# Bot commands create a snapshot containing only the posts and users tables:
+php artisan snapshot:create --table=posts,users
+php artisan snapshot:create --table=posts --table=users
 ```
 
 When creating snapshots, you can optionally create compressed snapshots.  To do this either pass the `--compress` option on the command line, or set the `db-snapshots.compress` configuration option to `true`:
