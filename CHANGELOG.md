@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.1.0 - 2021-12-08
+
+- Add `--table` option to specify tables to include in the snapshot
+
+**Full Changelog**: https://github.com/spatie/laravel-db-snapshots/compare/2.0.0...2.1.0
+
 ## 2.0.0 - 2021-04-02
 
 - require PHP 8+
