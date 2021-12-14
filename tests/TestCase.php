@@ -7,6 +7,8 @@ use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Spatie\DbSnapshots\DbSnapshotsServiceProvider;
 
@@ -149,5 +151,13 @@ abstract class TestCase extends Orchestra
         foreach ($searchStrings as $searchString) {
             $this->assertStringContainsString((string) $searchString, $output);
         }
+    }
+
+    protected function assertTableNotExists(string $table)
+    {
+        $this->assertFalse(
+            Schema::hasTable($table),
+            "Table {$table} should not exist"
+        );
     }
 }

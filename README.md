@@ -159,6 +159,12 @@ To load a previous dump to another DB connection:
 php artisan snapshot:load my-first-dump --connection=connectionName
 ```
 
+By default, `snapshot:load` will drop all existing tables in the database. If you don't want this behaviour, you can pass the `--drop-tables=0` option:
+
+```bash
+php artisan snapshot:load my-first-dump --drop-tables=0
+```
+
 To list all the dumps run:
 
 ```bash

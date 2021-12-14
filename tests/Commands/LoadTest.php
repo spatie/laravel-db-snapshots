@@ -2,8 +2,8 @@
 
 namespace Spatie\DbSnapshots\Commands\Test;
 
-use DB;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Mockery as m;
 use Spatie\DbSnapshots\Test\TestCase;
 
@@ -36,6 +36,36 @@ class LoadTest extends TestCase
         Artisan::call('snapshot:load');
 
         $this->assertSnapshotLoaded('snapshot2');
+    }
+
+    /** @test */
+    public function it_drops_tables_when_loading_a_snapshot()
+    {
+        DB::insert('insert into `users` (`id`, `name`) values (1, "test")');
+
+        $this->command
+            ->shouldReceive('choice')
+            ->once()
+            ->andReturn('snapshot2');
+
+        Artisan::call('snapshot:load');
+
+        $this->assertTableNotExists('users');
+    }
+
+    /** @test */
+    public function it_can_load_a_snapshot_without_dropping_existing_tables()
+    {
+        DB::insert('insert into `users` (`id`, `name`) values (1, "test")');
+
+        $this->command
+            ->shouldReceive('choice')
+            ->once()
+            ->andReturn('snapshot2');
+
+        Artisan::call('snapshot:load', ['--drop-tables' => 0]);
+
+        $this->assertDatabaseCount('users', 1);
     }
 
     /** @test */
