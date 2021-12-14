@@ -12,7 +12,7 @@ class Load extends Command
     use AsksForSnapshotName;
     use ConfirmableTrait;
 
-    protected $signature = 'snapshot:load {name?} {--connection=} {--force} --disk {--latest}';
+    protected $signature = 'snapshot:load {name?} {--connection=} {--force} --disk {--latest} {--drop-tables=1}';
 
     protected $description = 'Load up a snapshot.';
 
@@ -36,6 +36,7 @@ class Load extends Command
             ? $snapShots->first()->name
             : ($this->argument('name') ?: $this->askForSnapshotName());
 
+        /** @var \Spatie\DbSnapshots\Snapshot $snapshot */
         $snapshot = app(SnapshotRepository::class)->findByName($name);
 
         if (! $snapshot) {
@@ -44,7 +45,7 @@ class Load extends Command
             return;
         }
 
-        $snapshot->load($this->option('connection'));
+        $snapshot->load($this->option('connection'), (bool) $this->option('drop-tables'));
 
         $this->info("Snapshot `{$name}` loaded!");
     }

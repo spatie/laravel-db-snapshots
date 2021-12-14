@@ -36,7 +36,7 @@ class Snapshot
         $this->name = pathinfo($fileName, PATHINFO_FILENAME);
     }
 
-    public function load(string $connectionName = null): void
+    public function load(string $connectionName = null, bool $dropTables = true): void
     {
         event(new LoadingSnapshot($this));
 
@@ -44,7 +44,9 @@ class Snapshot
             DB::setDefaultConnection($connectionName);
         }
 
-        $this->dropAllCurrentTables();
+        if ($dropTables) {
+            $this->dropAllCurrentTables();
+        }
 
         $dbDumpContents = $this->disk->get($this->fileName);
 
