@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.2.0 - 2021-12-14
+
+- add `--drop-tables` option to `snapshot:load`
+
+**Full Changelog**: https://github.com/spatie/laravel-db-snapshots/compare/2.1.0...2.2.0
+
 ## 2.1.0 - 2021-12-08
 
 - Add `--table` option to specify tables to include in the snapshot
