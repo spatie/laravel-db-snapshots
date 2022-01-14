@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.2.1 - 2022-01-14
+
+- allow Laravel 9
+
 ## 2.2.0 - 2021-12-14
 
 - add `--drop-tables` option to `snapshot:load`
