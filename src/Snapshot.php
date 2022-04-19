@@ -4,7 +4,6 @@ namespace Spatie\DbSnapshots;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Console\OutputStyle;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Facades\Storage;
 use Spatie\DbSnapshots\Events\LoadedSnapshot;
@@ -13,7 +12,6 @@ use Spatie\DbSnapshots\Events\LoadingSnapshot;
 use Spatie\DbSnapshots\Events\DeletingSnapshot;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Illuminate\Filesystem\FilesystemAdapter as Disk;
-use Spatie\DbSnapshots\Exceptions\CannotLoadSnapshot;
 
 class Snapshot
 {
@@ -69,26 +67,6 @@ class Snapshot
         event(new LoadedSnapshot($this));
     }
 
-    protected function getUncompressedLocalSnapshotPath(): string
-    {
-        $stream = $this->disk->readStream($this->fileName);
-
-        $uncompressedFilePath = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))
-                           ->create()
-                           ->path('snapshot.sql');
-
-        $fileDest = fopen($uncompressedFilePath, 'w');
-
-        while (feof($stream) !== true) {
-            fwrite($fileDest, gzdecode(gzread($stream, self::STREAM_BUFFER_SIZE)));
-        }
-
-        fclose($fileDest);
-
-        $this->disk = Storage::disk('local');
-        return $uncompressedFilePath;
-    }
-
     protected function loadAsync(string $connectionName = null)
     {
         $dbDumpContents = $this->disk->get($this->fileName);
@@ -113,29 +91,39 @@ class Snapshot
 
     protected function loadStream(string $connectionName = null)
     {
-        $snapshotFilePath = $this->compressionExtension === 'gz'
-                            ? $this->getUncompressedLocalSnapshotPath()
-                            : $this->disk->path($this->fileName);
-
-        if (!is_readable($snapshotFilePath)) {
-            throw CannotLoadSnapshot::fileNotReadable($snapshotFilePath);
-        }
-
-        LazyCollection::make(function() use ($snapshotFilePath, $bar) {
-            $handle = fopen($snapshotFilePath, 'r');
+        LazyCollection::make(function() {
+            $stream = $this->disk->readStream($this->fileName);
 
             $statement = '';
-            while (($line = fgets($handle)) !== false) {
-                if ($this->shouldIgnoreLine($line)) {
-                    continue;
-                }
+            while(!feof($stream)) {
+                $chunk = $this->compressionExtension === 'gz'
+                        ? gzdecode(gzread($stream, self::STREAM_BUFFER_SIZE))
+                        : fread($stream, self::STREAM_BUFFER_SIZE);
 
-                $statement .= $line;
+                $lines = explode("\n", $chunk);
+                foreach($lines as $idx => $line) {
+                    if ($this->shouldIgnoreLine($line)) {
+                        continue;
+                    }
 
-                if (substr(trim($statement), -1, 1) === ';') {
-                    yield $statement;
-                    $statement = '';
+                    $statement .= $line;
+
+                    // Carry-over the last line to the next chunk since it
+                    // is possible that this chunk finished mid-line right on
+                    // a semi-colon.
+                    if (count($lines) == $idx + 1) {
+                        break;
+                    }
+
+                    if (substr(trim($statement), -1, 1) === ';') {
+                        yield $statement;
+                        $statement = '';
+                    }
                 }
+            }
+
+            if (substr(trim($statement), -1, 1) === ';') {
+                yield $statement;
             }
         })->each(function (string $statement) use($connectionName) {
             DB::connection($connectionName)->unprepared($statement);
