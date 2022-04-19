@@ -168,7 +168,7 @@ By default, `snapshot:load` will drop all existing tables in the database. If yo
 php artisan snapshot:load my-first-dump --drop-tables=0
 ```
 
-By default, `snapshot:load` will load the entire snapshot into memory which may cause memory problems on large files. To get avoid this, you can pass the `--stream` option to stream the snapshot to the database one statement at a time:
+By default, `snapshot:load` will load the entire snapshot into memory which may cause problems when using large files. To get avoid this, you can pass the `--stream` option to stream the snapshot to the database one statement at a time:
 
 ```bash
 php artisan snapshot:load my-first-dump --stream
