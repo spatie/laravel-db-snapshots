@@ -4,6 +4,7 @@ namespace Spatie\DbSnapshots;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Console\OutputStyle;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Facades\Storage;
 use Spatie\DbSnapshots\Events\LoadedSnapshot;
@@ -26,8 +27,6 @@ class Snapshot
 
     private bool $useStream = false;
 
-    private bool $showProgress = false;
-
     const STREAM_BUFFER_SIZE = 16384;
 
     public function __construct(Disk $disk, string $fileName)
@@ -49,13 +48,6 @@ class Snapshot
     public function useStream()
     {
         $this->useStream = true;
-
-        return $this;
-    }
-
-    public function showProgressBar()
-    {
-        $this->showProgress = true;
 
         return $this;
     }
@@ -105,17 +97,7 @@ class Snapshot
             $dbDumpContents = gzdecode($dbDumpContents);
         }
 
-        if ($this->showProgress) {
-            $bar = $this->output->createProgressBar(1);
-            $bar->start();
-        }
-
         DB::connection($connectionName)->unprepared($dbDumpContents);
-
-        if ($this->showProgress) {
-            $bar->progress();
-            $bar->finish();
-        }
     }
 
     protected function isASqlComment(string $line): bool
@@ -139,20 +121,11 @@ class Snapshot
             throw CannotLoadSnapshot::fileNotReadable($snapshotFilePath);
         }
 
-        if ($this->showProgress) {
-            $bar = $this->output->createProgressBar(filesize($snapshotFilePath));
-            $bar->start();
-        }
-
-        LazyCollection::make(function() use ($snapshotFilePath) {
+        LazyCollection::make(function() use ($snapshotFilePath, $bar) {
             $handle = fopen($snapshotFilePath, 'r');
 
             $statement = '';
             while (($line = fgets($handle)) !== false) {
-                if ($this->showProgress) {
-                    $bar->advance(strlen($line));
-                }
-
                 if ($this->shouldIgnoreLine($line)) {
                     continue;
                 }
@@ -167,10 +140,6 @@ class Snapshot
         })->each(function (string $statement) use($connectionName) {
             DB::connection($connectionName)->unprepared($statement);
         });
-
-        if ($this->showProgress) {
-            $bar->finish();
-        }
     }
 
     public function delete(): void

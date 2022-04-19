@@ -12,7 +12,7 @@ class Load extends Command
     use AsksForSnapshotName;
     use ConfirmableTrait;
 
-    protected $signature = 'snapshot:load {name?} {--connection=} {--force} {--stream} {--progress} --disk {--latest} {--drop-tables=1}';
+    protected $signature = 'snapshot:load {name?} {--connection=} {--force} {--stream} --disk {--latest} {--drop-tables=1}';
 
     protected $description = 'Load up a snapshot.';
 
@@ -47,10 +47,6 @@ class Load extends Command
 
         if ($this->option('stream') ?: false) {
             $snapshot->useStream();
-        }
-
-        if ($this->option('progress') ?: false) {
-            $snapshot->showProgressBar();
         }
 
         $snapshot->load($this->option('connection'), (bool) $this->option('drop-tables'));
