@@ -39,6 +39,40 @@ class LoadTest extends TestCase
     }
 
     /** @test */
+    public function it_can_load_a_snapshot_via_streaming()
+    {
+        $this->assertSnapshotNotLoaded('snapshot2');
+
+        $this->command
+            ->shouldReceive('choice')
+            ->once()
+            ->andReturn('snapshot2');
+
+        Artisan::call('snapshot:load', [
+            '--stream' => true
+        ]);
+
+        $this->assertSnapshotLoaded('snapshot2');
+    }
+
+    /** @test */
+    public function it_can_load_a_compressed_snapshot_via_streaming()
+    {
+        $this->assertSnapshotNotLoaded('snapshot4');
+
+        $this->command
+            ->shouldReceive('choice')
+            ->once()
+            ->andReturn('snapshot4');
+
+        Artisan::call('snapshot:load', [
+            '--stream' => true
+        ]);
+
+        $this->assertSnapshotLoaded('snapshot4');
+    }
+
+    /** @test */
     public function it_drops_tables_when_loading_a_snapshot()
     {
         DB::insert('insert into `users` (`id`, `name`) values (1, "test")');
