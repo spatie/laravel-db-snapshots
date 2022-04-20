@@ -3,15 +3,13 @@
 namespace Spatie\DbSnapshots;
 
 use Carbon\Carbon;
+use Illuminate\Filesystem\FilesystemAdapter as Disk;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\LazyCollection;
-use Illuminate\Support\Facades\Storage;
-use Spatie\DbSnapshots\Events\LoadedSnapshot;
 use Spatie\DbSnapshots\Events\DeletedSnapshot;
-use Spatie\DbSnapshots\Events\LoadingSnapshot;
 use Spatie\DbSnapshots\Events\DeletingSnapshot;
-use Spatie\TemporaryDirectory\TemporaryDirectory;
-use Illuminate\Filesystem\FilesystemAdapter as Disk;
+use Spatie\DbSnapshots\Events\LoadedSnapshot;
+use Spatie\DbSnapshots\Events\LoadingSnapshot;
 
 class Snapshot
 {
@@ -25,7 +23,7 @@ class Snapshot
 
     private bool $useStream = false;
 
-    const STREAM_BUFFER_SIZE = 16384;
+    public const STREAM_BUFFER_SIZE = 16384;
 
     public function __construct(Disk $disk, string $fileName)
     {
@@ -86,22 +84,23 @@ class Snapshot
     protected function shouldIgnoreLine(string $line): bool
     {
         $line = trim($line);
+
         return empty($line) || $this->isASqlComment($line);
     }
 
     protected function loadStream(string $connectionName = null)
     {
-        LazyCollection::make(function() {
+        LazyCollection::make(function () {
             $stream = $this->disk->readStream($this->fileName);
 
             $statement = '';
-            while(!feof($stream)) {
+            while (! feof($stream)) {
                 $chunk = $this->compressionExtension === 'gz'
                         ? gzdecode(gzread($stream, self::STREAM_BUFFER_SIZE))
                         : fread($stream, self::STREAM_BUFFER_SIZE);
 
                 $lines = explode("\n", $chunk);
-                foreach($lines as $idx => $line) {
+                foreach ($lines as $idx => $line) {
                     if ($this->shouldIgnoreLine($line)) {
                         continue;
                     }
@@ -125,7 +124,7 @@ class Snapshot
             if (substr(trim($statement), -1, 1) === ';') {
                 yield $statement;
             }
-        })->each(function (string $statement) use($connectionName) {
+        })->each(function (string $statement) use ($connectionName) {
             DB::connection($connectionName)->unprepared($statement);
         });
     }

@@ -49,7 +49,7 @@ class LoadTest extends TestCase
             ->andReturn('snapshot2');
 
         Artisan::call('snapshot:load', [
-            '--stream' => true
+            '--stream' => true,
         ]);
 
         $this->assertSnapshotLoaded('snapshot2');
@@ -66,7 +66,7 @@ class LoadTest extends TestCase
             ->andReturn('snapshot4');
 
         Artisan::call('snapshot:load', [
-            '--stream' => true
+            '--stream' => true,
         ]);
 
         $this->assertSnapshotLoaded('snapshot4');
