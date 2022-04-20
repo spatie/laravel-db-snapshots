@@ -2,6 +2,18 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.3.0 - 2022-04-20
+
+## What's Changed
+
+- Stream large snapshots by @jasonlfunk in https://github.com/spatie/laravel-db-snapshots/pull/118
+
+## New Contributors
+
+- @jasonlfunk made their first contribution in https://github.com/spatie/laravel-db-snapshots/pull/118
+
+**Full Changelog**: https://github.com/spatie/laravel-db-snapshots/compare/2.2.1...2.3.0
+
 ## 2.2.1 - 2022-01-14
 
 - allow Laravel 9
