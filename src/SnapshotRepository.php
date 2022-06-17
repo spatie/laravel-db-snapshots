@@ -19,10 +19,7 @@ class SnapshotRepository
             ->filter(function (string $fileName) {
                 $pathinfo = pathinfo($fileName);
 
-                if (
-                    array_key_exists('extension', $pathinfo)
-                    && $pathinfo['extension'] === 'gz'
-                ) {
+                if (($pathinfo['extension'] ?? null) === 'gz') {
                     $fileName = $pathinfo['filename'];
                 }
 
