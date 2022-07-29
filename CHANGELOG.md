@@ -2,6 +2,18 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.3.1 - 2022-07-29
+
+### What's Changed
+
+- Fix undefined array key error in `SnapshotRepository::getAll()` by @eli-s-r in https://github.com/spatie/laravel-db-snapshots/pull/120
+
+### New Contributors
+
+- @eli-s-r made their first contribution in https://github.com/spatie/laravel-db-snapshots/pull/120
+
+**Full Changelog**: https://github.com/spatie/laravel-db-snapshots/compare/2.3.0...2.3.1
+
 ## 2.3.0 - 2022-04-20
 
 ## What's Changed
