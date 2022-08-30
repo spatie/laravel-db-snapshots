@@ -91,4 +91,41 @@ class CreateTest extends TestCase
         $this->assertFileOnDiskPassesRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/');
         $this->assertFileOnDiskFailsRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
     }
+    /** @test */
+    public function it_can_create_a_snapshot_without_excluded_tables_specified_in_the_command_options()
+    {
+        Artisan::call('snapshot:create', ['--exclude' => ['users', 'posts']]);
+
+        $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
+
+        $this->assertFileOnDiskFailsRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "users"/');
+        $this->assertFileOnDiskFailsRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/');
+        $this->assertFileOnDiskPassesRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
+    }
+
+    /** @test */
+    public function it_can_create_a_snapshot_without_excluded_tables_specified_in_the_command_options_as_a_string()
+    {
+        Artisan::call('snapshot:create', ['--exclude' => 'users,posts']);
+
+        $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
+
+        $this->assertFileOnDiskFailsRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "users"/');
+        $this->assertFileOnDiskFailsRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/');
+        $this->assertFileOnDiskPassesRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
+    }
+
+    /** @test */
+    public function it_can_create_a_snapshot_without_excluded_tables_specified_in_the_config()
+    {
+        $this->app['config']->set('db-snapshots.exclude', ['users', 'posts']);
+
+        Artisan::call('snapshot:create');
+
+        $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
+
+        $this->assertFileOnDiskFailsRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "users"/');
+        $this->assertFileOnDiskFailsRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/');
+        $this->assertFileOnDiskPassesRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
+    }
 }
