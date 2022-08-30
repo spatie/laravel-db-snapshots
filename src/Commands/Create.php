@@ -28,9 +28,11 @@ class Create extends Command
         $tables = $this->option('table') ?: config('db-snapshots.tables', null);
         $tables = is_string($tables) ? explode(',', $tables) : $tables;
 
-        if (is_null($tables)){
+        if (is_null($tables)) {
             $exclude = $this->option('exclude') ?: config('db-snapshots.exclude', null);
             $exclude = is_string($exclude) ? explode(',', $exclude) : $exclude;
+        } else {
+            $exclude = null;
         }
 
 
@@ -40,7 +42,7 @@ class Create extends Command
             $connectionName,
             $compress,
             $tables,
-            $exclude??null
+            $exclude
         );
 
         $size = Format::humanReadableSize($snapshot->size());
