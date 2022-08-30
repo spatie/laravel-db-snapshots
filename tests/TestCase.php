@@ -45,9 +45,12 @@ abstract class TestCase extends Orchestra
     {
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
-            'driver' => 'sqlite',
-            'database' => __DIR__.'/temp/database.sqlite',
-            'prefix' => '',
+            'driver' => 'mysql',
+            'host'=>'127.0.0.1',
+            'port'=>'3306',
+            'database'=>'test',
+            'username'=>'root',
+            'password'=>'09158585889'
         ]);
 
         $app['config']->set('filesystems.disks.snapshots', [
@@ -76,6 +79,7 @@ abstract class TestCase extends Orchestra
 
     protected function setupDatabase()
     {
+        Artisan::call('db:wipe');
         $databasePath = __DIR__.'/temp/database.sqlite';
 
         if (file_exists($databasePath)) {

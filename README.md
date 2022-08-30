@@ -84,18 +84,18 @@ This is the content of the published file:
 ```php
 return [
 
-    /**
+    /*
      * The name of the disk on which the snapshots are stored.
      */
     'disk' => 'snapshots',
 
-    /**
+    /*
      * The connection to be used to create snapshots. Set this to null
-     * to use the default configured in `config/database.php`
+     * to use the default configured in `config/databases.php`
      */
     'default_connection' => null,
 
-    /**
+    /*
      * The directory where temporary files will be stored.
      */
     'temporary_directory_path' => storage_path('app/laravel-db-snapshots/temp'),
@@ -111,7 +111,15 @@ return [
      * Default: `null`
      */
     'tables' => null,
+
+    /*
+     * All tables will be included in the snapshot expect this tables. Set to `null` to include all tables.
+     *
+     * Default: `null`
+     */
+    'exclude' => null,
 ];
+
 ```
 
 ## Usage
@@ -136,6 +144,15 @@ Maybe you only want to snapshot a couple of tables. You can do this by passing t
 php artisan snapshot:create --table=posts,users
 php artisan snapshot:create --table=posts --table=users
 ```
+
+You may want to exclude some tables from snapshot. You can do this by passing the `--exclude` multiple times or as a comma separated list:
+```bash
+# create snapshot from all tables exclude the users and posts
+php artisan snapshot:create --exclude=posts,users
+php artisan snapshot:create --exclude=posts --exclude=users
+```
+> Note: if you pass `--table` and `--exclude` in the same time it will use `--table` to create the snapshot and it's ignore the `--exclude`
+> Note: this feature is not supported in `sqlite` DB.
 
 When creating snapshots, you can optionally create compressed snapshots.  To do this either pass the `--compress` option on the command line, or set the `db-snapshots.compress` configuration option to `true`:
 
