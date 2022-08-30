@@ -152,7 +152,6 @@ php artisan snapshot:create --exclude=posts,users
 php artisan snapshot:create --exclude=posts --exclude=users
 ```
 > Note: if you pass `--table` and `--exclude` in the same time it will use `--table` to create the snapshot and it's ignore the `--exclude`
-> Note: this feature is not supported in `sqlite` DB.
 
 When creating snapshots, you can optionally create compressed snapshots.  To do this either pass the `--compress` option on the command line, or set the `db-snapshots.compress` configuration option to `true`:
 
