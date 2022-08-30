@@ -29,4 +29,11 @@ return [
      * Default: `null`
      */
     'tables' => null,
+
+    /*
+     * All tables will be included in the snapshot expect this tables. Set to `null` to include all tables.
+     *
+     * Default: `null`
+     */
+    'exclude' => null,
 ];
