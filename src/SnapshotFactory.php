@@ -35,7 +35,8 @@ class SnapshotFactory
             $fileName,
             $disk,
             $connectionName,
-            $tables
+            $tables,
+            $exclude
         ));
 
         $this->createDump($connectionName, $fileName, $disk, $compress, $tables, $exclude);

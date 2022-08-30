@@ -20,4 +20,16 @@ class CreatingSnapshotTest extends TestCase
             return $event->fileName === 'my-snapshot.sql';
         });
     }
+
+    /** @test */
+    public function creating_a_snapshot_with_exclude_will_pass_excluded_tables()
+    {
+        Event::fake();
+
+        Artisan::call('snapshot:create', ['name' => 'my-snapshot', '--exclude' => ['tb1', 'tb2']]);
+
+        Event::assertDispatched(CreatingSnapshot::class, function (CreatingSnapshot $event) {
+            return ($event->fileName === 'my-snapshot.sql') && $event->exclude === ['tb1', 'tb2'];
+        });
+    }
 }
