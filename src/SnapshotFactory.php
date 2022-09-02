@@ -20,11 +20,11 @@ class SnapshotFactory
         //
     }
 
-    public function create(string $snapshotName, string $diskName, string $connectionName, bool $compress = false, ?array $tables = null): Snapshot
+    public function create(string $snapshotName, string $diskName, string $connectionName, bool $compress = false, ?array $tables = null, ?array $exclude = null): Snapshot
     {
         $disk = $this->getDisk($diskName);
 
-        $fileName = $snapshotName.'.sql';
+        $fileName = $snapshotName . '.sql';
         $fileName = pathinfo($fileName, PATHINFO_BASENAME);
 
         if ($compress) {
@@ -35,10 +35,11 @@ class SnapshotFactory
             $fileName,
             $disk,
             $connectionName,
-            $tables
+            $tables,
+            $exclude
         ));
 
-        $this->createDump($connectionName, $fileName, $disk, $compress, $tables);
+        $this->createDump($connectionName, $fileName, $disk, $compress, $tables, $exclude);
 
         $snapshot = new Snapshot($disk, $fileName);
 
@@ -63,7 +64,7 @@ class SnapshotFactory
         return $factory::createForConnection($connectionName);
     }
 
-    protected function createDump(string $connectionName, string $fileName, FilesystemAdapter $disk, bool $compress = false, ?array $tables = null): void
+    protected function createDump(string $connectionName, string $fileName, FilesystemAdapter $disk, bool $compress = false, ?array $tables = null, ?array $exclude = null): void
     {
         $directory = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))->create();
 
@@ -77,6 +78,10 @@ class SnapshotFactory
 
         if (is_array($tables)) {
             $dbDumper->includeTables($tables);
+        }
+
+        if (is_array($exclude)) {
+            $dbDumper->excludeTables($exclude);
         }
 
         $dbDumper->dumpToFile($dumpPath);
