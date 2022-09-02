@@ -2,6 +2,18 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.4.0 - 2022-09-02
+
+### What's Changed
+
+- add --exclude to the create command by @ariaieboy in https://github.com/spatie/laravel-db-snapshots/pull/125
+
+### New Contributors
+
+- @ariaieboy made their first contribution in https://github.com/spatie/laravel-db-snapshots/pull/125
+
+**Full Changelog**: https://github.com/spatie/laravel-db-snapshots/compare/2.3.1...2.4.0
+
 ## 2.3.1 - 2022-07-29
 
 ### What's Changed
