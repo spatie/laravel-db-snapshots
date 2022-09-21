@@ -140,14 +140,14 @@ php artisan snapshot:create
 Maybe you only want to snapshot a couple of tables. You can do this by passing the `--table` multiple times or as a comma separated list:
 
 ```bash
-# Bot commands create a snapshot containing only the posts and users tables:
+# Both commands create a snapshot containing only the posts and users tables:
 php artisan snapshot:create --table=posts,users
 php artisan snapshot:create --table=posts --table=users
 ```
 
 You may want to exclude some tables from snapshot. You can do this by passing the `--exclude` multiple times or as a comma separated list:
 ```bash
-# create snapshot from all tables exclude the users and posts
+# create snapshot from all tables excluding the users and posts
 php artisan snapshot:create --exclude=posts,users
 php artisan snapshot:create --exclude=posts --exclude=users
 ```
