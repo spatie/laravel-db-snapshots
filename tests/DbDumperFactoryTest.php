@@ -72,6 +72,25 @@ class DbDumperFactoryTest extends TestCase
     }
 
     /** @test */
+    public function it_will_use_connect_via_database_when_one_is_defined()
+    {
+        $dbConfig = [
+            'driver' => 'pgsql',
+            'connect_via_database' => 'connection_pool',
+            'username' => 'root',
+            'password' => 'myPassword',
+            'database' => 'myDb',
+            'dump' => ['add_extra_option' => '--extra-option=value'],
+        ];
+
+        $this->app['config']->set('database.connections.pgsql', $dbConfig);
+
+        $dumper = DbDumperFactory::createForConnection('pgsql');
+
+        $this->assertEquals('connection_pool', $dumper->getDbName());
+    }
+
+    /** @test */
     public function it_will_throw_an_exception_when_creating_an_unknown_type_of_dumper()
     {
         $this->expectException(CannotCreateDbDumper::class);

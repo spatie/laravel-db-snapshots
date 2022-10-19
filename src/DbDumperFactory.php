@@ -32,9 +32,11 @@ class DbDumperFactory
             $fallback
         );
 
+        $dbName = $dbConfig['connect_via_database'] ?? $dbConfig['database'];
+
         $dbDumper = static::forDriver($dbConfig['driver'])
             ->setHost($dbHost ?? '')
-            ->setDbName($dbConfig['database'])
+            ->setDbName($dbName)
             ->setUserName($dbConfig['username'] ?? '')
             ->setPassword($dbConfig['password'] ?? '');
 
