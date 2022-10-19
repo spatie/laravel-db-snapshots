@@ -2,6 +2,20 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.5.0 - 2022-10-19
+
+### What's Changed
+
+- Typos in readme by @zoispag in https://github.com/spatie/laravel-db-snapshots/pull/126
+- Support connect_via_database by @daniel-de-wit in https://github.com/spatie/laravel-db-snapshots/pull/127
+
+### New Contributors
+
+- @zoispag made their first contribution in https://github.com/spatie/laravel-db-snapshots/pull/126
+- @daniel-de-wit made their first contribution in https://github.com/spatie/laravel-db-snapshots/pull/127
+
+**Full Changelog**: https://github.com/spatie/laravel-db-snapshots/compare/2.4.0...2.5.0
+
 ## 2.4.0 - 2022-09-02
 
 ### What's Changed
