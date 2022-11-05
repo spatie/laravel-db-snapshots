@@ -15,7 +15,7 @@ abstract class TestCase extends Orchestra
 {
     protected FilesystemAdapter $disk;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -46,13 +46,13 @@ abstract class TestCase extends Orchestra
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
             'driver' => 'sqlite',
-            'database' => __DIR__.'/temp/database.sqlite',
+            'database' => __DIR__ . '/temp/database.sqlite',
             'prefix' => '',
         ]);
 
         $app['config']->set('filesystems.disks.snapshots', [
             'driver' => 'local',
-            'root' => __DIR__.'/temp/snapshotsDisk',
+            'root' => __DIR__ . '/temp/snapshotsDisk',
         ]);
     }
 
@@ -76,13 +76,13 @@ abstract class TestCase extends Orchestra
 
     protected function setupDatabase()
     {
-        $databasePath = __DIR__.'/temp/database.sqlite';
+        $databasePath = __DIR__ . '/temp/database.sqlite';
 
         if (file_exists($databasePath)) {
             unlink($databasePath);
         }
 
-        if (! file_exists($databasePath)) {
+        if (!file_exists($databasePath)) {
             file_put_contents($databasePath, '');
         }
 
@@ -131,7 +131,7 @@ abstract class TestCase extends Orchestra
 
     protected function getSnapshotContent($modelName): string
     {
-        $snapshotContent = file_get_contents(__DIR__.'/fixtures/snapshotContent.sql');
+        $snapshotContent = file_get_contents(__DIR__ . '/fixtures/snapshotContent.sql');
 
         return str_replace('%%modelName%%', $modelName, $snapshotContent);
     }
@@ -141,7 +141,7 @@ abstract class TestCase extends Orchestra
      */
     protected function seeInConsoleOutput($searchStrings)
     {
-        if (! is_array($searchStrings)) {
+        if (!is_array($searchStrings)) {
             $searchStrings = [$searchStrings];
         }
 
