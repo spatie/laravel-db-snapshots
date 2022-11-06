@@ -1,23 +1,15 @@
 <?php
 
-namespace Spatie\DbSnapshots\Commands\Test;
-
-use Artisan;
-use Event;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Event;
 use Spatie\DbSnapshots\Events\DeletingSnapshot;
-use Spatie\DbSnapshots\Test\TestCase;
 
-class DeletingSnapshotTest extends TestCase
-{
-    /** @test */
-    public function deleting_a_snapshot_fires_the_deleting_snapshot_event()
-    {
-        Event::fake();
+test('deleting a snapshot fires the deleting snapshot event', function () {
+    Event::fake();
 
-        Artisan::call('snapshot:delete', ['name' => 'snapshot2']);
+    Artisan::call('snapshot:delete', ['name' => 'snapshot2']);
 
-        Event::assertDispatched(DeletingSnapshot::class, function (DeletingSnapshot $event) {
-            return $event->snapshot->fileName === 'snapshot2.sql';
-        });
-    }
-}
+    Event::assertDispatched(DeletingSnapshot::class, function (DeletingSnapshot $event) {
+        return $event->snapshot->fileName === 'snapshot2.sql';
+    });
+});
