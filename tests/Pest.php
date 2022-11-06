@@ -6,7 +6,12 @@
 |--------------------------------------------------------------------------
 */
 
+use Illuminate\Database\Schema\SchemaState;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schema;
+
 use function PHPUnit\Framework\assertDoesNotMatchRegularExpression;
+use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertMatchesRegularExpression;
 
 uses(Spatie\DbSnapshots\Test\TestCase::class)->in('.');
@@ -42,3 +47,26 @@ expect()->extend('fileOnDiskToFailRegex', function (string $needle) {
 
     return $this;
 });
+
+// Functions
+
+function seeInConsoleOutput(string|array $searchStrings): void
+{
+    if (!is_array($searchStrings)) {
+        $searchStrings = [$searchStrings];
+    }
+
+    $output = Artisan::output();
+
+    foreach ($searchStrings as $searchString) {
+        expect($output)->toContain((string) $searchString);
+    }
+}
+
+function assertTableNotExists(string $table): void
+{
+    assertFalse(
+        Schema::hasTable($table),
+        "Table {$table} should not exist"
+    );
+}

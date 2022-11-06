@@ -117,28 +117,4 @@ abstract class TestCase extends Orchestra
 
         return str_replace('%%modelName%%', $modelName, $snapshotContent);
     }
-
-    /**
-     * @param string|array $searchStrings
-     */
-    protected function seeInConsoleOutput($searchStrings)
-    {
-        if (!is_array($searchStrings)) {
-            $searchStrings = [$searchStrings];
-        }
-
-        $output = Artisan::output();
-
-        foreach ($searchStrings as $searchString) {
-            $this->assertStringContainsString((string) $searchString, $output);
-        }
-    }
-
-    protected function assertTableNotExists(string $table)
-    {
-        $this->assertFalse(
-            Schema::hasTable($table),
-            "Table {$table} should not exist"
-        );
-    }
 }
