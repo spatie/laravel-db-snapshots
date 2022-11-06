@@ -1,49 +1,33 @@
 <?php
 
-namespace Spatie\DbSnapshots\Commands\Test;
-
 use Illuminate\Support\Facades\Artisan;
 use Mockery as m;
-use Spatie\DbSnapshots\Test\TestCase;
 
-class DeleteTest extends TestCase
-{
-    /** @var \Spatie\DbSnapshots\Commands\Delete|m\Mock */
-    protected $command;
+beforeEach(function () {
+    $this->command = m::mock('Spatie\DbSnapshots\Commands\Delete[choice]');
 
-    public function setUp(): void
-    {
-        parent::setUp();
+    $this->app->bind('command.snapshot:delete', function () {
+        return $this->command;
+    });
+});
 
-        $this->command = m::mock('Spatie\DbSnapshots\Commands\Delete[choice]');
+it('can delete a snapshot', function () {
+    $this->disk->assertExists('snapshot2.sql');
 
-        $this->app->bind('command.snapshot:delete', function () {
-            return $this->command;
-        });
-    }
+    $this->command
+        ->shouldReceive('choice')
+        ->once()
+        ->andReturn('snapshot2');
 
-    /** @test */
-    public function it_can_delete_a_snapshot()
-    {
-        $this->disk->assertExists('snapshot2.sql');
+    Artisan::call('snapshot:delete');
 
-        $this->command
-            ->shouldReceive('choice')
-            ->once()
-            ->andReturn('snapshot2');
+    $this->disk->assertMissing('snapshot2.sql');
+});
 
-        Artisan::call('snapshot:delete');
+it('can delete a snapshot with a specific name', function () {
+    $this->disk->assertExists('snapshot2.sql');
 
-        $this->disk->assertMissing('snapshot2.sql');
-    }
+    Artisan::call('snapshot:delete', ['name' => 'snapshot2']);
 
-    /** @test */
-    public function it_can_delete_a_snapshot_with_a_specific_name()
-    {
-        $this->disk->assertExists('snapshot2.sql');
-
-        Artisan::call('snapshot:delete', ['name' => 'snapshot2']);
-
-        $this->disk->assertMissing('snapshot2.sql');
-    }
-}
+    $this->disk->assertMissing('snapshot2.sql');
+});

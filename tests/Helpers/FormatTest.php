@@ -1,21 +1,12 @@
 <?php
 
-namespace Spatie\DbSnapshots\Test\Helpers;
-
-use PHPUnit\Framework\TestCase;
 use Spatie\DbSnapshots\Helpers\Format;
 
-class FormatTest extends TestCase
-{
-    /** @test */
-    public function it_can_determine_a_human_readable_filesize()
-    {
-        $this->assertEquals('10 B', Format::humanReadableSize(10));
-        $this->assertEquals('100 B', Format::humanReadableSize(100));
-        $this->assertEquals('1000 B', Format::humanReadableSize(1000));
-        $this->assertEquals('9.77 KB', Format::humanReadableSize(10000));
-        $this->assertEquals('976.56 KB', Format::humanReadableSize(1000000));
-        $this->assertEquals('9.54 MB', Format::humanReadableSize(10000000));
-        $this->assertEquals('9.31 GB', Format::humanReadableSize(10000000000));
-    }
-}
+it('can determine a human readable file size')
+    ->expect(fn () => Format::humanReadableSize(10))->toEqual('10 B')
+    ->and(fn () => Format::humanReadableSize(100))->toEqual('100 B')
+    ->and(fn () => Format::humanReadableSize(1000))->toEqual('1000 B')
+    ->and(fn () => Format::humanReadableSize(10000))->toEqual('9.77 KB')
+    ->and(fn () => Format::humanReadableSize(1000000))->toEqual('976.56 KB')
+    ->and(fn () => Format::humanReadableSize(10000000))->toEqual('9.54 MB')
+    ->and(fn () => Format::humanReadableSize(10000000000))->toEqual('9.31 GB');

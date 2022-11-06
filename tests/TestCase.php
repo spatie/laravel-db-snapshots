@@ -6,16 +6,14 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Filesystem\FilesystemAdapter;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Spatie\DbSnapshots\DbSnapshotsServiceProvider;
 
 abstract class TestCase extends Orchestra
 {
-    protected FilesystemAdapter $disk;
+    public FilesystemAdapter $disk;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -46,37 +44,19 @@ abstract class TestCase extends Orchestra
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
             'driver' => 'sqlite',
-            'database' => __DIR__.'/temp/database.sqlite',
+            'database' => __DIR__ . '/temp/database.sqlite',
             'prefix' => '',
         ]);
 
         $app['config']->set('filesystems.disks.snapshots', [
             'driver' => 'local',
-            'root' => __DIR__.'/temp/snapshotsDisk',
+            'root' => __DIR__ . '/temp/snapshotsDisk',
         ]);
-    }
-
-    protected function assertFileOnDiskPassesRegex($fileName, $needle)
-    {
-        $this->disk->assertExists($fileName);
-
-        $contents = $this->disk->get($fileName);
-
-        $this->assertMatchesRegularExpression($needle, $contents);
-    }
-
-    protected function assertFileOnDiskFailsRegex($fileName, $needle)
-    {
-        $this->disk->assertExists($fileName);
-
-        $contents = $this->disk->get($fileName);
-
-        $this->assertDoesNotMatchRegularExpression($needle, $contents);
     }
 
     protected function setupDatabase()
     {
-        $databasePath = __DIR__.'/temp/database.sqlite';
+        $databasePath = __DIR__ . '/temp/database.sqlite';
 
         if (file_exists($databasePath)) {
             unlink($databasePath);
@@ -106,13 +86,8 @@ abstract class TestCase extends Orchestra
     {
         $this->disk = app(Factory::class)->disk('snapshots');
 
-        $this->clearDisk();
+        clearDisk();
         $this->createDummySnapshots();
-    }
-
-    protected function clearDisk()
-    {
-        $this->disk->delete($this->disk->allFiles());
     }
 
     protected function createDummySnapshots()
@@ -131,32 +106,8 @@ abstract class TestCase extends Orchestra
 
     protected function getSnapshotContent($modelName): string
     {
-        $snapshotContent = file_get_contents(__DIR__.'/fixtures/snapshotContent.sql');
+        $snapshotContent = file_get_contents(__DIR__ . '/fixtures/snapshotContent.sql');
 
         return str_replace('%%modelName%%', $modelName, $snapshotContent);
-    }
-
-    /**
-     * @param string|array $searchStrings
-     */
-    protected function seeInConsoleOutput($searchStrings)
-    {
-        if (! is_array($searchStrings)) {
-            $searchStrings = [$searchStrings];
-        }
-
-        $output = Artisan::output();
-
-        foreach ($searchStrings as $searchString) {
-            $this->assertStringContainsString((string) $searchString, $output);
-        }
-    }
-
-    protected function assertTableNotExists(string $table)
-    {
-        $this->assertFalse(
-            Schema::hasTable($table),
-            "Table {$table} should not exist"
-        );
     }
 }

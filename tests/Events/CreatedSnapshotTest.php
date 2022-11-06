@@ -1,23 +1,15 @@
 <?php
 
-namespace Spatie\DbSnapshots\Commands\Test;
-
-use Artisan;
-use Event;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Event;
 use Spatie\DbSnapshots\Events\CreatedSnapshot;
-use Spatie\DbSnapshots\Test\TestCase;
 
-class CreatedSnapshotTest extends TestCase
-{
-    /** @test */
-    public function after_the_snapshot_has_been_created_the_created_snapshot_event_will_be_fired()
-    {
-        Event::fake();
+test('after the snapshot has been created the created snapshot event will be fired', function () {
+    Event::fake();
 
-        Artisan::call('snapshot:create', ['name' => 'my-snapshot']);
+    Artisan::call('snapshot:create', ['name' => 'my-snapshot']);
 
-        Event::assertDispatched(CreatedSnapshot::class, function (CreatedSnapshot $event) {
-            return $event->snapshot->fileName === 'my-snapshot.sql';
-        });
-    }
-}
+    Event::assertDispatched(CreatedSnapshot::class, function (CreatedSnapshot $event) {
+        return $event->snapshot->fileName === 'my-snapshot.sql';
+    });
+});

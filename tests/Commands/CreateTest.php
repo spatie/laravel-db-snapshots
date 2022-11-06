@@ -1,132 +1,114 @@
 <?php
 
-namespace Spatie\DbSnapshots\Commands\Test;
-
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Artisan;
-use Spatie\DbSnapshots\Test\TestCase;
 
-class CreateTest extends TestCase
-{
-    /** @test */
-    public function it_can_create_a_snapshot_without_a_specific_name()
-    {
-        Artisan::call('snapshot:create');
+it('can create a snapshot without a specific', function () {
+    Artisan::call('snapshot:create');
 
-        $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
+    $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
 
-        $this->assertFileOnDiskPassesRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
-        $this->assertFileOnDiskPassesRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "users"/');
-        $this->assertFileOnDiskPassesRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/');
-    }
+    expect($fileName)
+        ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/')
+        ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "users"/')
+        ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/');
+});
 
-    /** @test */
-    public function it_can_create_a_snapshot_with_specific_name()
-    {
-        Artisan::call('snapshot:create', ['name' => 'test']);
+it('can create a snapshot with specific name')
+    ->tap(fn () => Artisan::call('snapshot:create', ['name' => 'test']))
+    ->expect('test.sql')
+    ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
 
-        $this->assertFileOnDiskPassesRegex('test.sql', '/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
-    }
+it('can create a compressed snapshot from CLI param', function () {
+    Artisan::call('snapshot:create', ['--compress' => true]);
 
-    /** @test */
-    public function it_can_create_a_compressed_snapshot_from_cli_param()
-    {
-        Artisan::call('snapshot:create', ['--compress' => true]);
+    $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql.gz';
 
-        $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql.gz';
+    $this->disk->assertExists($fileName);
 
-        $this->disk->assertExists($fileName);
+    expect(
+        gzdecode($this->disk->get($fileName))
+    )->not->toBeEmpty();
+});
 
-        $this->assertNotEmpty(gzdecode($this->disk->get($fileName)));
-    }
+it('can create a compressed snapshot from config', function () {
+    $this->app['config']->set('db-snapshots.compress', true);
 
-    /** @test */
-    public function it_can_create_a_compressed_snapshot_from_config()
-    {
-        $this->app['config']->set('db-snapshots.compress', true);
+    Artisan::call('snapshot:create');
 
-        Artisan::call('snapshot:create');
+    $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql.gz';
 
-        $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql.gz';
+    $this->disk->assertExists($fileName);
 
-        $this->disk->assertExists($fileName);
+    expect(gzdecode($this->disk->get($fileName)))->not->toBeEmpty();
+});
 
-        $this->assertNotEmpty(gzdecode($this->disk->get($fileName)));
-    }
+it('can create a snapshot with specific tables specified in the command options', function () {
+    Artisan::call('snapshot:create', ['--table' => ['users', 'posts']]);
 
-    /** @test */
-    public function it_can_create_a_snapshot_with_specific_tables_specified_in_the_command_options()
-    {
-        Artisan::call('snapshot:create', ['--table' => ['users', 'posts']]);
+    $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
 
-        $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
+    expect($fileName)
+        ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "users"/')
+        ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/')
+        ->fileOnDiskToFailRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
+});
 
-        $this->assertFileOnDiskPassesRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "users"/');
-        $this->assertFileOnDiskPassesRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/');
-        $this->assertFileOnDiskFailsRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
-    }
+it('can create a snapshot with specific tables specified in the command options as a string', function () {
+    Artisan::call('snapshot:create', ['--table' => 'users,posts']);
 
-    /** @test */
-    public function it_can_create_a_snapshot_with_specific_tables_specified_in_the_command_options_as_a_string()
-    {
-        Artisan::call('snapshot:create', ['--table' => 'users,posts']);
+    $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
 
-        $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
+    expect($fileName)
+        ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "users"/')
+        ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/')
+        ->fileOnDiskToFailRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
+});
 
-        $this->assertFileOnDiskPassesRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "users"/');
-        $this->assertFileOnDiskPassesRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/');
-        $this->assertFileOnDiskFailsRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
-    }
+it('can create a snapshot with specific tables specified in the config', function () {
+    $this->app['config']->set('db-snapshots.tables', ['users', 'posts']);
 
-    /** @test */
-    public function it_can_create_a_snapshot_with_specific_tables_specified_in_the_config()
-    {
-        $this->app['config']->set('db-snapshots.tables', ['users', 'posts']);
+    Artisan::call('snapshot:create');
 
-        Artisan::call('snapshot:create');
+    $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
 
-        $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
+    expect($fileName)
+        ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "users"/')
+        ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/')
+        ->fileOnDiskToFailRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
+});
 
-        $this->assertFileOnDiskPassesRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "users"/');
-        $this->assertFileOnDiskPassesRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/');
-        $this->assertFileOnDiskFailsRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
-    }
+it('can create a snapshot without excluded tables specified in the command options', function () {
+    Artisan::call('snapshot:create', ['--exclude' => ['users', 'posts']]);
 
-    /** @test */
-    public function it_can_create_a_snapshot_without_excluded_tables_specified_in_the_command_options()
-    {
-        Artisan::call('snapshot:create', ['--exclude' => ['users', 'posts']]);
+    $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
 
-        $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
+    expect($fileName)
+        ->fileOnDiskToFailRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "users"/')
+        ->fileOnDiskToFailRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/')
+        ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
+});
 
-        $this->assertFileOnDiskFailsRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "users"/');
-        $this->assertFileOnDiskFailsRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/');
-        $this->assertFileOnDiskPassesRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
-    }
+it('can create a snapshot without excluded tables specified in the command options as a string', function () {
+    Artisan::call('snapshot:create', ['--exclude' => 'users,posts']);
 
-    /** @test */
-    public function it_can_create_a_snapshot_without_excluded_tables_specified_in_the_command_options_as_a_string()
-    {
-        Artisan::call('snapshot:create', ['--exclude' => 'users,posts']);
+    $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
 
-        $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
+    expect($fileName)
+        ->fileOnDiskToFailRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "users"/')
+        ->fileOnDiskToFailRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/')
+        ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
+});
 
-        $this->assertFileOnDiskFailsRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "users"/');
-        $this->assertFileOnDiskFailsRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/');
-        $this->assertFileOnDiskPassesRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
-    }
+it('can create a snapshot without excluded tables specified in the config', function () {
+    $this->app['config']->set('db-snapshots.exclude', ['users', 'posts']);
 
-    /** @test */
-    public function it_can_create_a_snapshot_without_excluded_tables_specified_in_the_config()
-    {
-        $this->app['config']->set('db-snapshots.exclude', ['users', 'posts']);
+    Artisan::call('snapshot:create');
 
-        Artisan::call('snapshot:create');
+    $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
 
-        $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
-
-        $this->assertFileOnDiskFailsRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "users"/');
-        $this->assertFileOnDiskFailsRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/');
-        $this->assertFileOnDiskPassesRegex($fileName, '/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
-    }
-}
+    expect($fileName)
+        ->fileOnDiskToFailRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "users"/')
+        ->fileOnDiskToFailRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/')
+        ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
+});
