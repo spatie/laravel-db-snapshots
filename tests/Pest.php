@@ -50,6 +50,11 @@ expect()->extend('fileOnDiskToFailRegex', function (string $needle) {
 
 // Functions
 
+function clearDisk(): void
+{
+    test()->disk->delete(test()->disk->allFiles());
+}
+
 function seeInConsoleOutput(string|array $searchStrings): void
 {
     if (!is_array($searchStrings)) {

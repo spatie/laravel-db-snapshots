@@ -86,13 +86,8 @@ abstract class TestCase extends Orchestra
     {
         $this->disk = app(Factory::class)->disk('snapshots');
 
-        $this->clearDisk();
+        clearDisk();
         $this->createDummySnapshots();
-    }
-
-    protected function clearDisk()
-    {
-        $this->disk->delete($this->disk->allFiles());
     }
 
     protected function createDummySnapshots()
