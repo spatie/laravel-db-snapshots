@@ -37,5 +37,5 @@ it('warns if keep is not specified', function () {
     Artisan::call('snapshot:cleanup');
 
     $this->disk->assertExists('snapshot.sql');
-    $this->seeInConsoleOutput('No value for option --keep.');
+    seeInConsoleOutput('No value for option --keep.');
 });
