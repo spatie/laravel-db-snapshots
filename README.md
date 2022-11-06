@@ -76,7 +76,7 @@ You should add a disk named `snapshots` to `app/config/filesystems.php` on which
 Optionally, you may publish the configuration file with:
 
 ```bash
-php artisan vendor:publish --provider="Spatie\DbSnapshots\DbSnapshotsServiceProvider" --tag="config"
+php artisan vendor:publish --provider="Spatie\DbSnapshots\DbSnapshotsServiceProvider"
 ```
 
 This is the content of the published file:
