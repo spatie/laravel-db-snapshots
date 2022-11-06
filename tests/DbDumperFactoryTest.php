@@ -1,7 +1,5 @@
 <?php
 
-namespace Spatie\DbSnapshots\Test;
-
 use Spatie\DbDumper\Databases\MySql;
 use Spatie\DbDumper\Databases\PostgreSql;
 use Spatie\DbDumper\Databases\Sqlite;
