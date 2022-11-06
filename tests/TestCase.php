@@ -13,7 +13,7 @@ use Spatie\DbSnapshots\DbSnapshotsServiceProvider;
 
 abstract class TestCase extends Orchestra
 {
-    protected FilesystemAdapter $disk;
+    public FilesystemAdapter $disk;
 
     protected function setUp(): void
     {
@@ -54,24 +54,6 @@ abstract class TestCase extends Orchestra
             'driver' => 'local',
             'root' => __DIR__ . '/temp/snapshotsDisk',
         ]);
-    }
-
-    protected function assertFileOnDiskPassesRegex($fileName, $needle)
-    {
-        $this->disk->assertExists($fileName);
-
-        $contents = $this->disk->get($fileName);
-
-        $this->assertMatchesRegularExpression($needle, $contents);
-    }
-
-    protected function assertFileOnDiskFailsRegex($fileName, $needle)
-    {
-        $this->disk->assertExists($fileName);
-
-        $contents = $this->disk->get($fileName);
-
-        $this->assertDoesNotMatchRegularExpression($needle, $contents);
     }
 
     protected function setupDatabase()
