@@ -62,7 +62,7 @@ abstract class TestCase extends Orchestra
             unlink($databasePath);
         }
 
-        if (!file_exists($databasePath)) {
+        if (! file_exists($databasePath)) {
             file_put_contents($databasePath, '');
         }
 

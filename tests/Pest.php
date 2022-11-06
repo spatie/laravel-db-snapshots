@@ -6,7 +6,6 @@
 |--------------------------------------------------------------------------
 */
 
-use Illuminate\Database\Schema\SchemaState;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
 
@@ -57,7 +56,7 @@ function clearDisk(): void
 
 function seeInConsoleOutput(string|array $searchStrings): void
 {
-    if (!is_array($searchStrings)) {
+    if (! is_array($searchStrings)) {
         $searchStrings = [$searchStrings];
     }
 
