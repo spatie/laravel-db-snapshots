@@ -4,6 +4,7 @@ namespace Spatie\DbSnapshots;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Support\ConfigurationUrlParser;
 use Spatie\DbDumper\Databases\MySql;
 use Spatie\DbDumper\Databases\PostgreSql;
 use Spatie\DbDumper\Databases\Sqlite;
@@ -18,6 +19,10 @@ class DbDumperFactory
 
         if (is_null($dbConfig)) {
             throw CannotCreateDbDumper::connectionDoesNotExist($connectionName);
+        }
+
+        if (! empty($dbConfig['url'])) {
+            $dbConfig = (new ConfigurationUrlParser)->parseConfiguration($dbConfig);
         }
 
         $fallback = Arr::get(

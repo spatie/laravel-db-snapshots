@@ -122,3 +122,22 @@ it('can add arbitrary options to the dump command', function () {
 it('adds the inserts option to the pgSQL dump command')
     ->expect(fn () => getDumpCommand('pgsql'))
     ->toContain('--inserts');
+
+it('will use url when one is defined', function () {
+    $dbConfig = [
+        'driver' => 'mysql',
+        'username' => 'root',
+        'password' => 'myPassword',
+        'database' => 'myDb',
+        'host' => '127.0.0.1',
+        'port' => '3306',
+        'url' => 'mysql://otherUser:otherPass@otherHost:3307/otherDb',
+    ];
+
+    $this->app['config']->set('database.connections.mysql', $dbConfig);
+
+    $dumper = DbDumperFactory::createForConnection('mysql');
+
+    expect($dumper->getDbName())->toEqual('otherDb');
+    expect($dumper->getHost())->toEqual('otherHost');
+});
