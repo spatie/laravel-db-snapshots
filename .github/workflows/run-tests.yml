@@ -31,7 +31,16 @@ jobs:
       - name: Install SQLite 3 (3.32 is required and only included in Ubuntu 21.x)
         run: |
           sudo apt-get update
-          sudo apt-get install sqlite3 libsqlite3-dev
+          sudo apt-get install build-essential tar wget
+          wget https://www.sqlite.org/2022/sqlite-autoconf-3400000.tar.gz
+          tar xzf sqlite-autoconf-3400000.tar.gz
+          cd sqlite-autoconf-3400000
+          ./configure --prefix=/usr
+          make
+          sudo make install
+          sudo cp -f ./sqlite3 /usr/bin/sqlite3
+          cd ..
+          sqlite3 --version
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -51,4 +60,4 @@ jobs:
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: Execute tests
-        run: vendor/bin/pest --no-coverage
+        run: vendor/bin/pest
