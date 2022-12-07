@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        php: [8.1, 8.0]
+        php: [8.2, 8.1, 8.0]
         laravel: [9.*, 8.*]
         stability: [prefer-lowest, prefer-stable]
         include:
@@ -26,17 +26,20 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install SQLite 3 (3.32 is required and only included in Ubuntu 21.x)
         run: |
+          sudo apt-get update
           sudo apt-get install build-essential tar wget
-          wget https://www.sqlite.org/2021/sqlite-autoconf-3370000.tar.gz
-          tar xzf sqlite-autoconf-3370000.tar.gz
-          cd sqlite-autoconf-3370000
-          ./configure
+          wget https://www.sqlite.org/2022/sqlite-autoconf-3400000.tar.gz
+          tar xzf sqlite-autoconf-3400000.tar.gz
+          cd sqlite-autoconf-3400000
+          ./configure --prefix=/usr
           make
           sudo make install
+          sudo cp -f ./sqlite3 /usr/bin/sqlite3
+          cd ..
           sqlite3 --version
 
       - name: Setup PHP
@@ -50,9 +53,11 @@ jobs:
         run: |
           echo "::add-matcher::${{ runner.tool_cache }}/php.json"
           echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer require "laravel/framework:${{ matrix.laravel }}" "nesbot/carbon:^2.63" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+
       - name: Execute tests
-        run: vendor/bin/pest --no-coverage
+        run: vendor/bin/pest
