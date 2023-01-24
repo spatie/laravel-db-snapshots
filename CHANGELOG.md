@@ -2,6 +2,20 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.5.1 - 2023-01-24
+
+### What's Changed
+
+- Refactor tests to Pest by @alexmanase in https://github.com/spatie/laravel-db-snapshots/pull/129
+- Add PHP 8.2 Support by @patinthehat in https://github.com/spatie/laravel-db-snapshots/pull/135
+- Laravel 10.x Compatibility by @laravel-shift in https://github.com/spatie/laravel-db-snapshots/pull/136
+
+### New Contributors
+
+- @alexmanase made their first contribution in https://github.com/spatie/laravel-db-snapshots/pull/129
+
+**Full Changelog**: https://github.com/spatie/laravel-db-snapshots/compare/2.5.0...2.5.1
+
 ## 2.5.0 - 2022-10-19
 
 ### What's Changed
