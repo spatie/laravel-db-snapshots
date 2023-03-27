@@ -91,12 +91,14 @@ class Snapshot
     protected function loadStream(string $connectionName = null)
     {
         LazyCollection::make(function () {
-            $stream = $this->disk->readStream($this->fileName);
+            $stream = $this->compressionExtension === 'gz'
+                ? gzopen($this->disk->path($this->fileName), 'r')
+                : $this->disk->readStream($this->fileName);
 
             $statement = '';
             while (! feof($stream)) {
                 $chunk = $this->compressionExtension === 'gz'
-                        ? gzdecode(gzread($stream, self::STREAM_BUFFER_SIZE))
+                        ? gzread($stream, self::STREAM_BUFFER_SIZE)
                         : fread($stream, self::STREAM_BUFFER_SIZE);
 
                 $lines = explode("\n", $chunk);
