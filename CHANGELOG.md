@@ -2,6 +2,18 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.5.2 - 2023-03-27
+
+### What's Changed
+
+- fix uploading gz snapshot by @deonthomasgy in https://github.com/spatie/laravel-db-snapshots/pull/138
+
+### New Contributors
+
+- @deonthomasgy made their first contribution in https://github.com/spatie/laravel-db-snapshots/pull/138
+
+**Full Changelog**: https://github.com/spatie/laravel-db-snapshots/compare/2.5.1...2.5.2
+
 ## 2.5.1 - 2023-01-24
 
 ### What's Changed
