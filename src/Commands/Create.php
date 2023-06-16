@@ -21,7 +21,8 @@ class Create extends Command
             ?: config('db-snapshots.default_connection')
             ?? config('database.default');
 
-        $snapshotName = $this->argument('name');
+        $snapshotName = ($this->argument('name')) ? (Carbon::now()->format('Y-m-d_H-i-s') . '-'
+            . $this->argument('name')) : (Carbon::now()->format('Y-m-d_H-i-s'));
 
         $compress = $this->option('compress') || config('db-snapshots.compress', false);
 
@@ -37,7 +38,7 @@ class Create extends Command
 
 
         $snapshot = app(SnapshotFactory::class)->create(
-            Carbon::now()->format('Y-m-d_H-i-s') . '_' . $snapshotName,
+            $snapshotName,
             config('db-snapshots.disk'),
             $connectionName,
             $compress,
