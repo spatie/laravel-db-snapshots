@@ -57,7 +57,7 @@ You can install the package via Composer:
 composer require spatie/laravel-db-snapshots
 ```
 
-You should add a disk named `snapshots` to `app/config/filesystems.php` on which the snapshots will be saved. This would be a typical configuration:
+You should add a disk named `snapshots` to `config/filesystems.php` on which the snapshots will be saved. This would be a typical configuration:
 
 ```php
 // ...
