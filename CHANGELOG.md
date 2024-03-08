@@ -2,6 +2,23 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.6.0 - 2024-03-08
+
+### What's Changed
+
+* Fix badges by @erikn69 in https://github.com/spatie/laravel-db-snapshots/pull/139
+* Fix path in readme by @sebastianpopp in https://github.com/spatie/laravel-db-snapshots/pull/143
+* Fix typo in README by @roerjo in https://github.com/spatie/laravel-db-snapshots/pull/146
+* Laravel 11.x Compatibility by @laravel-shift in https://github.com/spatie/laravel-db-snapshots/pull/145
+
+### New Contributors
+
+* @erikn69 made their first contribution in https://github.com/spatie/laravel-db-snapshots/pull/139
+* @sebastianpopp made their first contribution in https://github.com/spatie/laravel-db-snapshots/pull/143
+* @roerjo made their first contribution in https://github.com/spatie/laravel-db-snapshots/pull/146
+
+**Full Changelog**: https://github.com/spatie/laravel-db-snapshots/compare/2.5.2...2.6.0
+
 ## 2.5.2 - 2023-03-27
 
 ### What's Changed
