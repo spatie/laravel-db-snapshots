@@ -43,7 +43,7 @@ We highly appreciate you sending us a postcard from your hometown, mentioning wh
 
 ## Support us
 
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us). 
+We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
 
 We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
 
@@ -67,7 +67,7 @@ You should add a disk named `snapshots` to `config/filesystems.php` on which the
         'driver' => 'local',
         'root' => database_path('snapshots'),
     ],
-// ...    
+// ...
 ```
 
 Optionally, you may publish the configuration file with:
@@ -205,7 +205,7 @@ To remove all backups except the most recent 2
 php artisan snapshot:cleanup --keep=2
 ```
 
-If you need to pass extra options to the underlying db-dumper, add a `dump` key to the database **connection** with a key of `addExtraOptions` and a value of the option. For example, to prevent the Postgres db dumper from setting the owner, you'd add:
+If you need to pass extra options to the underlying db-dumper, add a `dump` key to the database **connection** with a key of `addExtraOption` and a value of the option. For example, to prevent the Postgres db dumper from setting the owner, you'd add:
 ```
 'dump' => [
     'addExtraOption' => '--no-owner',
