@@ -2,8 +2,7 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-db-snapshots.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-db-snapshots)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-![Test Status](https://img.shields.io/github/actions/workflow/status/spatie/laravel-db-snapshots/run-tests.yml?branch=master&label=tests)
-![Code Style Status](https://img.shields.io/github/actions/workflow/status/spatie/laravel-db-snapshots/php-cs-fixer.yml?branch=master&label=code%20style)
+[![run-tests](https://github.com/spatie/laravel-db-snapshots/actions/workflows/run-tests.yml/badge.svg)](https://github.com/spatie/laravel-db-snapshots/actions/workflows/run-tests.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-db-snapshots.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-db-snapshots)
 
 This package provides Artisan commands to quickly dump and load databases in a Laravel application.
