@@ -2,6 +2,18 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.6.1 - 2024-04-02
+
+### What's Changed
+
+* Add MariaDB support by @francoism90 in https://github.com/spatie/laravel-db-snapshots/pull/147
+
+### New Contributors
+
+* @francoism90 made their first contribution in https://github.com/spatie/laravel-db-snapshots/pull/147
+
+**Full Changelog**: https://github.com/spatie/laravel-db-snapshots/compare/2.6.0...2.6.1
+
 ## 2.6.0 - 2024-03-08
 
 ### What's Changed
