@@ -21,7 +21,11 @@ class Create extends Command
             ?: config('db-snapshots.default_connection')
             ?? config('database.default');
 
-        $snapshotName = $this->argument('name') ?? Carbon::now()->format('Y-m-d_H-i-s');
+        if (! is_null($this->option('connection')) && is_null($this->argument('name'))) {
+            $snapshotName = $this->option('connection') . "_" . Carbon::now()->format('Y-m-d_H-i-s');
+        } else {
+            $snapshotName = $this->argument('name') ?? Carbon::now()->format('Y-m-d_H-i-s');
+        }
 
         $compress = $this->option('compress') || config('db-snapshots.compress', false);
 
