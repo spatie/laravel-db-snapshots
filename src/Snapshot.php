@@ -3,6 +3,7 @@
 namespace Spatie\DbSnapshots;
 
 use Carbon\Carbon;
+use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Filesystem\FilesystemAdapter as Disk;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\LazyCollection;
@@ -10,6 +11,7 @@ use Spatie\DbSnapshots\Events\DeletedSnapshot;
 use Spatie\DbSnapshots\Events\DeletingSnapshot;
 use Spatie\DbSnapshots\Events\LoadedSnapshot;
 use Spatie\DbSnapshots\Events\LoadingSnapshot;
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 class Snapshot
 {
@@ -25,6 +27,8 @@ class Snapshot
 
     public const STREAM_BUFFER_SIZE = 16384;
 
+    protected Factory $filesystemFactory;
+
     public function __construct(Disk $disk, string $fileName)
     {
         $this->disk = $disk;
@@ -39,6 +43,8 @@ class Snapshot
         }
 
         $this->name = pathinfo($fileName, PATHINFO_FILENAME);
+
+        $this->filesystemFactory = app(Factory::class);
     }
 
     public function useStream()
@@ -90,45 +96,65 @@ class Snapshot
 
     protected function loadStream(string $connectionName = null)
     {
-        LazyCollection::make(function () {
-            $stream = $this->compressionExtension === 'gz'
-                ? gzopen($this->disk->path($this->fileName), 'r')
-                : $this->disk->readStream($this->fileName);
+        $directory = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))->create();
 
-            $statement = '';
-            while (! feof($stream)) {
-                $chunk = $this->compressionExtension === 'gz'
+        config([
+            'filesystems.disks.' . self::class => [
+                'driver' => 'local',
+                'root' => $directory->path(),
+                'throw' => false,
+            ]
+        ]);
+
+        $localDisk = $this->filesystemFactory->disk(self::class);
+
+        try {
+            LazyCollection::make(function () use ($localDisk) {
+                $localDisk->writeStream($this->fileName, $this->disk->readStream($this->fileName));
+
+                $stream = $this->compressionExtension === 'gz'
+                    ? gzopen($localDisk->path($this->fileName), 'r')
+                    : $localDisk->readStream($this->fileName);
+
+                $statement = '';
+                while (! feof($stream)) {
+                    $chunk = $this->compressionExtension === 'gz'
                         ? gzread($stream, self::STREAM_BUFFER_SIZE)
                         : fread($stream, self::STREAM_BUFFER_SIZE);
 
-                $lines = explode("\n", $chunk);
-                foreach ($lines as $idx => $line) {
-                    if ($this->shouldIgnoreLine($line)) {
-                        continue;
-                    }
+                    $lines = explode("\n", $chunk);
+                    foreach ($lines as $idx => $line) {
+                        if ($this->shouldIgnoreLine($line)) {
+                            continue;
+                        }
 
-                    $statement .= $line;
+                        $statement .= $line;
 
-                    // Carry-over the last line to the next chunk since it
-                    // is possible that this chunk finished mid-line right on
-                    // a semi-colon.
-                    if (count($lines) == $idx + 1) {
-                        break;
-                    }
+                        // Carry-over the last line to the next chunk since it
+                        // is possible that this chunk finished mid-line right on
+                        // a semi-colon.
+                        if (count($lines) == $idx + 1) {
+                            break;
+                        }
 
-                    if (substr(trim($statement), -1, 1) === ';') {
-                        yield $statement;
-                        $statement = '';
+                        if (substr(trim($statement), -1, 1) === ';') {
+                            yield $statement;
+                            $statement = '';
+                        }
                     }
                 }
-            }
 
-            if (substr(trim($statement), -1, 1) === ';') {
-                yield $statement;
-            }
-        })->each(function (string $statement) use ($connectionName) {
-            DB::connection($connectionName)->unprepared($statement);
-        });
+                if ($this->compressionExtension === 'gz') {
+                    gzclose($stream);
+                } else {
+                    fclose($stream);
+                }
+            })->each(function (string $statement) use ($connectionName) {
+                DB::connection($connectionName)->unprepared($statement);
+            });
+        } finally {
+            $directory->delete();
+        }
     }
 
     public function delete(): void
