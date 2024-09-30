@@ -20,7 +20,7 @@ class SnapshotFactory
         //
     }
 
-    public function create(string $snapshotName, string $diskName, string $connectionName, bool $compress = false, ?array $tables = null, ?array $exclude = null): Snapshot
+    public function create(string $snapshotName, string $diskName, string $connectionName, bool $compress = false, ?array $tables = null, ?array $exclude = null, array $extraOptions = []): Snapshot
     {
         $disk = $this->getDisk($diskName);
 
@@ -82,6 +82,10 @@ class SnapshotFactory
 
         if (is_array($exclude)) {
             $dbDumper->excludeTables($exclude);
+        }
+
+        foreach ($extraOptions as $extraOption) {
+            $dbDumper->addExtraOption($extraOption);
         }
 
         $dbDumper->dumpToFile($dumpPath);
