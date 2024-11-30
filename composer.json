@@ -1,5 +1,5 @@
 {
-    "name": "spatie/laravel-db-snapshots",
+    "name": "wattnpapa/laravel-db-snapshots",
     "description": "Quickly dump and load databases",
     "keywords": [
         "spatie",
