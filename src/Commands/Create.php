@@ -36,7 +36,7 @@ class Create extends Command
         }
 
         $extraOptions = $this->option('extraOptions') ?: config('db-snapshots.extraOptions', []);
-        $extraOptions = is_string($extraOptions) ? explode(',', $exclude) : $exclude;
+        $extraOptions = is_string($extraOptions) ? explode(',', $extraOptions) : $extraOptions;
 
 
         $snapshot = app(SnapshotFactory::class)->create(
