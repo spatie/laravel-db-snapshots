@@ -133,6 +133,13 @@ Giving your snapshot a name is optional. If you don't pass a name the current da
 php artisan snapshot:create
 ```
 
+If you pass a connection but do not declare a name for the snapshot, the connection will be prepended
+
+```bash
+# Creates a snapshot named something like `logging_2017-03-17 14:31`
+php artisan snapshot:create --connection=logging
+```
+
 Maybe you only want to snapshot a couple of tables. You can do this by passing the `--table` multiple times or as a comma separated list:
 
 ```bash
