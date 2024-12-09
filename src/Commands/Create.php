@@ -52,7 +52,7 @@ class Create extends Command
 
     private function getSnapshotName(): string
     {
-        if (!is_null($this->option('connection')) && is_null($this->argument('name'))) {
+        if (! is_null($this->option('connection')) && is_null($this->argument('name'))) {
             return $this->option('connection'). "_". Carbon::now()->format('Y-m-d_H-i-s');
         }
 
