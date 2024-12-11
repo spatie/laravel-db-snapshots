@@ -11,7 +11,8 @@ class CreatingSnapshot
         public FilesystemAdapter $disk,
         public string $connectionName,
         public ?array $tables = null,
-        public ?array $exclude = null
+        public ?array $exclude = null,
+        public ?array $extraOptions = null
     ) {
         //
     }
