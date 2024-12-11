@@ -5,11 +5,13 @@ namespace Spatie\DbSnapshots;
 use Carbon\Carbon;
 use Illuminate\Filesystem\FilesystemAdapter as Disk;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\LazyCollection;
 use Spatie\DbSnapshots\Events\DeletedSnapshot;
 use Spatie\DbSnapshots\Events\DeletingSnapshot;
 use Spatie\DbSnapshots\Events\LoadedSnapshot;
 use Spatie\DbSnapshots\Events\LoadingSnapshot;
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 class Snapshot
 {
@@ -90,10 +92,22 @@ class Snapshot
 
     protected function loadStream(string $connectionName = null)
     {
+        $directory = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))->create();
+
+        config([
+            'filesystems.disks.' . self::class => [
+                'driver' => 'local',
+                'root' => $directory->path(),
+                'throw' => false,
+            ]
+        ]);
+
         LazyCollection::make(function () {
+            Storage::disk(self::class)->writeStream($this->fileName, $this->disk->readStream($this->fileName));
+
             $stream = $this->compressionExtension === 'gz'
-                ? gzopen($this->disk->path($this->fileName), 'r')
-                : $this->disk->readStream($this->fileName);
+                ? gzopen(Storage::disk(self::class)->path($this->fileName), 'r')
+                : Storage::disk(self::class)->readStream($this->fileName);
 
             $statement = '';
             while (! feof($stream)) {
@@ -128,6 +142,8 @@ class Snapshot
             }
         })->each(function (string $statement) use ($connectionName) {
             DB::connection($connectionName)->unprepared($statement);
+        })->after(function () use ($directory) {
+           $directory->delete();
         });
     }
 
