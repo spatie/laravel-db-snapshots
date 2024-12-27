@@ -78,7 +78,7 @@ class Snapshot
 
     protected function isASqlComment(string $line): bool
     {
-        return substr($line, 0, 2) === '--';
+        return str_starts_with($line, '--');
     }
 
     protected function shouldIgnoreLine(string $line): bool
@@ -116,14 +116,14 @@ class Snapshot
                         break;
                     }
 
-                    if (substr(trim($statement), -1, 1) === ';') {
+                    if (str_ends_with(trim($statement), ';')) {
                         yield $statement;
                         $statement = '';
                     }
                 }
             }
 
-            if (substr(trim($statement), -1, 1) === ';') {
+            if (str_ends_with(trim($statement), ';')) {
                 yield $statement;
             }
         })->each(function (string $statement) use ($connectionName) {
