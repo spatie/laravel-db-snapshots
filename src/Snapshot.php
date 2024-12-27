@@ -48,7 +48,7 @@ class Snapshot
         return $this;
     }
 
-    public function load(string $connectionName = null, bool $dropTables = true): void
+    public function load(?string $connectionName = null, bool $dropTables = true): void
     {
         event(new LoadingSnapshot($this));
 
@@ -65,7 +65,7 @@ class Snapshot
         event(new LoadedSnapshot($this));
     }
 
-    protected function loadAsync(string $connectionName = null)
+    protected function loadAsync(?string $connectionName = null)
     {
         $dbDumpContents = $this->disk->get($this->fileName);
 
@@ -88,7 +88,7 @@ class Snapshot
         return empty($line) || $this->isASqlComment($line);
     }
 
-    protected function loadStream(string $connectionName = null)
+    protected function loadStream(?string $connectionName = null)
     {
         LazyCollection::make(function () {
             $stream = $this->compressionExtension === 'gz'
