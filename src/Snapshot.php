@@ -41,7 +41,7 @@ class Snapshot
         $this->name = pathinfo($fileName, PATHINFO_FILENAME);
     }
 
-    public function useStream()
+    public function useStream(): self
     {
         $this->useStream = true;
 
@@ -65,7 +65,7 @@ class Snapshot
         event(new LoadedSnapshot($this));
     }
 
-    protected function loadAsync(?string $connectionName = null)
+    protected function loadAsync(?string $connectionName = null): void
     {
         $dbDumpContents = $this->disk->get($this->fileName);
 
@@ -88,7 +88,7 @@ class Snapshot
         return empty($line) || $this->isASqlComment($line);
     }
 
-    protected function loadStream(?string $connectionName = null)
+    protected function loadStream(?string $connectionName = null): void
     {
         LazyCollection::make(function () {
             $stream = $this->compressionExtension === 'gz'
@@ -150,7 +150,7 @@ class Snapshot
         return Carbon::createFromTimestamp($this->disk->lastModified($this->fileName));
     }
 
-    protected function dropAllCurrentTables()
+    protected function dropAllCurrentTables(): void
     {
         DB::connection(DB::getDefaultConnection())
             ->getSchemaBuilder()
