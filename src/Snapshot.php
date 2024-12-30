@@ -94,7 +94,7 @@ class Snapshot
         return empty($line) || $this->isASqlComment($line);
     }
 
-    protected function loadStream(string $connectionName = null)
+    protected function loadStream(?string $connectionName = null): void
     {
         $directory = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))->create();
 
@@ -160,7 +160,7 @@ class Snapshot
             $directory->delete();
         }
     }
-  
+
     public function delete(): void
     {
         event(new DeletingSnapshot($this));
