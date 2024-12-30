@@ -1,9 +1,14 @@
 <?php
 
+use Carbon\Carbon;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Mockery as m;
 
+use Spatie\DbSnapshots\Events\DeletedSnapshot;
+use Spatie\DbSnapshots\Snapshot;
 use function Pest\Laravel\assertDatabaseCount;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertNotEquals;
@@ -142,4 +147,105 @@ it('can load a compressed snapshot', function () {
     Artisan::call('snapshot:load', ['name' => 'snapshot4']);
 
     assertSnapshotLoaded('snapshot4');
+});
+
+it('throws an error when snapshot does not exist', function () {
+    $this->expectException(Exception::class);
+
+    $disk = m::mock(FilesystemAdapter::class);
+    $disk->shouldReceive('exists')
+        ->with('nonexistent.sql')
+        ->andReturn(false);
+
+    $snapshot = new Snapshot($disk, 'nonexistent.sql');
+    $snapshot->load();
+});
+
+it('throws an error for invalid SQL in snapshot', function () {
+    $disk = m::mock(FilesystemAdapter::class);
+    $disk->shouldReceive('get')
+        ->andReturn("INVALID SQL;\n");
+
+    $snapshot = new Snapshot($disk, 'invalid.sql');
+
+    $this->expectException(Exception::class);
+    $snapshot->load();
+});
+
+it('deletes the snapshot and triggers event', function () {
+    Event::fake();
+
+    $disk = m::mock(FilesystemAdapter::class);
+    $disk->shouldReceive('delete')
+        ->once()
+        ->with('snapshot.sql')
+        ->andReturn(true);
+
+    $snapshot = new Snapshot($disk, 'snapshot.sql');
+    $snapshot->delete();
+
+    Event::assertDispatched(DeletedSnapshot::class, function ($event) use ($snapshot) {
+        return $event->fileName === $snapshot->fileName && $event->disk === $snapshot->disk;
+    });
+});
+
+it('returns the correct size of the snapshot', function () {
+    $disk = m::mock(FilesystemAdapter::class);
+    $disk->shouldReceive('size')
+        ->andReturn(2048);
+
+    $snapshot = new Snapshot($disk, 'snapshot.sql');
+
+    assertEquals(2048, $snapshot->size());
+});
+
+it('returns the correct creation date of the snapshot', function () {
+    $timestamp = Carbon::now()->timestamp;
+
+    $disk = m::mock(FilesystemAdapter::class);
+    $disk->shouldReceive('lastModified')
+        ->andReturn($timestamp);
+
+    $snapshot = new Snapshot($disk, 'snapshot.sql');
+
+    assertEquals(Carbon::createFromTimestamp($timestamp), $snapshot->createdAt());
+});
+
+it('handles empty snapshots gracefully', function () {
+    $disk = m::mock(FilesystemAdapter::class);
+    $disk->shouldReceive('get')
+        ->andReturn("");
+
+    $snapshot = new Snapshot($disk, 'empty.sql');
+
+    $snapshot->load();
+
+    // Expect no SQL to be executed
+    DB::shouldReceive('unprepared')
+        ->never();
+});
+
+it('drops all current tables when requested', function () {
+    // Mock SchemaBuilder
+    $schemaBuilderMock = m::mock();
+    $schemaBuilderMock->shouldReceive('dropAllTables')->once();
+
+    // Mock DB facade
+    DB::shouldReceive('connection')
+        ->andReturnSelf(); // Returns the DB connection
+    DB::shouldReceive('getSchemaBuilder')
+        ->andReturn($schemaBuilderMock); // Returns the mocked schema builder
+    DB::shouldReceive('getDefaultConnection')
+        ->andReturn('testing'); // Returns a mock default connection
+    DB::shouldReceive('reconnect')->once();
+
+    // Instance of Snapshot
+    $snapshot = new Snapshot(m::mock(FilesystemAdapter::class), 'snapshot.sql');
+
+    // Access protected method via Reflection
+    $reflection = new ReflectionMethod(Snapshot::class, 'dropAllCurrentTables');
+    $reflection->setAccessible(true);
+
+    // Invoke the protected method
+    $reflection->invoke($snapshot);
 });
