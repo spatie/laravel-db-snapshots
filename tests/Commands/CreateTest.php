@@ -2,7 +2,6 @@
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Storage;
 
 it('can create a snapshot without a specific', function () {
     Artisan::call('snapshot:create');
@@ -127,4 +126,3 @@ it('can create a snapshot without excluded tables specified in the config', func
         ->fileOnDiskToFailRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/')
         ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
 });
-
