@@ -3,6 +3,7 @@
 namespace Spatie\DbSnapshots\Commands;
 
 use Illuminate\Console\Command;
+use Spatie\DbSnapshots\Snapshot;
 use Spatie\DbSnapshots\SnapshotRepository;
 
 class Cleanup extends Command
@@ -23,6 +24,6 @@ class Cleanup extends Command
             return;
         }
 
-        $snapshots->splice($keep)->each(fn ($snapshot) => $snapshot->delete());
+        $snapshots->splice($keep)->each(fn (Snapshot $snapshot) => $snapshot->delete());
     }
 }

@@ -13,6 +13,9 @@ class SnapshotRepository
         //
     }
 
+    /**
+     * @return Collection<Snapshot>
+     */
     public function getAll(): Collection
     {
         return collect($this->disk->allFiles())
@@ -29,7 +32,7 @@ class SnapshotRepository
             ->sortByDesc(fn (Snapshot $snapshot) => $snapshot->createdAt()->toDateTimeString());
     }
 
-    public function findByName(string $name)
+    public function findByName(string $name): ?Snapshot
     {
         return $this->getAll()->first(fn (Snapshot $snapshot) => $snapshot->name === $name);
     }

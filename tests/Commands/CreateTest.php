@@ -15,9 +15,23 @@ it('can create a snapshot without a specific', function () {
 });
 
 it('can create a snapshot with specific name')
-    ->tap(fn () => Artisan::call('snapshot:create', ['name' => 'test']))
+    ->defer(fn () => Artisan::call('snapshot:create', ['name' => 'test']))
     ->expect('test.sql')
     ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
+
+it('can will prepend the connection to the default name if no specific name is passed', function () {
+
+    config()->set('database.connections.second_connection', [
+        'driver' => 'sqlite',
+        'database' => __DIR__ . '/../temp/second_connection.sqlite',
+        'prefix' => '',
+    ]);
+
+    Artisan::call('snapshot:create', ['--connection' => 'second_connection']);
+    $fileName = 'second_connection_' . Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
+
+    $this->disk->assertExists($fileName);
+});
 
 it('can create a compressed snapshot from CLI param', function () {
     Artisan::call('snapshot:create', ['--compress' => true]);

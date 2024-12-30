@@ -9,7 +9,7 @@ use Spatie\DbSnapshots\SnapshotFactory;
 
 class Create extends Command
 {
-    protected $signature = 'snapshot:create {name?} {--connection=} {--compress} {--table=*} {--exclude=*}';
+    protected $signature = 'snapshot:create {name?} {--connection=} {--compress} {--table=*} {--exclude=*} {--extraOptions=*}';
 
     protected $description = 'Create a new snapshot.';
 
@@ -21,7 +21,7 @@ class Create extends Command
             ?: config('db-snapshots.default_connection')
             ?? config('database.default');
 
-        $snapshotName = $this->argument('name') ?? Carbon::now()->format('Y-m-d_H-i-s');
+        $snapshotName = $this->getSnapshotName();
 
         $compress = $this->option('compress') || config('db-snapshots.compress', false);
 
@@ -35,6 +35,9 @@ class Create extends Command
             $exclude = null;
         }
 
+        $extraOptions = $this->option('extraOptions') ?: config('db-snapshots.extraOptions', []);
+        $extraOptions = is_string($extraOptions) ? explode(',', $extraOptions) : $extraOptions;
+
 
         $snapshot = app(SnapshotFactory::class)->create(
             $snapshotName,
@@ -42,11 +45,21 @@ class Create extends Command
             $connectionName,
             $compress,
             $tables,
-            $exclude
+            $exclude,
+            $extraOptions
         );
 
         $size = Format::humanReadableSize($snapshot->size());
 
         $this->info("Snapshot `{$snapshotName}` created (size: {$size})");
+    }
+
+    private function getSnapshotName(): string
+    {
+        if (! is_null($this->option('connection')) && is_null($this->argument('name'))) {
+            return $this->option('connection'). "_". Carbon::now()->format('Y-m-d_H-i-s');
+        }
+
+        return $this->argument('name') ?? Carbon::now()->format('Y-m-d_H-i-s');
     }
 }

@@ -47,14 +47,14 @@ class Snapshot
         $this->filesystemFactory = app(Factory::class);
     }
 
-    public function useStream()
+    public function useStream(): self
     {
         $this->useStream = true;
 
         return $this;
     }
 
-    public function load(string $connectionName = null, bool $dropTables = true): void
+    public function load(?string $connectionName = null, bool $dropTables = true): void
     {
         event(new LoadingSnapshot($this));
 
@@ -71,7 +71,7 @@ class Snapshot
         event(new LoadedSnapshot($this));
     }
 
-    protected function loadAsync(string $connectionName = null)
+    protected function loadAsync(?string $connectionName = null): void
     {
         $dbDumpContents = $this->disk->get($this->fileName);
 
@@ -84,7 +84,7 @@ class Snapshot
 
     protected function isASqlComment(string $line): bool
     {
-        return substr($line, 0, 2) === '--';
+        return str_starts_with($line, '--');
     }
 
     protected function shouldIgnoreLine(string $line): bool
@@ -117,7 +117,7 @@ class Snapshot
                     : $localDisk->readStream($this->fileName);
 
                 $statement = '';
-                while (! feof($stream)) {
+                while (!feof($stream)) {
                     $chunk = $this->compressionExtension === 'gz'
                         ? gzread($stream, self::STREAM_BUFFER_SIZE)
                         : fread($stream, self::STREAM_BUFFER_SIZE);
@@ -137,11 +137,15 @@ class Snapshot
                             break;
                         }
 
-                        if (substr(trim($statement), -1, 1) === ';') {
+                        if (str_ends_with(trim($statement), ';')) {
                             yield $statement;
                             $statement = '';
                         }
                     }
+                }
+
+                if (str_ends_with(trim($statement), ';')) {
+                    yield $statement;
                 }
 
                 if ($this->compressionExtension === 'gz') {
@@ -156,7 +160,7 @@ class Snapshot
             $directory->delete();
         }
     }
-
+  
     public function delete(): void
     {
         event(new DeletingSnapshot($this));
@@ -176,7 +180,7 @@ class Snapshot
         return Carbon::createFromTimestamp($this->disk->lastModified($this->fileName));
     }
 
-    protected function dropAllCurrentTables()
+    protected function dropAllCurrentTables(): void
     {
         DB::connection(DB::getDefaultConnection())
             ->getSchemaBuilder()

@@ -20,7 +20,7 @@ class SnapshotFactory
         //
     }
 
-    public function create(string $snapshotName, string $diskName, string $connectionName, bool $compress = false, ?array $tables = null, ?array $exclude = null): Snapshot
+    public function create(string $snapshotName, string $diskName, string $connectionName, bool $compress = false, ?array $tables = null, ?array $exclude = null, array $extraOptions = []): Snapshot
     {
         $disk = $this->getDisk($diskName);
 
@@ -36,10 +36,11 @@ class SnapshotFactory
             $disk,
             $connectionName,
             $tables,
-            $exclude
+            $exclude,
+            $extraOptions
         ));
 
-        $this->createDump($connectionName, $fileName, $disk, $compress, $tables, $exclude);
+        $this->createDump($connectionName, $fileName, $disk, $compress, $tables, $exclude, $extraOptions);
 
         $snapshot = new Snapshot($disk, $fileName);
 
@@ -64,7 +65,7 @@ class SnapshotFactory
         return $factory::createForConnection($connectionName);
     }
 
-    protected function createDump(string $connectionName, string $fileName, FilesystemAdapter $disk, bool $compress = false, ?array $tables = null, ?array $exclude = null): void
+    protected function createDump(string $connectionName, string $fileName, FilesystemAdapter $disk, bool $compress = false, ?array $tables = null, ?array $exclude = null, array $extraOptions = []): void
     {
         $directory = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))->create();
 
@@ -82,6 +83,10 @@ class SnapshotFactory
 
         if (is_array($exclude)) {
             $dbDumper->excludeTables($exclude);
+        }
+
+        foreach ($extraOptions as $extraOption) {
+            $dbDumper->addExtraOption($extraOption);
         }
 
         $dbDumper->dumpToFile($dumpPath);

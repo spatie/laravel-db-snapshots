@@ -2,6 +2,30 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.7.0 - 2024-12-11
+
+### What's Changed
+
+* Add extraOptions to dbDumper by @wattnpapa in https://github.com/spatie/laravel-db-snapshots/pull/150
+
+### New Contributors
+
+* @wattnpapa made their first contribution in https://github.com/spatie/laravel-db-snapshots/pull/150
+
+**Full Changelog**: https://github.com/spatie/laravel-db-snapshots/compare/2.6.2...2.7.0
+
+## 2.6.2 - 2024-12-09
+
+### What's Changed
+
+* Prepend the connection onto the name by @michaeljhopkins in https://github.com/spatie/laravel-db-snapshots/pull/148
+
+### New Contributors
+
+* @michaeljhopkins made their first contribution in https://github.com/spatie/laravel-db-snapshots/pull/148
+
+**Full Changelog**: https://github.com/spatie/laravel-db-snapshots/compare/2.6.1...2.6.2
+
 ## 2.6.1 - 2024-04-02
 
 ### What's Changed
