@@ -41,14 +41,14 @@ class Snapshot
         $this->name = pathinfo($fileName, PATHINFO_FILENAME);
     }
 
-    public function useStream()
+    public function useStream(): self
     {
         $this->useStream = true;
 
         return $this;
     }
 
-    public function load(string $connectionName = null, bool $dropTables = true): void
+    public function load(?string $connectionName = null, bool $dropTables = true): void
     {
         event(new LoadingSnapshot($this));
 
@@ -65,7 +65,7 @@ class Snapshot
         event(new LoadedSnapshot($this));
     }
 
-    protected function loadAsync(string $connectionName = null)
+    protected function loadAsync(?string $connectionName = null): void
     {
         $dbDumpContents = $this->disk->get($this->fileName);
 
@@ -78,7 +78,7 @@ class Snapshot
 
     protected function isASqlComment(string $line): bool
     {
-        return substr($line, 0, 2) === '--';
+        return str_starts_with($line, '--');
     }
 
     protected function shouldIgnoreLine(string $line): bool
@@ -88,7 +88,7 @@ class Snapshot
         return empty($line) || $this->isASqlComment($line);
     }
 
-    protected function loadStream(string $connectionName = null)
+    protected function loadStream(?string $connectionName = null): void
     {
         LazyCollection::make(function () {
             $stream = $this->compressionExtension === 'gz'
@@ -116,14 +116,14 @@ class Snapshot
                         break;
                     }
 
-                    if (substr(trim($statement), -1, 1) === ';') {
+                    if (str_ends_with(trim($statement), ';')) {
                         yield $statement;
                         $statement = '';
                     }
                 }
             }
 
-            if (substr(trim($statement), -1, 1) === ';') {
+            if (str_ends_with(trim($statement), ';')) {
                 yield $statement;
             }
         })->each(function (string $statement) use ($connectionName) {
@@ -150,7 +150,7 @@ class Snapshot
         return Carbon::createFromTimestamp($this->disk->lastModified($this->fileName));
     }
 
-    protected function dropAllCurrentTables()
+    protected function dropAllCurrentTables(): void
     {
         DB::connection(DB::getDefaultConnection())
             ->getSchemaBuilder()

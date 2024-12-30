@@ -15,7 +15,7 @@ it('can create a snapshot without a specific', function () {
 });
 
 it('can create a snapshot with specific name')
-    ->tap(fn () => Artisan::call('snapshot:create', ['name' => 'test']))
+    ->defer(fn () => Artisan::call('snapshot:create', ['name' => 'test']))
     ->expect('test.sql')
     ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
 
