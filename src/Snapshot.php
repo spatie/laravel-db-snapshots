@@ -137,19 +137,29 @@ class Snapshot
         $localDisk->writeStream($this->fileName, $this->disk->readStream($this->fileName));
     }
 
-    private function openStream(FilesystemAdapter $localDisk): resource
+    private function openStream(FilesystemAdapter $localDisk): mixed
     {
-        return $this->compressionExtension === 'gz'
+        $stream = $this->compressionExtension === 'gz'
             ? gzopen($localDisk->path($this->fileName), 'r')
             : $localDisk->readStream($this->fileName);
+
+        if (!is_resource($stream)) {
+            throw new \RuntimeException("Failed to open stream for file: {$this->fileName}");
+        }
+
+        return $stream;
     }
 
-    private function closeStream(resource $stream): void
+    private function closeStream(mixed $stream): void
     {
+        if (!is_resource($stream)) {
+            throw new \RuntimeException("Invalid stream provided for closing.");
+        }
+
         $this->compressionExtension === 'gz' ? gzclose($stream) : fclose($stream);
     }
 
-    private function processStatements(resource $stream, ?string $connectionName): void
+    private function processStatements(mixed $stream, ?string $connectionName): void
     {
         $statement = '';
         while (!feof($stream)) {
@@ -179,7 +189,7 @@ class Snapshot
         }
     }
 
-    private function readChunk(resource $stream): string
+    private function readChunk(mixed $stream): string
     {
         return $this->compressionExtension === 'gz'
             ? gzread($stream, self::STREAM_BUFFER_SIZE)
