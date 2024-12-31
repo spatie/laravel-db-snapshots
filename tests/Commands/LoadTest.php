@@ -249,3 +249,4 @@ it('drops all current tables when requested', function () {
     // Invoke the protected method
     $reflection->invoke($snapshot);
 });
+
