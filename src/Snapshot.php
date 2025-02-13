@@ -192,7 +192,7 @@ class Snapshot
     private function readChunk(mixed $stream): string
     {
         return $this->compressionExtension === 'gz'
-            ? gzread($stream, self::STREAM_BUFFER_SIZE)
+            ? gzgets($stream, self::STREAM_BUFFER_SIZE)
             : fread($stream, self::STREAM_BUFFER_SIZE);
     }
 
