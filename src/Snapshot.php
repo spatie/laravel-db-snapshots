@@ -112,7 +112,7 @@ class Snapshot
             $statement = '';
             while (! feof($stream)) {
                 $chunk = $this->compressionExtension === 'gz'
-                        ? gzread($stream, self::STREAM_BUFFER_SIZE)
+                        ? gzgets($stream, self::STREAM_BUFFER_SIZE)
                         : fread($stream, self::STREAM_BUFFER_SIZE);
 
                 $lines = explode("\n", $chunk);
