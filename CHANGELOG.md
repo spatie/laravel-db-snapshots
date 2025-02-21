@@ -2,6 +2,19 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.7.1 - 2025-02-21
+
+### What's Changed
+
+* Code health updates by @xHeaven in https://github.com/spatie/laravel-db-snapshots/pull/151
+* Laravel 12.x Compatibility by @laravel-shift in https://github.com/spatie/laravel-db-snapshots/pull/153
+
+### New Contributors
+
+* @xHeaven made their first contribution in https://github.com/spatie/laravel-db-snapshots/pull/151
+
+**Full Changelog**: https://github.com/spatie/laravel-db-snapshots/compare/2.7.0...2.7.1
+
 ## 2.7.0 - 2024-12-11
 
 ### What's Changed
