@@ -43,14 +43,14 @@ class Snapshot
         $this->name = pathinfo($fileName, PATHINFO_FILENAME);
     }
 
-    public function useStream(): self
+    public function useStream()
     {
         $this->useStream = true;
 
         return $this;
     }
 
-    public function load(?string $connectionName = null, bool $dropTables = true): void
+    public function load(string $connectionName = null, bool $dropTables = true): void
     {
         event(new LoadingSnapshot($this));
 
@@ -67,7 +67,7 @@ class Snapshot
         event(new LoadedSnapshot($this));
     }
 
-    protected function loadAsync(?string $connectionName = null): void
+    protected function loadAsync(string $connectionName = null)
     {
         $dbDumpContents = $this->disk->get($this->fileName);
 
@@ -80,17 +80,27 @@ class Snapshot
 
     protected function isASqlComment(string $line): bool
     {
-        return str_starts_with($line, '--');
+        return substr($line, 0, 2) === '--';
     }
 
     protected function shouldIgnoreLine(string $line): bool
     {
         $line = trim($line);
 
-        return empty($line) || $this->isASqlComment($line);
+        // Ignore empty lines, SQL comments, and psql meta-commands (e.g. \\connect, \\., etc.)
+        if ($line === '' || $this->isASqlComment($line)) {
+            return true;
+        }
+
+        // Skip psql meta commands and COPY terminator from pg_dump-like files
+        if (str_starts_with($line, '\\')) {
+            return true;
+        }
+
+        return false;
     }
 
-    protected function loadStream(?string $connectionName = null): void
+    protected function loadStream(string $connectionName = null)
     {
         $directory = (new TemporaryDirectory(config('db-snapshots.temporary_directory_path')))->create();
 
@@ -112,7 +122,7 @@ class Snapshot
             $statement = '';
             while (! feof($stream)) {
                 $chunk = $this->compressionExtension === 'gz'
-                        ? gzgets($stream, self::STREAM_BUFFER_SIZE)
+                        ? gzread($stream, self::STREAM_BUFFER_SIZE)
                         : fread($stream, self::STREAM_BUFFER_SIZE);
 
                 $lines = explode("\n", $chunk);
@@ -130,14 +140,14 @@ class Snapshot
                         break;
                     }
 
-                    if (str_ends_with(trim($statement), ';')) {
+                    if (substr(trim($statement), -1, 1) === ';') {
                         yield $statement;
                         $statement = '';
                     }
                 }
             }
 
-            if (str_ends_with(trim($statement), ';')) {
+            if (substr(trim($statement), -1, 1) === ';') {
                 yield $statement;
             }
         })->each(function (string $statement) use ($connectionName) {
@@ -166,7 +176,7 @@ class Snapshot
         return Carbon::createFromTimestamp($this->disk->lastModified($this->fileName));
     }
 
-    protected function dropAllCurrentTables(): void
+    protected function dropAllCurrentTables()
     {
         DB::connection(DB::getDefaultConnection())
             ->getSchemaBuilder()
