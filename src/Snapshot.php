@@ -152,8 +152,8 @@ class Snapshot
             }
         })->each(function (string $statement) use ($connectionName) {
             DB::connection($connectionName)->unprepared($statement);
-        })->after(function () use ($directory) {
-           $directory->delete();
+        })->tap(function () use ($directory) {
+            $directory->delete();
         });
     }
 
