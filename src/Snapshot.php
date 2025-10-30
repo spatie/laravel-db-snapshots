@@ -97,6 +97,12 @@ class Snapshot
             return true;
         }
 
+        // Some dump tools include non-SQL metadata lines like:
+        // These are not valid SQL statements and must be skipped.
+        if (str_contains($line, '; Type:') && str_contains($line, 'Schema:')) {
+            return true;
+        }
+
         return false;
     }
 
@@ -120,30 +126,49 @@ class Snapshot
                 : Storage::disk(self::class)->readStream($this->fileName);
 
             $statement = '';
+            $leftover = '';
+
             while (! feof($stream)) {
                 $chunk = $this->compressionExtension === 'gz'
-                        ? gzread($stream, self::STREAM_BUFFER_SIZE)
-                        : fread($stream, self::STREAM_BUFFER_SIZE);
+                    ? gzread($stream, self::STREAM_BUFFER_SIZE)
+                    : fread($stream, self::STREAM_BUFFER_SIZE);
+
+                if ($chunk === false || $chunk === '') {
+                    continue;
+                }
+
+                // Prepend any leftover from previous chunk to ensure lines are complete
+                $chunk = $leftover . $chunk;
+                $leftover = '';
 
                 $lines = explode("\n", $chunk);
-                foreach ($lines as $idx => $line) {
+
+                // If the chunk didn't end with a newline, the last element is a partial line.
+                // Save it for the next iteration so that we don't accidentally treat a mid-line
+                // piece (like the tail of a comment) as a new statement.
+                if (substr($chunk, -1) !== "\n") {
+                    $leftover = array_pop($lines);
+                }
+
+                foreach ($lines as $line) {
+                    // Now that we reconstructed full lines, we can correctly ignore comments/meta
                     if ($this->shouldIgnoreLine($line)) {
                         continue;
                     }
 
                     $statement .= $line;
 
-                    // Carry-over the last line to the next chunk since it
-                    // is possible that this chunk finished mid-line right on
-                    // a semi-colon.
-                    if (count($lines) == $idx + 1) {
-                        break;
-                    }
-
                     if (substr(trim($statement), -1, 1) === ';') {
                         yield $statement;
                         $statement = '';
                     }
+                }
+            }
+
+            // Process any leftover line after EOF
+            if ($leftover !== '') {
+                if (! $this->shouldIgnoreLine($leftover)) {
+                    $statement .= $leftover;
                 }
             }
 
