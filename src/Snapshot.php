@@ -352,6 +352,16 @@ class Snapshot
                         // End of physical line: decide to keep or drop it
                         $atLineStart = true;
                         $flushLineIfNotIgnored();
+
+                        // If the current accumulated statement is just a standalone quoted literal
+                        // (e.g. a marker line like 'snapshot4'), drop it to avoid concatenation with
+                        // the next real SQL statement.
+                        $trimStmt = trim($statement);
+                        if ($trimStmt !== ''
+                            && !str_contains($trimStmt, ';')
+                            && (preg_match("/^'(?:[^']|'')*'$/", $trimStmt) || preg_match('/^"[^"]*"$/', $trimStmt))) {
+                            $statement = '';
+                        }
                     } else {
                         $atLineStart = false;
                     }
