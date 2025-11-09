@@ -125,8 +125,55 @@ class Snapshot
                 ? gzopen(Storage::disk(self::class)->path($this->fileName), 'r')
                 : Storage::disk(self::class)->readStream($this->fileName);
 
+            // Stateful, PostgreSQL-aware streaming parser
             $statement = '';
             $leftover = '';
+            $lineBuffer = '';
+            $atLineStart = true;
+            $skipLine = false; // for psql meta-commands starting with '\\'
+
+            $inSingle = false;      // inside '...'
+            $inDollarTag = null;    // holds the full $tag$ delimiter when inside dollar-quoted string
+            $inBlockComment = false;// inside /* ... */
+            $inLineComment = false; // inside -- ... until \n
+            $inCopy = false;        // inside COPY ... FROM stdin data section
+            $copyLineBuffer = '';
+
+            $flushLineIfNotIgnored = function () use (&$lineBuffer, &$statement) {
+                $line = $lineBuffer;
+                $lineBuffer = '';
+                // Decide whether to ignore this line (comments/meta). We only evaluate in neutral state.
+                if ($this->shouldIgnoreLine($line)) {
+                    return; // drop
+                }
+                $statement .= $line;
+            };
+
+            $yieldIfTerminated = function () use (&$statement, &$lineBuffer, &$inCopy) {
+                // Append any remaining buffered line (if not ignored); caller must ensure neutral state
+                // Evaluate ignore after full line only if a newline was already encountered.
+                // If semicolon occurs mid-line, we can't defer the decision to EOL. Apply a quick metadata guard.
+                $trimmedLine = trim($lineBuffer);
+                if ($trimmedLine !== '' && str_contains($trimmedLine, '; Type:') && str_contains($trimmedLine, 'Schema:')) {
+                    // This is a pg_dump metadata line; drop it entirely and do not terminate.
+                    $lineBuffer = '';
+                    return false;
+                }
+                $statement .= $lineBuffer;
+                $lineBuffer = '';
+                $sql = trim($statement);
+                if ($sql === '') {
+                    $statement = '';
+                    return false;
+                }
+                // Detect COPY ... FROM stdin; header and enter copy mode. We do NOT yield this to DB
+                if (preg_match('/^copy\s+.+\s+from\s+stdin;\s*$/is', $sql)) {
+                    $inCopy = true;
+                    $statement = '';
+                    return false;
+                }
+                return $sql; // return the SQL to be yielded by caller
+            };
 
             while (! feof($stream)) {
                 $chunk = $this->compressionExtension === 'gz'
@@ -137,43 +184,193 @@ class Snapshot
                     continue;
                 }
 
-                // Prepend any leftover from previous chunk to ensure lines are complete
-                $chunk = $leftover . $chunk;
+                $data = $leftover . $chunk;
                 $leftover = '';
+                $len = strlen($data);
 
-                $lines = explode("\n", $chunk);
+                for ($i = 0; $i < $len; $i++) {
+                    $ch = $data[$i];
+                    $next = ($i + 1 < $len) ? $data[$i + 1] : null;
 
-                // If the chunk didn't end with a newline, the last element is a partial line.
-                // Save it for the next iteration so that we don't accidentally treat a mid-line
-                // piece (like the tail of a comment) as a new statement.
-                if (substr($chunk, -1) !== "\n") {
-                    $leftover = array_pop($lines);
-                }
-
-                foreach ($lines as $line) {
-                    // Now that we reconstructed full lines, we can correctly ignore comments/meta
-                    if ($this->shouldIgnoreLine($line)) {
+                    // COPY data mode: consume lines verbatim until a line with "\\." terminator
+                    if ($inCopy) {
+                        $copyLineBuffer .= $ch;
+                        if ($ch === "\n") {
+                            $line = rtrim($copyLineBuffer, "\r\n");
+                            $copyLineBuffer = '';
+                            if ($line === '\\.') {
+                                // End of COPY data. Return to neutral state.
+                                $inCopy = false;
+                                $atLineStart = true;
+                            } else {
+                                // Stay in COPY mode; ignore data lines.
+                                $atLineStart = true;
+                            }
+                        }
                         continue;
                     }
 
-                    $statement .= $line;
+                    // Handle pending line-comment
+                    if ($inLineComment) {
+                        if ($ch === "\n") {
+                            $inLineComment = false;
+                            $atLineStart = true;
+                            $lineBuffer .= "\n"; // preserve newline to keep statement spacing stable
+                            // End of line: commit or drop buffered line
+                            $flushLineIfNotIgnored();
+                        }
+                        continue;
+                    }
 
-                    if (substr(trim($statement), -1, 1) === ';') {
-                        yield $statement;
-                        $statement = '';
+                    // Handle block comment
+                    if ($inBlockComment) {
+                        if ($ch === '*' && $next === '/') {
+                            $inBlockComment = false;
+                            $i++; // consume '/'
+                        }
+                        if ($ch === "\n") {
+                            $atLineStart = true;
+                        }
+                        continue;
+                    }
+
+                    // Handle inside single-quoted string
+                    if ($inSingle) {
+                        $statement .= $ch;
+                        if ($ch === "'" && $next === "'") {
+                            // escaped quote
+                            $statement .= $next;
+                            $i++;
+                        } elseif ($ch === "'") {
+                            $inSingle = false;
+                        }
+                        if ($ch === "\n") {
+                            $atLineStart = true;
+                        } else {
+                            $atLineStart = false;
+                        }
+                        continue;
+                    }
+
+                    // Handle inside dollar-quoted string
+                    if ($inDollarTag !== null) {
+                        // Lookahead for closing tag
+                        $tagLen = strlen($inDollarTag);
+                        if ($ch === '$' && $tagLen > 0) {
+                            if ($i + $tagLen <= $len && substr($data, $i, $tagLen) === $inDollarTag) {
+                                $statement .= $inDollarTag;
+                                $i += $tagLen - 1;
+                                $inDollarTag = null;
+                                $atLineStart = false;
+                                continue;
+                            }
+                        }
+                        // otherwise just append
+                        $statement .= $ch;
+                        if ($ch === "\n") {
+                            $atLineStart = true;
+                        } else {
+                            $atLineStart = false;
+                        }
+                        continue;
+                    }
+
+                    // Neutral state (not in string/comment)
+                    // Start of psql meta-command line (e.g., "\\connect", "\\.") → skip entire line
+                    if ($atLineStart && $ch === '\\') {
+                        $skipLine = true;
+                    }
+                    if ($skipLine) {
+                        if ($ch === "\n") {
+                            $skipLine = false;
+                            $atLineStart = true;
+                            $lineBuffer = '';
+                        }
+                        continue;
+                    }
+
+                    // Detect start of line comment
+                    if ($ch === '-' && $next === '-') {
+                        $inLineComment = true;
+                        $i++; // consume second '-'
+                        continue;
+                    }
+
+                    // Detect start of block comment
+                    if ($ch === '/' && $next === '*') {
+                        $inBlockComment = true;
+                        $i++; // consume '*'
+                        continue;
+                    }
+
+                    // Detect start of single-quoted string
+                    if ($ch === "'") {
+                        $inSingle = true;
+                        $statement .= $ch;
+                        $atLineStart = false;
+                        continue;
+                    }
+
+                    // Detect start of dollar-quoted string: $tag$
+                    if ($ch === '$') {
+                        // find next '$'
+                        $j = $i + 1;
+                        while ($j < $len && $data[$j] !== '$' && preg_match('/[A-Za-z0-9_]/', $data[$j])) {
+                            $j++;
+                        }
+                        if ($j < $len && $data[$j] === '$') {
+                            $tag = substr($data, $i, $j - $i + 1); // includes both '$'
+                            // validate all chars between are [A-Za-z0-9_]*
+                            $between = substr($tag, 1, -1);
+                            if ($between === '' || preg_match('/^[A-Za-z0-9_]+$/', $between)) {
+                                $inDollarTag = $tag;
+                                $statement .= $tag;
+                                $i = $j;
+                                $atLineStart = false;
+                                continue;
+                            }
+                        }
+                        // fallthrough: it's just a '$' char
+                    }
+
+                    // Normal character in neutral state
+                    if ($ch === ';') {
+                        // Potential statement terminator
+                        $lineBuffer .= $ch;
+                        $sql = $yieldIfTerminated();
+                        if ($sql !== false) {
+                            yield $sql;
+                            $statement = '';
+                        }
+                        $atLineStart = false;
+                        continue;
+                    }
+
+                    // Regular char accumulation into current logical line
+                    $lineBuffer .= $ch;
+                    if ($ch === "\n") {
+                        // End of physical line: decide to keep or drop it
+                        $atLineStart = true;
+                        $flushLineIfNotIgnored();
+                    } else {
+                        $atLineStart = false;
                     }
                 }
+
+                // Preserve any partial multibyte or token between chunks
+                // We simply carry over the tail which may cut a token; to be safe carry last few bytes
+                // However, here we can't easily know token boundaries, so just keep nothing special.
+                // We'll use $leftover only for incomplete dollar-tag lookahead or similar by setting it explicitly.
+                // Not needed now.
             }
 
-            // Process any leftover line after EOF
-            if ($leftover !== '') {
-                if (! $this->shouldIgnoreLine($leftover)) {
-                    $statement .= $leftover;
-                }
+            // EOF: flush any remaining buffered content safely
+            if ($lineBuffer !== '') {
+                $flushLineIfNotIgnored();
             }
-
-            if (substr(trim($statement), -1, 1) === ';') {
-                yield $statement;
+            $final = trim($statement);
+            if ($final !== '' && substr($final, -1) === ';') {
+                yield $final;
             }
         })->each(function (string $statement) use ($connectionName) {
             DB::connection($connectionName)->unprepared($statement);
