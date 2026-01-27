@@ -95,7 +95,7 @@ class Snapshot
     {
         $line = trim($line);
 
-        return empty($line) || $this->isASqlComment($line)  || $this->isPsqlMetaCommand($line);
+        return empty($line) || $this->isASqlComment($line) || $this->isPsqlMetaCommand($line);
     }
 
     protected function isPsqlMetaCommand(string $line): bool
@@ -103,7 +103,7 @@ class Snapshot
         return str_starts_with($line, '\\');
     }
 
-protected function loadStream(?string $connectionName = null): void
+    protected function loadStream(?string $connectionName = null): void
     {
         LazyCollection::make(function () {
             $stream = $this->compressionExtension === 'gz'
