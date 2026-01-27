@@ -143,3 +143,11 @@ it('can load a compressed snapshot', function () {
 
     assertSnapshotLoaded('snapshot4');
 });
+
+it('can load a snapshot containing psql meta-commands', function () {
+    assertSnapshotNotLoaded('snapshot_with_psql_meta_command');
+
+    Artisan::call('snapshot:load', ['name' => 'snapshot_with_psql_meta_command']);
+
+    assertSnapshotLoaded('snapshot_with_psql_meta_command');
+});

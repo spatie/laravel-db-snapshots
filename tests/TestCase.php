@@ -102,11 +102,20 @@ abstract class TestCase extends Orchestra
         $this->disk->put('snapshot4.sql.gz', gzencode($this->getSnapshotContent('snapshot4')));
 
         $this->disk->put('otherfile.txt', 'not a snapshot');
+
+        $this->disk->put('snapshot_with_psql_meta_command.sql', $this->getSnapshotContentWithPsqlMetaCommand('snapshot_with_psql_meta_command'));
     }
 
     protected function getSnapshotContent($modelName): string
     {
         $snapshotContent = file_get_contents(__DIR__ . '/fixtures/snapshotContent.sql');
+
+        return str_replace('%%modelName%%', $modelName, $snapshotContent);
+    }
+
+    protected function getSnapshotContentWithPsqlMetaCommand($modelName): string
+    {
+        $snapshotContent = file_get_contents(__DIR__ . '/fixtures/snapshotContentWithPsqlMetaCommand.sql');
 
         return str_replace('%%modelName%%', $modelName, $snapshotContent);
     }

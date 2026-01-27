@@ -10,7 +10,7 @@ beforeEach(function () {
 it('can load snapshots from a disk', function () {
     $snapshots = $this->repository->getAll();
 
-    expect($snapshots)->toHaveCount(4)
+    expect($snapshots)->toHaveCount(5)
         ->and($snapshots->first())->toBeInstanceOf(Snapshot::class);
 });
 
