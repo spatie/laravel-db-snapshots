@@ -2,6 +2,20 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.7.2 - 2026-01-28
+
+### What's Changed
+
+* Update issue template by @AlexVanderbist in https://github.com/spatie/laravel-db-snapshots/pull/155
+* Skip psql meta-commands when loading snapshots by @daniel-de-wit in https://github.com/spatie/laravel-db-snapshots/pull/157
+* Fix testbench compatibility by adding $latestResponse property by @freekbot in https://github.com/spatie/laravel-db-snapshots/pull/158
+
+### New Contributors
+
+* @freekbot made their first contribution in https://github.com/spatie/laravel-db-snapshots/pull/158
+
+**Full Changelog**: https://github.com/spatie/laravel-db-snapshots/compare/2.7.1...2.7.2
+
 ## 2.7.1 - 2025-02-21
 
 ### What's Changed
