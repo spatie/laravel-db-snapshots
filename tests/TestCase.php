@@ -11,6 +11,8 @@ use Spatie\DbSnapshots\DbSnapshotsServiceProvider;
 
 abstract class TestCase extends Orchestra
 {
+    public static $latestResponse;
+
     public FilesystemAdapter $disk;
 
     protected function setUp(): void
