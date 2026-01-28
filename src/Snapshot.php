@@ -73,7 +73,17 @@ class Snapshot
             $dbDumpContents = gzdecode($dbDumpContents);
         }
 
+        $dbDumpContents = $this->filterPsqlMetaCommands($dbDumpContents);
+
         DB::connection($connectionName)->unprepared($dbDumpContents);
+    }
+
+    protected function filterPsqlMetaCommands(string $contents): string
+    {
+        $lines = explode("\n", $contents);
+        $filteredLines = array_filter($lines, fn (string $line) => ! $this->isPsqlMetaCommand(trim($line)));
+
+        return implode("\n", $filteredLines);
     }
 
     protected function isASqlComment(string $line): bool
@@ -85,7 +95,12 @@ class Snapshot
     {
         $line = trim($line);
 
-        return empty($line) || $this->isASqlComment($line);
+        return empty($line) || $this->isASqlComment($line) || $this->isPsqlMetaCommand($line);
+    }
+
+    protected function isPsqlMetaCommand(string $line): bool
+    {
+        return str_starts_with($line, '\\');
     }
 
     protected function loadStream(?string $connectionName = null): void
