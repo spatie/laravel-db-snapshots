@@ -5,7 +5,4 @@
       <directory>tests</directory>
     </testsuite>
   </testsuites>
-  <logging>
-    <junit outputFile="build/report.junit.xml"/>
-  </logging>
 </phpunit>
