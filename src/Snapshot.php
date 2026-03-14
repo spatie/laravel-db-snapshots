@@ -106,35 +106,52 @@ class Snapshot
     protected function loadStream(?string $connectionName = null): void
     {
         LazyCollection::make(function () {
-            $stream = $this->compressionExtension === 'gz'
+            $isCompressedStream = $this->compressionExtension === 'gz';
+
+            $stream = $isCompressedStream
                 ? gzopen($this->disk->path($this->fileName), 'r')
                 : $this->disk->readStream($this->fileName);
 
             $statement = '';
-            while (! feof($stream)) {
-                $chunk = $this->compressionExtension === 'gz'
+            $lineContinuesFromPreviousChunk = false;
+            while (! ($isCompressedStream ? gzeof($stream) : feof($stream))) {
+                $chunk = $isCompressedStream
                         ? gzread($stream, self::STREAM_BUFFER_SIZE)
                         : fread($stream, self::STREAM_BUFFER_SIZE);
 
+                $chunkEndsWithNewline = str_ends_with($chunk, "\n");
                 $lines = explode("\n", $chunk);
                 foreach ($lines as $idx => $line) {
-                    if ($this->shouldIgnoreLine($line)) {
+                    $isFirstLine = $idx === 0;
+                    $isLastLine = count($lines) == $idx + 1;
+                    $startsAtLineBoundary = ! ($lineContinuesFromPreviousChunk && $isFirstLine);
+
+                    if ($startsAtLineBoundary && $this->shouldIgnoreLine($line)) {
+                        if (! $isLastLine || $chunkEndsWithNewline) {
+                            $lineContinuesFromPreviousChunk = false;
+                        }
+
                         continue;
                     }
 
                     $statement .= $line;
 
-                    // Carry-over the last line to the next chunk since it
-                    // is possible that this chunk finished mid-line right on
-                    // a semi-colon.
-                    if (count($lines) == $idx + 1) {
-                        break;
-                    }
-
                     if (str_ends_with(trim($statement), ';')) {
                         yield $statement;
                         $statement = '';
+                        $lineContinuesFromPreviousChunk = false;
+
+                        continue;
                     }
+
+                    // Carry-over the last line to the next chunk when the
+                    // chunk ends mid-line and the statement is incomplete.
+                    if ($isLastLine && ! $chunkEndsWithNewline) {
+                        $lineContinuesFromPreviousChunk = true;
+                        break;
+                    }
+
+                    $lineContinuesFromPreviousChunk = false;
                 }
             }
 
