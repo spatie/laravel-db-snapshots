@@ -113,46 +113,59 @@ class Snapshot
                 : $this->disk->readStream($this->fileName);
 
             $statement = '';
-            $lineContinuesFromPreviousChunk = false;
+            $line = '';
+            $inString = false;
+            $stringIsEscaped = false;
             while (! ($isCompressedStream ? gzeof($stream) : feof($stream))) {
                 $chunk = $isCompressedStream
                         ? gzread($stream, self::STREAM_BUFFER_SIZE)
                         : fread($stream, self::STREAM_BUFFER_SIZE);
 
-                $chunkEndsWithNewline = str_ends_with($chunk, "\n");
-                $lines = explode("\n", $chunk);
-                foreach ($lines as $idx => $line) {
-                    $isFirstLine = $idx === 0;
-                    $isLastLine = count($lines) == $idx + 1;
-                    $startsAtLineBoundary = ! ($lineContinuesFromPreviousChunk && $isFirstLine);
+                foreach (str_split($chunk) as $char) {
+                    $line .= $char;
 
-                    if ($startsAtLineBoundary && $this->shouldIgnoreLine($line)) {
-                        if (! $isLastLine || $chunkEndsWithNewline) {
-                            $lineContinuesFromPreviousChunk = false;
+                    if ($inString) {
+                        if ($stringIsEscaped) {
+                            $stringIsEscaped = false;
+
+                            continue;
+                        }
+
+                        if ($char === '\\') {
+                            $stringIsEscaped = true;
+
+                            continue;
+                        }
+
+                        if ($char === "'") {
+                            $inString = false;
                         }
 
                         continue;
                     }
 
-                    $statement .= $line;
-
-                    if (str_ends_with(trim($statement), ';')) {
-                        yield $statement;
-                        $statement = '';
-                        $lineContinuesFromPreviousChunk = false;
+                    if ($char === "'") {
+                        $inString = true;
 
                         continue;
                     }
 
-                    // Carry-over the last line to the next chunk when the
-                    // chunk ends mid-line and the statement is incomplete.
-                    if ($isLastLine && ! $chunkEndsWithNewline) {
-                        $lineContinuesFromPreviousChunk = true;
-                        break;
+                    if ($char !== "\n") {
+                        continue;
                     }
 
-                    $lineContinuesFromPreviousChunk = false;
+                    $this->appendStreamLine($statement, $line);
+                    $line = '';
+
+                    if (str_ends_with(trim($statement), ';')) {
+                        yield $statement;
+                        $statement = '';
+                    }
                 }
+            }
+
+            if ($line !== '') {
+                $this->appendStreamLine($statement, $line);
             }
 
             if (str_ends_with(trim($statement), ';')) {
@@ -161,6 +174,15 @@ class Snapshot
         })->each(function (string $statement) use ($connectionName) {
             DB::connection($connectionName)->unprepared($statement);
         });
+    }
+
+    protected function appendStreamLine(string &$statement, string $line): void
+    {
+        if ($this->shouldIgnoreLine($line)) {
+            return;
+        }
+
+        $statement .= $line;
     }
 
     public function delete(): void
