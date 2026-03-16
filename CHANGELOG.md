@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.9.0 - 2026-03-16
+
+- Fix streamed snapshot loading for chunk-boundary and continued-line cases (#160)
+
 ## 2.8.0 - 2026-02-21
 
 ### What's Changed
