@@ -106,30 +106,56 @@ class Snapshot
     protected function loadStream(?string $connectionName = null): void
     {
         LazyCollection::make(function () {
-            $stream = $this->compressionExtension === 'gz'
+            $isCompressedStream = $this->compressionExtension === 'gz';
+
+            $stream = $isCompressedStream
                 ? gzopen($this->disk->path($this->fileName), 'r')
                 : $this->disk->readStream($this->fileName);
 
             $statement = '';
-            while (! feof($stream)) {
-                $chunk = $this->compressionExtension === 'gz'
+            $line = '';
+            $inString = false;
+            $stringIsEscaped = false;
+            while (! ($isCompressedStream ? gzeof($stream) : feof($stream))) {
+                $chunk = $isCompressedStream
                         ? gzread($stream, self::STREAM_BUFFER_SIZE)
                         : fread($stream, self::STREAM_BUFFER_SIZE);
 
-                $lines = explode("\n", $chunk);
-                foreach ($lines as $idx => $line) {
-                    if ($this->shouldIgnoreLine($line)) {
+                foreach (str_split($chunk) as $char) {
+                    $line .= $char;
+
+                    if ($inString) {
+                        if ($stringIsEscaped) {
+                            $stringIsEscaped = false;
+
+                            continue;
+                        }
+
+                        if ($char === '\\') {
+                            $stringIsEscaped = true;
+
+                            continue;
+                        }
+
+                        if ($char === "'") {
+                            $inString = false;
+                        }
+
                         continue;
                     }
 
-                    $statement .= $line;
+                    if ($char === "'") {
+                        $inString = true;
 
-                    // Carry-over the last line to the next chunk since it
-                    // is possible that this chunk finished mid-line right on
-                    // a semi-colon.
-                    if (count($lines) == $idx + 1) {
-                        break;
+                        continue;
                     }
+
+                    if ($char !== "\n") {
+                        continue;
+                    }
+
+                    $this->appendStreamLine($statement, $line);
+                    $line = '';
 
                     if (str_ends_with(trim($statement), ';')) {
                         yield $statement;
@@ -138,12 +164,25 @@ class Snapshot
                 }
             }
 
+            if ($line !== '') {
+                $this->appendStreamLine($statement, $line);
+            }
+
             if (str_ends_with(trim($statement), ';')) {
                 yield $statement;
             }
         })->each(function (string $statement) use ($connectionName) {
             DB::connection($connectionName)->unprepared($statement);
         });
+    }
+
+    protected function appendStreamLine(string &$statement, string $line): void
+    {
+        if ($this->shouldIgnoreLine($line)) {
+            return;
+        }
+
+        $statement .= $line;
     }
 
     public function delete(): void
