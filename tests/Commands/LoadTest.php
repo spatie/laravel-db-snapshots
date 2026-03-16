@@ -151,3 +151,71 @@ it('can load a snapshot containing psql meta-commands', function () {
 
     assertSnapshotLoaded('snapshot_with_psql_meta_command');
 });
+
+it('can stream load a snapshot with newlines inside string values', function () {
+    $content = implode("\n", [
+        'PRAGMA foreign_keys=OFF;',
+        'BEGIN TRANSACTION;',
+        'DROP TABLE IF EXISTS "models";',
+        'CREATE TABLE "models" ("id" integer not null primary key autoincrement, "name" varchar not null);',
+        "INSERT INTO \"models\" VALUES(1,'line1",
+        "line2');",
+        'DELETE FROM sqlite_sequence;',
+        "INSERT INTO \"sqlite_sequence\" VALUES('models',1);",
+        'COMMIT;',
+    ]);
+
+    test()->disk->put('snapshot_newline.sql', $content);
+
+    Artisan::call('snapshot:load', ['name' => 'snapshot_newline', '--stream' => true]);
+
+    $result = DB::select('select `name` from models');
+    expect($result)->toHaveCount(1);
+    expect($result[0]->name)->toBe("line1\nline2");
+});
+
+it('can stream load a snapshot with content resembling comments inside string values', function () {
+    $content = implode("\n", [
+        'PRAGMA foreign_keys=OFF;',
+        'BEGIN TRANSACTION;',
+        'DROP TABLE IF EXISTS "models";',
+        'CREATE TABLE "models" ("id" integer not null primary key autoincrement, "name" varchar not null);',
+        "INSERT INTO \"models\" VALUES(1,'first line",
+        "-- not a comment",
+        "\\not a meta command');",
+        'DELETE FROM sqlite_sequence;',
+        "INSERT INTO \"sqlite_sequence\" VALUES('models',1);",
+        'COMMIT;',
+    ]);
+
+    test()->disk->put('snapshot_special_chars.sql', $content);
+
+    Artisan::call('snapshot:load', ['name' => 'snapshot_special_chars', '--stream' => true]);
+
+    $result = DB::select('select `name` from models');
+    expect($result)->toHaveCount(1);
+    expect($result[0]->name)->toBe("first line\n-- not a comment\n\\not a meta command");
+});
+
+it('can stream load a snapshot that spans multiple chunks', function () {
+    $longValue = str_repeat('a', 20000);
+
+    $content = implode("\n", [
+        'PRAGMA foreign_keys=OFF;',
+        'BEGIN TRANSACTION;',
+        'DROP TABLE IF EXISTS "models";',
+        'CREATE TABLE "models" ("id" integer not null primary key autoincrement, "name" varchar not null);',
+        "INSERT INTO \"models\" VALUES(1,'{$longValue}');",
+        'DELETE FROM sqlite_sequence;',
+        "INSERT INTO \"sqlite_sequence\" VALUES('models',1);",
+        'COMMIT;',
+    ]);
+
+    test()->disk->put('snapshot_large.sql', $content);
+
+    Artisan::call('snapshot:load', ['name' => 'snapshot_large', '--stream' => true]);
+
+    $result = DB::select('select `name` from models');
+    expect($result)->toHaveCount(1);
+    expect($result[0]->name)->toBe($longValue);
+});

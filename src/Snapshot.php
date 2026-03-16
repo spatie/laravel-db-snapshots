@@ -121,7 +121,9 @@ class Snapshot
                         ? gzread($stream, self::STREAM_BUFFER_SIZE)
                         : fread($stream, self::STREAM_BUFFER_SIZE);
 
-                foreach (str_split($chunk) as $char) {
+                $chunkLength = strlen($chunk);
+                for ($i = 0; $i < $chunkLength; $i++) {
+                    $char = $chunk[$i];
                     $line .= $char;
 
                     if ($inString) {
