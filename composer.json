@@ -19,7 +19,7 @@
         "php": "^8.2",
         "illuminate/support": "^11.0|^12.0|^13.0",
         "league/flysystem": "^3.0",
-        "spatie/db-dumper": "^3.3",
+        "spatie/db-dumper": "^3.3|^4.0",
         "spatie/laravel-package-tools": "^1.6",
         "spatie/temporary-directory": "^2.0"
     },
