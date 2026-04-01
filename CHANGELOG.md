@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.10.0 - 2026-04-01
+
+### What's Changed
+
+* Allow spatie/db-dumper v4
+
 ## 2.9.0 - 2026-03-16
 
 - Fix streamed snapshot loading for chunk-boundary and continued-line cases (#160)
