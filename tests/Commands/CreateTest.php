@@ -126,3 +126,25 @@ it('can create a snapshot without excluded tables specified in the config', func
         ->fileOnDiskToFailRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/')
         ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
 });
+
+it('can create a snapshot with comma separated tables passed via the command line', function () {
+    Artisan::call('snapshot:create', ['--table' => ['users,posts']]);
+
+    $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
+
+    expect($fileName)
+        ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "users"/')
+        ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/')
+        ->fileOnDiskToFailRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
+});
+
+it('can create a snapshot without comma separated excluded tables passed via the command line', function () {
+    Artisan::call('snapshot:create', ['--exclude' => ['users,posts']]);
+
+    $fileName = Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
+
+    expect($fileName)
+        ->fileOnDiskToFailRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "users"/')
+        ->fileOnDiskToFailRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "posts"/')
+        ->fileOnDiskToPassRegex('/CREATE TABLE(?: IF NOT EXISTS){0,1} "models"/');
+});
