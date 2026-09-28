@@ -2,6 +2,18 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.10.1 - 2026-09-28
+
+### What's Changed
+
+* Refactor table, exclude and options normalization by @lotestudio in https://github.com/spatie/laravel-db-snapshots/pull/162
+
+### New Contributors
+
+* @lotestudio made their first contribution in https://github.com/spatie/laravel-db-snapshots/pull/162
+
+**Full Changelog**: https://github.com/spatie/laravel-db-snapshots/compare/2.10.0...2.10.1
+
 ## 2.10.0 - 2026-04-01
 
 ### What's Changed
