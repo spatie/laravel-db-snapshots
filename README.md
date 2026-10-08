@@ -193,6 +193,8 @@ By default, `snapshot:load` will load the entire snapshot into memory which may 
 php artisan snapshot:load my-first-dump --stream
 ```
 
+If a streamed snapshot ends inside an unterminated string literal, the load throws a `Spatie\DbSnapshots\Exceptions\CannotLoadSnapshot` exception instead of skipping the rest of the file.
+
 To list all the dumps run:
 
 ```bash

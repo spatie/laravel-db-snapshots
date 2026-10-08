@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Mockery as m;
+use Spatie\DbSnapshots\Exceptions\CannotLoadSnapshot;
 
 use function Pest\Laravel\assertDatabaseCount;
 use function PHPUnit\Framework\assertEquals;
@@ -218,4 +219,34 @@ it('can stream load a snapshot that spans multiple chunks', function () {
     $result = DB::select('select `name` from models');
     expect($result)->toHaveCount(1);
     expect($result[0]->name)->toBe($longValue);
+});
+
+it('throws instead of silently skipping a streamed snapshot that ends inside a string literal', function () {
+    $content = implode("\n", [
+        'DROP TABLE IF EXISTS "models";',
+        'CREATE TABLE "models" ("id" integer not null primary key autoincrement, "name" varchar not null);',
+        "INSERT INTO \"models\" VALUES(1,'complete');",
+        "INSERT INTO \"models\" VALUES(2,'never closed);",
+        "INSERT INTO \"models\" VALUES(3,'after');",
+    ]);
+
+    test()->disk->put('snapshot_unterminated.sql', $content);
+
+    expect(fn () => Artisan::call('snapshot:load', ['name' => 'snapshot_unterminated', '--stream' => true]))
+        ->toThrow(CannotLoadSnapshot::class, 'snapshot_unterminated.sql');
+});
+
+it('can stream load a final statement without a trailing semicolon', function () {
+    $content = implode("\n", [
+        'DROP TABLE IF EXISTS "models";',
+        'CREATE TABLE "models" ("id" integer not null primary key autoincrement, "name" varchar not null);',
+        "INSERT INTO \"models\" VALUES(1,'first');",
+        "INSERT INTO \"models\" VALUES(2,'last')",
+    ]);
+
+    test()->disk->put('snapshot_no_final_semicolon.sql', $content);
+
+    Artisan::call('snapshot:load', ['name' => 'snapshot_no_final_semicolon', '--stream' => true]);
+
+    expect(DB::table('models')->orderBy('id')->pluck('name')->all())->toBe(['first', 'last']);
 });
