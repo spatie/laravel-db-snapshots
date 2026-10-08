@@ -105,7 +105,9 @@ class Snapshot
 
     protected function loadStream(?string $connectionName = null): void
     {
-        LazyCollection::make(function () {
+        $backslashEscapes = $this->usesBackslashEscapes($connectionName);
+
+        LazyCollection::make(function () use ($backslashEscapes) {
             $isCompressedStream = $this->compressionExtension === 'gz';
 
             $stream = $isCompressedStream
@@ -133,7 +135,7 @@ class Snapshot
                             continue;
                         }
 
-                        if ($char === '\\') {
+                        if ($backslashEscapes && $char === '\\') {
                             $stringIsEscaped = true;
 
                             continue;
@@ -176,6 +178,16 @@ class Snapshot
         })->each(function (string $statement) use ($connectionName) {
             DB::connection($connectionName)->unprepared($statement);
         });
+    }
+
+    /**
+     * Only MySQL and MariaDB treat a backslash inside a string literal as an
+     * escape. PostgreSQL (with standard_conforming_strings on, as pg_dump
+     * writes) and SQLite take it literally and escape a quote by doubling it.
+     */
+    protected function usesBackslashEscapes(?string $connectionName): bool
+    {
+        return in_array(DB::connection($connectionName)->getDriverName(), ['mysql', 'mariadb'], true);
     }
 
     protected function appendStreamLine(string &$statement, string $line): void
