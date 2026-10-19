@@ -150,7 +150,9 @@ class Snapshot
                     }
 
                     if ($char === "'") {
-                        $inString = true;
+                        if (! $this->shouldIgnoreLine($line)) {
+                            $inString = true;
+                        }
 
                         continue;
                     }
