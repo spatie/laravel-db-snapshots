@@ -197,7 +197,7 @@ it('can stream load a snapshot with content resembling comments inside string va
     expect($result[0]->name)->toBe("first line\n-- not a comment\n\\not a meta command");
 });
 
-it('can stream load string values ending in a backslash on drivers that take backslashes literally', function () {
+it('can stream load string values ending in a backslash on drivers that take backslashes literally', function (bool $compressed) {
     $content = implode("\n", [
         'DROP TABLE IF EXISTS "models";',
         'CREATE TABLE "models" ("id" integer not null primary key autoincrement, "name" varchar not null);',
@@ -207,13 +207,15 @@ it('can stream load string values ending in a backslash on drivers that take bac
         '-- end of dump',
     ]);
 
-    test()->disk->put('snapshot_backslash_literal.sql', $content);
+    $fileName = $compressed ? 'snapshot_backslash_literal.sql.gz' : 'snapshot_backslash_literal.sql';
+
+    test()->disk->put($fileName, $compressed ? gzencode($content) : $content);
 
     Artisan::call('snapshot:load', ['name' => 'snapshot_backslash_literal', '--stream' => true]);
 
     expect(DB::table('models')->orderBy('id')->pluck('name')->all())
         ->toBe(['C:\\', "I\\'ve said", 'after the backslashes']);
-});
+})->with(['plain' => false, 'gzip' => true]);
 
 it('can stream load a snapshot that spans multiple chunks', function () {
     $longValue = str_repeat('a', 20000);
