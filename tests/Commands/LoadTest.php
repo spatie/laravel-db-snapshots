@@ -2,11 +2,15 @@
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Mockery as m;
 
 use function Pest\Laravel\assertDatabaseCount;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertNotEquals;
+
+use Spatie\DbSnapshots\Events\LoadedSnapshot;
+use Spatie\DbSnapshots\Exceptions\CannotLoadSnapshot;
 
 function assertSnapshotLoaded($snapshotName)
 {
@@ -239,3 +243,64 @@ it('can stream load a snapshot that spans multiple chunks', function () {
     expect($result)->toHaveCount(1);
     expect($result[0]->name)->toBe($longValue);
 });
+
+it('throws instead of silently skipping a streamed snapshot that ends inside a string literal', function (bool $compressed) {
+    Event::fake([LoadedSnapshot::class]);
+
+    $content = implode("\n", [
+        'DROP TABLE IF EXISTS "models";',
+        'CREATE TABLE "models" ("id" integer not null primary key autoincrement, "name" varchar not null);',
+        "INSERT INTO \"models\" VALUES(1,'complete');",
+        "INSERT INTO \"models\" VALUES(2,'never closed);",
+        "INSERT INTO \"models\" VALUES(3,'after');",
+    ]);
+
+    $fileName = $compressed ? 'snapshot_unterminated.sql.gz' : 'snapshot_unterminated.sql';
+
+    test()->disk->put($fileName, $compressed ? gzencode($content) : $content);
+
+    expect(fn () => Artisan::call('snapshot:load', ['name' => 'snapshot_unterminated', '--stream' => true]))
+        ->toThrow(CannotLoadSnapshot::class, $fileName);
+
+    Event::assertNotDispatched(LoadedSnapshot::class);
+
+    expect(DB::table('models')->pluck('name')->all())->toBe(['complete']);
+    expect(Artisan::output())->not->toContain('loaded!');
+})->with(['plain' => false, 'gzip' => true]);
+
+it('can stream load a final statement without a trailing semicolon', function (bool $compressed) {
+    $content = implode("\n", [
+        'DROP TABLE IF EXISTS "models";',
+        'CREATE TABLE "models" ("id" integer not null primary key autoincrement, "name" varchar not null);',
+        "INSERT INTO \"models\" VALUES(1,'first');",
+        "INSERT INTO \"models\" VALUES(2,'last')",
+    ]);
+
+    $fileName = $compressed ? 'snapshot_no_final_semicolon.sql.gz' : 'snapshot_no_final_semicolon.sql';
+
+    test()->disk->put($fileName, $compressed ? gzencode($content) : $content);
+
+    Artisan::call('snapshot:load', ['name' => 'snapshot_no_final_semicolon', '--stream' => true]);
+
+    expect(DB::table('models')->orderBy('id')->pluck('name')->all())->toBe(['first', 'last']);
+})->with(['plain' => false, 'gzip' => true]);
+
+it('ignores quotes in comments and psql meta-commands when streaming', function (bool $compressed) {
+    $content = implode("\n", [
+        "  -- author's snapshot",
+        'DROP TABLE IF EXISTS "models";',
+        'CREATE TABLE "models" ("id" integer not null primary key autoincrement, "name" varchar not null);',
+        "INSERT INTO \"models\" VALUES(1,'first');",
+        "\\echo 'ignored",
+        "INSERT INTO \"models\" VALUES(2,'last');",
+        "-- author's trailing comment",
+    ]);
+
+    $fileName = $compressed ? 'snapshot_quoted_comments.sql.gz' : 'snapshot_quoted_comments.sql';
+
+    test()->disk->put($fileName, $compressed ? gzencode($content) : $content);
+
+    Artisan::call('snapshot:load', ['name' => 'snapshot_quoted_comments', '--stream' => true]);
+
+    expect(DB::table('models')->orderBy('id')->pluck('name')->all())->toBe(['first', 'last']);
+})->with(['plain' => false, 'gzip' => true]);

@@ -195,6 +195,8 @@ By default, `snapshot:load` will load the entire snapshot into memory which may 
 php artisan snapshot:load my-first-dump --stream
 ```
 
+A final SQL statement does not need a trailing semicolon. If a streamed snapshot ends inside an unterminated string literal, the load throws a `Spatie\DbSnapshots\Exceptions\CannotLoadSnapshot` exception instead of skipping the rest of the file. Statements already loaded are not rolled back.
+
 To list all the dumps run:
 
 ```bash

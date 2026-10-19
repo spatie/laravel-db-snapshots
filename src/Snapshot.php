@@ -10,6 +10,7 @@ use Spatie\DbSnapshots\Events\DeletedSnapshot;
 use Spatie\DbSnapshots\Events\DeletingSnapshot;
 use Spatie\DbSnapshots\Events\LoadedSnapshot;
 use Spatie\DbSnapshots\Events\LoadingSnapshot;
+use Spatie\DbSnapshots\Exceptions\CannotLoadSnapshot;
 
 class Snapshot
 {
@@ -149,7 +150,9 @@ class Snapshot
                     }
 
                     if ($char === "'") {
-                        $inString = true;
+                        if (! $this->shouldIgnoreLine($line)) {
+                            $inString = true;
+                        }
 
                         continue;
                     }
@@ -172,7 +175,11 @@ class Snapshot
                 $this->appendStreamLine($statement, $line);
             }
 
-            if (str_ends_with(trim($statement), ';')) {
+            if ($inString) {
+                throw CannotLoadSnapshot::unterminatedStringLiteral($this->fileName);
+            }
+
+            if (trim($statement) !== '') {
                 yield $statement;
             }
         })->each(function (string $statement) use ($connectionName) {
