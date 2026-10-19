@@ -2,6 +2,23 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.10.3 - 2026-10-19
+
+### Fixes
+
+- Throw `CannotLoadSnapshot` when a streamed SQL snapshot ends inside an unterminated string literal instead of silently skipping the remaining statements.
+- Load a complete final SQL statement even without a trailing semicolon.
+- Ignore apostrophes in SQL comment lines and psql meta-commands when tracking string literals.
+- Cover plain and gzip snapshots, including preventing success output and events after an incomplete load.
+
+Statements already loaded are not rolled back when a streamed load fails.
+
+No breaking changes.
+
+Thanks to @phattarachai for the original fix in #163.
+
+**Full Changelog**: https://github.com/spatie/laravel-db-snapshots/compare/2.10.2...2.10.3
+
 ## 2.10.2 - 2026-10-19
 
 ### Fixed
