@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ${{ matrix.os }}
@@ -16,45 +19,41 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        php: [8.5, 8.4, 8.3, 8.2]
-        laravel: ['11.*', '12.*', '13.*']
+        php: ['8.5', '8.4', '8.3']
+        laravel: ['12.*', '13.*']
         stability: [prefer-lowest, prefer-stable]
         include:
-          - laravel: 11.*
-            testbench: 9.*
+          - php: '8.3'
+            pest: '^4.4.1'
+            pest-plugin-laravel: '^4.1'
+          - php: '8.4'
+            pest: '^5.0'
+            pest-plugin-laravel: '^5.0'
+          - php: '8.5'
+            pest: '^5.0'
+            pest-plugin-laravel: '^5.0'
           - laravel: 12.*
             testbench: 10.*
           - laravel: 13.*
             testbench: 11.*
-        exclude:
-          - laravel: 13.*
-            php: 8.2
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
-      - name: Install SQLite 3 (3.32 is required and only included in Ubuntu 21.x)
+      - name: Install SQLite
         run: |
           sudo apt-get update
-          sudo apt-get install build-essential tar wget
-          wget https://www.sqlite.org/2022/sqlite-autoconf-3400000.tar.gz
-          tar xzf sqlite-autoconf-3400000.tar.gz
-          cd sqlite-autoconf-3400000
-          ./configure --prefix=/usr
-          make
-          sudo make install
-          sudo cp -f ./sqlite3 /usr/bin/sqlite3
-          cd ..
+          sudo apt-get install -y sqlite3
           sqlite3 --version
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          extensions: dom, curl, mbstring, zip, pdo_sqlite
           coverage: none
 
       - name: Setup problem matchers
@@ -64,7 +63,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer require --dev "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "pestphp/pest:${{ matrix.pest }}" "pestphp/pest-plugin-laravel:${{ matrix.pest-plugin-laravel }}" --no-interaction --no-update
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: Execute tests
