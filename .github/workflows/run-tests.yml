@@ -23,19 +23,18 @@ jobs:
         laravel: ['12.*', '13.*']
         stability: [prefer-lowest, prefer-stable]
         include:
-          - php: '8.3'
-            pest: '^4.4.1'
-            pest-plugin-laravel: '^4.1'
-          - php: '8.4'
-            pest: '^5.0'
-            pest-plugin-laravel: '^5.0'
-          - php: '8.5'
-            pest: '^5.0'
-            pest-plugin-laravel: '^5.0'
           - laravel: 12.*
             testbench: 10.*
+            pest: '^4.4.1'
+            pest-plugin-laravel: '^4.1'
           - laravel: 13.*
             testbench: 11.*
+            pest: '^5.0'
+            pest-plugin-laravel: '^5.0'
+          - php: '8.3'
+            laravel: 13.*
+            pest: '^4.4.1'
+            pest-plugin-laravel: '^4.1'
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
