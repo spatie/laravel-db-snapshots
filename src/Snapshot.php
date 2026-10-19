@@ -105,7 +105,9 @@ class Snapshot
 
     protected function loadStream(?string $connectionName = null): void
     {
-        LazyCollection::make(function () {
+        $backslashEscapes = in_array(DB::connection($connectionName)->getDriverName(), ['mysql', 'mariadb'], true);
+
+        LazyCollection::make(function () use ($backslashEscapes) {
             $isCompressedStream = $this->compressionExtension === 'gz';
 
             $stream = $isCompressedStream
@@ -133,7 +135,7 @@ class Snapshot
                             continue;
                         }
 
-                        if ($char === '\\') {
+                        if ($backslashEscapes && $char === '\\') {
                             $stringIsEscaped = true;
 
                             continue;
