@@ -2,6 +2,23 @@
 
 All notable changes to `laravel-db-snapshots` will be documented in this file
 
+## 2.10.2 - 2026-10-19
+
+### Fixed
+
+- Prevent streamed PostgreSQL and SQLite snapshots from silently losing rows when string values contain literal backslashes. MySQL/MariaDB backslash escaping is preserved.
+- Cover the regression for both plain and gzip snapshots.
+
+### Maintenance
+
+- Require PHP 8.3+ and Laravel 12 or 13; remove PHP 8.2 and Laravel 11 from the supported matrix.
+- Test PHP 8.3–8.5 with lowest and stable dependencies. Use Pest 5 on compatible combinations and Pest 4 where required by PHP 8.3 or Laravel 12 Testbench.
+- Modernize checkout and SQLite tooling, update PHPUnit configuration, and make styling a read-only PR check.
+
+Thanks to @phattarachai for the fix in #164.
+
+**Full Changelog**: https://github.com/spatie/laravel-db-snapshots/compare/2.10.1...2.10.2
+
 ## 2.10.1 - 2026-09-28
 
 ### What's Changed
